@@ -1,6 +1,6 @@
 <?php
 session_start();
-$url_base = "http://inventario-billar/inventario/";
+$url_base = "http://inventario-billar.net/";
 if (!isset($_SESSION['usuario'])) {
     header("Location:" . $url_base . "login.php");
 }

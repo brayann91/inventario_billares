@@ -7,9 +7,9 @@ if (!isset($_SESSION['usuario'])) {
 
 $url_actual = $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
-$url_productos = "inventario-billar/secciones/productos/";
-$url_usuarios = "inventario-billar/secciones/usuarios/";
-$url_home = "inventario-billar/index.php";
+$url_productos = "inventario-billar.net/secciones/productos/";
+$url_usuarios = "inventario-billar.net/secciones/usuarios/";
+$url_home = "inventario-billar.net/index.php";
 
 $url_editar = "editar.php";
 $url_crear = "crear.php";

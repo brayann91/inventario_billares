@@ -2,9 +2,9 @@
 
 session_start();
 
-include "bd.php";
-
 if ($_POST) {
+  
+    include "bd.php";
 
     $sentencia = $conexion->prepare("SELECT *, count(*) as n_usuarios
     FROM usuarios

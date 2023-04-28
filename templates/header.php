@@ -1,15 +1,15 @@
 <?php
 session_start();
-$url_base = "http://localhost/inventario/";
+$url_base = "http://inventario-billar/";
 if (!isset($_SESSION['usuario'])) {
     header("Location:" . $url_base . "login.php");
 }
 
 $url_actual = $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
-$url_productos = "localhost/inventario/secciones/productos/";
-$url_usuarios = "localhost/inventario/secciones/usuarios/";
-$url_home = "localhost/inventario/index.php";
+$url_productos = "inventario-billar/secciones/productos/";
+$url_usuarios = "inventario-billar/secciones/usuarios/";
+$url_home = "inventario-billar/index.php";
 
 $url_editar = "editar.php";
 $url_crear = "crear.php";

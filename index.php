@@ -37,13 +37,14 @@ $sede_actual = $sentencia->fetch(PDO::FETCH_LAZY);
 
       <div class="mb-3">
         <label for="id_sede" class="form-label">Seleccione la Sede:</label>
-          <select class="form-select form-select-sm" name="id_sede" id="id_sede" required>
-            <?php foreach ($lista_sedes as $registro) {?>
-              <option value="<?php echo $registro['id_sede']; ?>">
-                <?php echo $registro['nombre_sede']; ?>
-              </option>
-            <?php }?>
-          </select>
+        <select class="form-select form-select-sm" name="id_sede" id="id_sede" required>
+          <option value="">Seleccione una opción</option> <!-- Agregar esta opción -->
+          <?php foreach ($lista_sedes as $registro) {?>
+            <option value="<?php echo $registro['id_sede']; ?>">
+              <?php echo $registro['nombre_sede']; ?>
+            </option>
+          <?php }?>
+        </select>
       </div>
 
       <button type="submit" class="btn btn-success">Actualizar sede</button>

@@ -51,6 +51,10 @@ $sede_actual = $sentencia->fetch(PDO::FETCH_LAZY);
 
       </form>
 
+          </br>
+          </br>
+          </br>
+
       <?php } ?>
 
 

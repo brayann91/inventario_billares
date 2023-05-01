@@ -953,7 +953,6 @@ window.onhashchange();
   }
 
   function agregarProductoACuenta(nombre_cuenta_temporal, id_producto_temporal, id_cuenta_temporal) {
-    alert(id_cuenta_temporal);
     $.ajax({
       url: 'index.php',
       method: 'POST',

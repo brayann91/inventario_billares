@@ -47,8 +47,6 @@ if ($_POST) {
     $id_cargo = (isset($_POST["id_cargo"]) ? $_POST["id_cargo"] : "");
     $id_sede = (isset($_POST["id_sede"]) ? $_POST["id_sede"] : "");
 
-    print_r($id_sede);
-
     //Preparar la insersion de los datos
     $sentencia = $conexion->prepare("UPDATE usuarios SET
     nombre_usuario=:nombre_usuario,
@@ -73,8 +71,8 @@ if ($_POST) {
     $sentencia->bindParam(":id_sede", $id_sede);
     
     $sentencia->execute();
-    //$mensaje = "Registro actualizado";
-    //header("Location:index.php?mensaje=" . $mensaje);
+    $mensaje = "Registro actualizado";
+    header("Location:index.php?mensaje=" . $mensaje);
 }
 
 ?>

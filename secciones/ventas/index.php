@@ -47,7 +47,7 @@ foreach ($lista_cuentas as $registro) {
 $menu .= '</ul>';
 $menu2 .= '</ul>';
 
-$sentencia = $conexion->prepare("SELECT *
+$sentencia = $conexion->prepare("SELECT p.*, e.*, c.*, SUM(e.cantidad) total_inventario
 FROM productos p
 INNER JOIN entradas e ON p.id_producto = e.id_producto
 INNER JOIN categorias c ON p.id_categoria = c.id_categoria
@@ -499,7 +499,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                         </td>
                         <td><?php echo $registro['nombre_producto']; ?></td>
                         <td>$ <?php echo number_format($registro['precio'], 1); ?></td>
-                        <td><?php echo $registro['cantidad']; ?></td>
+                        <td><?php echo $registro['total_inventario']; ?></td>
                     </tr>
                 <?php }?>
                 </tbody>
@@ -536,25 +536,6 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                     <tr valign="middle" align="center">
                         <th colspan="1"><?php echo $array_name_cuenta[$x]; ?></th>
                         <th colspan="4"><label style="font-size: 2em; color: green;" id="precio_<?php echo $array_name_cuenta[$x] ?>" >$ 0
-                          <?php
-                            // $sentencia = $conexion->prepare("SELECT * FROM factura_agrupada t
-                            // INNER JOIN cuentas c ON t.id_cuenta=c.id_cuenta 
-                            // WHERE c.nombre_cuenta='" . str_replace('_', ' ', $array_name_cuenta[$x]) . "'" .
-                            // " AND c.id_sede='" . $_SESSION['id_sede'] . "' ORDER BY t.id_factura DESC LIMIT 1");
-                            // $sentencia->execute();
-                            // $registro_factura_agrupada = $sentencia->fetch(PDO::FETCH_LAZY);
-                            
-                            //if (isset($registro_tiempo['precio_final']) && isset($lista_productos_liquidados['precio_total'])) {
-                              // if(isset($registro_factura_agrupada['precio_total'])){
-                              //   echo $registro_factura_agrupada['precio_total'];
-                              // }else{
-                              //   echo 0;
-                              // }
-                                
-                            //} else {
-                            //    echo "0";
-                            //}
-                          ?>
                         </label></th>
                         <th>
                         

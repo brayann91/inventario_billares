@@ -53,7 +53,6 @@ include "../../templates/header.php";?>
 
             <?php 
             // Formulario
-
             $sentencia = $conexion->prepare("SELECT id_categoria, nombre_categoria from categorias");
             $sentencia->execute();
             $resultado_categorias = $sentencia->fetchAll(PDO::FETCH_ASSOC);

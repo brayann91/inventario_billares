@@ -2,12 +2,7 @@
 
 include "../../bd.php";
 
-
-//print_r($lista_entradas["image"]);
-
-?>
-
-<?php include "../../templates/header.php";
+include "../../templates/header.php";
 
 $sentencia = $conexion->prepare("SELECT SUM(cantidad) cantidad, e.id_entrada, p.image, p.nombre_producto, p.precio, e.precio_total, e.fecha
 FROM productos p INNER JOIN entradas e Where e.id_producto=p.id_producto and p.id_sede= " . $_SESSION['id_sede'] . " GROUP BY p.id_producto");
@@ -15,7 +10,6 @@ $sentencia->execute();
 $lista_entradas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
-
 
   <h4>INVENTARIO:</h4>
 

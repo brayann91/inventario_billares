@@ -21,8 +21,6 @@ if (isset($_GET['txtID'])) {
     $id_cargo = $registro["id_cargo"];
     $id_sede = $registro["id_sede"];
 
-    //print_r($registro["id_sede"]);
-
     $sentencia = $conexion->prepare("SELECT * FROM cargo");
     $sentencia->execute();
     $lista_cargos = $sentencia->fetchAll(PDO::FETCH_ASSOC);

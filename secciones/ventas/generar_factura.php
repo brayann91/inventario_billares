@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 margin: 0;
             }
             @page {
-                size: auto;
+                size: 70mm 150mm;
                 margin: 0.5cm;
             }
             table {
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             .header {
                 margin-bottom: 10px;
-                text-align: center;
+                 text-align: center;
             }
             .header p {
                 margin: 0;
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $dompdf = new Dompdf\Dompdf();
 
     // Configura el tamaño de página y los márgenes
-    $dompdf->setPaper('70mm', '150mm', 'left', 'top');
+    $dompdf->setPaper('70mm', 'auto', 'left', 'top');
 
     // Establece el contenido HTML de la factura
     $dompdf->loadHtml($html);

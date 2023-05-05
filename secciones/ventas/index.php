@@ -421,10 +421,10 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
       <?php if($registro_caja["estado"]==1){ 
         
         if($cantidad_inventario_sin_liquidar > 0 || $cantidad_tiempos_sin_detener > 0){?>
-          <a name="" id="" class="btn btn-primary" href="crear.php" role="button">Agregar Cuenta</a>
+          <a name="" id="" class="btn btn-secondary" href="crear.php" role="button">Agregar Cuenta</a>
           <button type="submit" class="btn btn-warning" id="cerrar_caja_sin_liquidar" onclick="cerrar_caja_sin_liquidar()">Cerrar Caja</button>
         <?php }else{?>
-          <a name="" id="" class="btn btn-primary" href="crear.php" role="button">Agregar Cuenta</a>
+          <a name="" id="" class="btn btn-secondary" href="crear.php" role="button">Agregar Cuenta</a>
         <button type="submit" class="btn btn-danger" id="cerrarCaja" onclick="cerrarCaja(<?php echo $registro_caja['id_caja']; ?>)">Cerrar Caja</button>
       <?php }} ?>
     </td>

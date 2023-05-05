@@ -1,15 +1,15 @@
 <?php
 session_start();
-$url_base = "http://inventario-billar.net/";
+$url_base = "localhost/inventario/";
 if (!isset($_SESSION['usuario'])) {
     header("Location:" . $url_base . "login.php");
 }
 
 $url_actual = $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
-$url_productos = "inventario-billar.net/secciones/productos/";
-$url_usuarios = "inventario-billar.net/secciones/usuarios/";
-$url_home = "inventario-billar.net/index.php";
+$url_productos = "localhost/inventario/secciones/productos/";
+$url_usuarios = "localhost/inventario/secciones/usuarios/";
+$url_home = "localhost/inventario/index.php";
 
 $url_editar = "editar.php";
 $url_crear = "crear.php";
@@ -67,11 +67,6 @@ if ($_SESSION['id_cargo'] == 2 && str_contains($url_actual, $url_crear)) {
   <!-- Popper.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js" 
   integrity="sha384-eMNCOe7tC1doHpGoWe/6oMVemdAVTMs2xqW4mwXrXsW0L84Iytr2wi5v2QjrP/xp" crossorigin="anonymous"></script>
-
-  <!-- Bootstrap JS validar si quitar o no esta url
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"
-    integrity="sha512-t2JFXVU+ZI/8X9JbczUKLpxbVeymBc2xM+v99OY6EghjKoDzGSizG+v9tGYARgsShnJfdt20LhhyPLDYPjTbsw=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>--> 
 
   <!-- SweetAlert2 JS -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

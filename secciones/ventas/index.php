@@ -182,6 +182,25 @@ if ($_POST) {
         $sentencia->execute();
     }
 
+    if (isset($_POST["id_cuenta_continuar"])) {
+        //recolectamos los datos del metodo POST
+        $id_cuenta_continuar = (isset($_POST["id_cuenta_continuar"]) ? $_POST["id_cuenta_continuar"] : "");
+        $id_tiempo = (isset($_POST["id_tiempo"]) ? $_POST["id_tiempo"] : "");
+
+        $sentencia = $conexion->prepare("UPDATE tiempos t
+      INNER JOIN cuentas c ON t.id_cuenta=c.id_cuenta
+      SET t.fecha_fin=CURRENT_TIMESTAMP(),
+          t.tiempo_invertido=SEC_TO_TIME(TIMESTAMPDIFF(SECOND, t.fecha_inicio, CURRENT_TIMESTAMP())),
+          t.precio_final=(TIME_TO_SEC(SEC_TO_TIME(TIMESTAMPDIFF(SECOND, t.fecha_inicio, CURRENT_TIMESTAMP()))) / 3600) * c.precio_cuenta, t.estado_tiempo=1,
+          t.id_cuenta=:id_cuenta_continuar
+      WHERE id_tiempo=:id_tiempo;");
+
+        //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
+        $sentencia->bindParam(":id_cuenta_continuar", $id_cuenta_continuar);
+        $sentencia->bindParam(":id_tiempo", $id_tiempo);
+        $sentencia->execute();
+    }
+
     if (isset($_POST["id_cuenta_temporal"])) {
         //recolectamos los datos del metodo POST
         $id_producto_temporal = (isset($_POST["id_producto_temporal"]) ? $_POST["id_producto_temporal"] : "");
@@ -604,7 +623,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
 
                         <td rowspan="2">
                         <?php if (isset($registro_tiempo['estado_tiempo'])) {
-                          if($registro_tiempo['estado_tiempo'] == 0){?>
+                          if($registro_tiempo['estado_tiempo'] == 0 && $registro_tiempo['estado_liquidado'] == 0){?>
                           <button type="submit" value=""
                             id="button_iniciar_<?php echo $array_name_cuenta[$x] ?>"
                             name=""
@@ -631,6 +650,14 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                             name=""
                             onclick="detenerTiempo('<?php echo $array_name_cuenta[$x] ?>', '<?php echo $registro_tiempo['id_cuenta'] ?>', '<?php echo $registro_tiempo['id_tiempo'] ?>')"
                             class="btn btn-danger">Detener
+                          </button>
+                        <?php }?>
+                        <?php if (isset($registro_tiempo['estado_tiempo']) && $registro_tiempo['estado_tiempo'] == 0 && $registro_tiempo['estado_liquidado'] == 1) {?>
+                          <button type="submit" value=""
+                            id="button_detener_<?php echo $array_name_cuenta[$x] ?>"
+                            name=""
+                            onclick="continuarTiempo('<?php echo $array_name_cuenta[$x] ?>', '<?php echo $registro_tiempo['id_cuenta'] ?>', '<?php echo $registro_tiempo['id_tiempo'] ?>')"
+                            class="btn btn-info">Continuar
                           </button>
                         <?php }?>
                         </td>
@@ -763,9 +790,17 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
               <?php }else if (isset($registro_tiempo['estado_liquidado']) && $registro_tiempo['estado_liquidado']==1){?>
                 <button type="button" class="btn btn-dark" id="liquidar_<?php echo $array_name_cuenta[$x] ?>" 
                 onclick="liquidar(<?php echo $registro_cuenta['id_cuenta']; ?>)">Liquidar</button>
+
+                <form action="generar_factura.php" method="post" target="_blank">
+                  <button type="submit" class="btn btn-dark" id="imprimir_<?php echo $array_name_cuenta[$x] ?>">Imprimir</button>
+                </form>
+
               <?php }else if ($cantidad_inventario_sin_liquidar>0){?>
                 <button type="button" class="btn btn-dark" id="liquidar_<?php echo $array_name_cuenta[$x] ?>" 
                 onclick="liquidar(<?php echo $registro_cuenta['id_cuenta']; ?>)">Liquidar</button>
+
+                
+                
             <?php }?>
         </td>
 
@@ -1041,6 +1076,21 @@ window.onhashchange();
       url: 'index.php',
       method: 'POST',
       data: { id_cuenta_end: id_cuenta_end, id_tiempo: id_tiempo },
+      success: function(response) {
+        location.reload();
+      },
+      error: function(xhr, textStatus, errorThrown) {
+        console.log(xhr.responseText);
+      }
+    });
+
+  }
+
+   function continuarTiempo(nombre_cuenta, id_cuenta_continuar, id_tiempo) {
+    $.ajax({
+      url: 'index.php',
+      method: 'POST',
+      data: { id_cuenta_continuar: id_cuenta_continuar, id_tiempo: id_tiempo },
       success: function(response) {
         location.reload();
       },

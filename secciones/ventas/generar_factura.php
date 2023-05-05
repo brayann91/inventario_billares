@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 margin: 0;
             }
             @page {
-                size: 70mm 150mm;
+                size: auto;
                 margin: 0.5cm;
             }
             table {

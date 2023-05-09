@@ -19,11 +19,26 @@ if(isset($_GET['txtID'])){
             unlink("./".$registro_recuperado["image"]);
         }
     }
-    
-    $sentencia=$conexion->prepare("DELETE FROM productos WHERE id_producto=:id_producto");
+
+    $sentencia=$conexion->prepare("SELECT SUM(cantidad) cantidad
+    FROM entradas e INNER JOIN productos p ON e.id_producto=p.id_producto WHERE e.id_producto=:id_producto 
+    GROUP BY p.id_producto");
     $sentencia->bindParam(":id_producto", $txtID);
     $sentencia->execute();
-    header("Location:index.php");
+    $inventario=$sentencia->fetch(PDO::FETCH_LAZY);
+
+    if($inventario['cantidad']>0){
+        $mensaje="No se puede eliminar el producto cuando existe inventario activo";
+        header("Location:index.php?mensaje=".$mensaje);
+    }else{
+        $sentencia=$conexion->prepare("DELETE FROM productos WHERE id_producto=:id_producto");
+        $sentencia->bindParam(":id_producto", $txtID);
+        $sentencia->execute();
+        $mensaje="Registro eliminado";
+        header("Location:index.php?mensaje=".$mensaje);
+    }
+
+    
     
 }
 

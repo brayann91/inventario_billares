@@ -560,7 +560,8 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                           $lista_precio_productos_agregados = $sentencia->fetch(PDO::FETCH_LAZY);
 
                           $sentencia = $conexion->prepare("SELECT * FROM factura_agrupada f INNER JOIN cuentas c ON f.id_cuenta = c.id_cuenta
-                          WHERE f.id_sede= '" . $_SESSION['id_sede'] . "' AND c.nombre_cuenta ='" . str_replace('_', ' ', $array_name_cuenta[$x]) . "'");
+                          WHERE f.id_sede= '" . $_SESSION['id_sede'] . "' AND c.nombre_cuenta ='" . str_replace('_', ' ', $array_name_cuenta[$x]) . "'" . 
+                          " ORDER BY f.fecha_factura DESC LIMIT 1");
                           $sentencia->execute();
                           $lista_factura_agrupada = $sentencia->fetch(PDO::FETCH_LAZY);
                 ?>
@@ -815,7 +816,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                 onclick="liquidar(<?php echo $registro_cuenta['id_cuenta']; ?>)">Liquidar</button>
 
             <?php }?>
-            <?php if($registro_tiempo['estado_tiempo']==0 || $cantidad_inventario_sin_liquidar==0){?>
+            <?php if($registro_tiempo['estado_tiempo']==0 && $cantidad_inventario_sin_liquidar==0){?>
               <form target="_blank">
                   <a name="" id="imprimir_<?php echo $array_name_cuenta[$x] ?>" class="btn btn-info" 
                   href="generar_factura.php?txtID=<?php echo  $registro_detalle_factura['id_facturas'];?>" 

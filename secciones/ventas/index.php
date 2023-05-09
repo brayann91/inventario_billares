@@ -815,7 +815,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                 onclick="liquidar(<?php echo $registro_cuenta['id_cuenta']; ?>)">Liquidar</button>
 
             <?php }?>
-            <?php if(isset($registro_detalle_factura['id_cuenta'])){?>
+            <?php if($registro_tiempo['estado_tiempo']==1 || $cantidad_inventario_sin_liquidar==0){?>
               <form target="_blank">
                   <a name="" id="imprimir_<?php echo $array_name_cuenta[$x] ?>" class="btn btn-info" 
                   href="generar_factura.php?txtID=<?php echo  $registro_detalle_factura['id_facturas'];?>" 

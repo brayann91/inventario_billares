@@ -561,7 +561,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
 
                           $sentencia = $conexion->prepare("SELECT * FROM factura_agrupada f INNER JOIN cuentas c ON f.id_cuenta = c.id_cuenta
                           WHERE f.id_sede= '" . $_SESSION['id_sede'] . "' AND c.nombre_cuenta ='" . str_replace('_', ' ', $array_name_cuenta[$x]) . "'" . 
-                          " ORDER BY f.fecha_factura DESC LIMIT 1");
+                          " ORDER BY f.id_factura DESC LIMIT 1");
                           $sentencia->execute();
                           $lista_factura_agrupada = $sentencia->fetch(PDO::FETCH_LAZY);
                 ?>

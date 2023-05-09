@@ -35,9 +35,9 @@ $lista_entradas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
                     <th scope="col">T. EN HORAS</th>
                     <th scope="col">PRECIO FINAL</th>
                     <th scope="col">ESTADO</th>
-                    <?php if ($_SESSION['id_cargo'] != 2) {?>
+                    <!-- <?php if ($_SESSION['id_cargo'] != 2) {?>
                         <th scope="col">ACCIONES</th>
-                    <?php }?>
+                    <?php }?> -->
                 </tr>
             </thead>
             <tbody>
@@ -61,10 +61,10 @@ $lista_entradas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
                         ?>
                      </td>
                     <?php if ($_SESSION['id_cargo'] != 2) {?>
-                        <td>
+                        <!-- <td>
                             <a name="" id="editar_tiempo" class="btn btn-info" href="editar.php?txtID=<?php echo $registro['id_tiempo']; ?>" role="button">Editar</a>
                             <a name="" id="eliminar_tiempo" class="btn btn-danger" href="javascript:borrar(<?php echo $registro['id_tiempo']; ?>);" role="button">Borrar</a>
-                        </td>
+                        </td> -->
                     <?php }?>
                 </tr>
             <?php }?>

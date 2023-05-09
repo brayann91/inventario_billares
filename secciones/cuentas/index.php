@@ -6,7 +6,7 @@ if(isset($_GET['txtID'])){
 
     $txtID=(isset($_GET['txtID']))?$_GET['txtID']:"";
     
-    $sentencia=$conexion->prepare("DELETE FROM cuentas WHERE id_cuenta=:id_cuenta");
+    $sentencia=$conexion->prepare("UPDATE cuentas SET nombre_cuenta = CONCAT('borrada_', nombre_cuenta) WHERE id_cuenta =:id_cuenta");
     $sentencia->bindParam(":id_cuenta", $txtID);
     $sentencia->execute();
     $mensaje="Registro eliminado";
@@ -15,7 +15,10 @@ if(isset($_GET['txtID'])){
 
 include("../../templates/header.php");
 
-$sentencia=$conexion->prepare("SELECT * FROM cuentas c INNER JOIN sedes s WHERE c.id_sede=" . $_SESSION['id_sede'] . " GROUP BY c.id_cuenta");
+$sentencia=$conexion->prepare("SELECT * FROM cuentas c 
+INNER JOIN sedes s ON c.id_sede = s.id_sede 
+WHERE c.id_sede = " . $_SESSION['id_sede'] . " AND c.nombre_cuenta NOT LIKE 'borrada_%'
+GROUP BY c.id_cuenta");
 $sentencia->execute();
 $lista_cuentas=$sentencia->fetchAll(PDO::FETCH_ASSOC);
 

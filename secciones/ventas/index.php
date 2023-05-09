@@ -4,7 +4,13 @@ include "../../bd.php";
 
 include "../../templates/header.php";
 
-$sentencia = $conexion->prepare("SELECT * FROM cuentas c INNER JOIN sedes s ON c.id_sede=s.id_sede WHERE c.id_sede= '" . $_SESSION['id_sede'] . "'");
+if(isset($_GET['txtID'])){
+
+  $txtID=(isset($_GET['txtID']))?$_GET['txtID']:"";
+  
+}
+
+$sentencia = $conexion->prepare("SELECT * FROM cuentas c INNER JOIN sedes s ON c.id_sede=s.id_sede WHERE c.nombre_cuenta NOT LIKE 'borrada_%' AND c.id_sede= '" . $_SESSION['id_sede'] . "'");
 $sentencia->execute();
 $lista_cuentas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
@@ -368,11 +374,11 @@ $sentencia = $conexion->prepare("SELECT * FROM categorias");
 $sentencia->execute();
 $lista_categorias = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
-$sentencia = $conexion->prepare("SELECT * FROM cuentas WHERE estado<>1 AND id_sede= '" . $_SESSION['id_sede'] . "'");
+$sentencia = $conexion->prepare("SELECT * FROM cuentas WHERE estado<>1 AND nombre_cuenta NOT LIKE 'borrada_%' AND id_sede= '" . $_SESSION['id_sede'] . "'");
 $sentencia->execute();
 $lista_cuentas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
-$sentencia = $conexion->prepare("SELECT * FROM cuentas WHERE estado<>0 AND id_sede= '" . $_SESSION['id_sede'] . "'");
+$sentencia = $conexion->prepare("SELECT * FROM cuentas WHERE estado<>0 AND nombre_cuenta NOT LIKE 'borrada_%' AND id_sede= '" . $_SESSION['id_sede'] . "'");
 $sentencia->execute();
 $lista_cuentas2 = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
@@ -552,11 +558,16 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                           " GROUP BY c.id_cuenta");
                           $sentencia->execute();
                           $lista_precio_productos_agregados = $sentencia->fetch(PDO::FETCH_LAZY);
+
+                          $sentencia = $conexion->prepare("SELECT * FROM factura_agrupada f INNER JOIN cuentas c ON f.id_cuenta = c.id_cuenta
+                          WHERE f.id_sede= '" . $_SESSION['id_sede'] . "' AND c.nombre_cuenta ='" . str_replace('_', ' ', $array_name_cuenta[$x]) . "'");
+                          $sentencia->execute();
+                          $lista_factura_agrupada = $sentencia->fetch(PDO::FETCH_LAZY);
                 ?>
 
                     <tr valign="middle" align="center">
                         <th colspan="1"><?php echo $array_name_cuenta[$x]; ?></th>
-                        <th colspan="4"><label style="font-size: 2em; color: green;" id="precio_<?php echo $array_name_cuenta[$x] ?>" >$ 0
+                        <th colspan="4"><label style="font-size: 2em; color: green;" id="precio_<?php echo $array_name_cuenta[$x] ?>" >$ <?php echo number_format($lista_factura_agrupada['precio_total'], 2);?>
                         </label></th>
                         <th>
                         
@@ -779,6 +790,12 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                   " AND id_sede='" . $_SESSION['id_sede'] . "'");
                   $sentencia->execute();
                   $registro_cuenta = $sentencia->fetch(PDO::FETCH_LAZY);
+                  
+              $sentencia = $conexion->prepare("SELECT * FROM facturas f INNER JOIN cuentas c ON f.id_cuenta=c.id_cuenta 
+              WHERE f.nombre_cuenta='" . str_replace('_', ' ', $array_name_cuenta[$x]) . "'" .
+                  " AND c.id_sede='" . $_SESSION['id_sede'] . "' ORDER BY f.id_factura DESC LIMIT 1");
+                  $sentencia->execute();
+                  $registro_detalle_factura = $sentencia->fetch(PDO::FETCH_LAZY);
 
               $sentencia = $conexion->prepare("SELECT COUNT(*) AS cantidad FROM entradas e
               INNER JOIN productos p ON p.id_producto=e.id_producto WHERE e.estado=1 AND e.id_cuenta='" . $registro_cuenta['id_cuenta'] . "'" .
@@ -793,16 +810,17 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                 <button type="button" class="btn btn-dark" id="liquidar_<?php echo $array_name_cuenta[$x] ?>" 
                 onclick="liquidar(<?php echo $registro_cuenta['id_cuenta']; ?>)">Liquidar</button>
 
-                <form action="generar_factura.php" method="post" target="_blank">
-                  <button type="submit" class="btn btn-dark" id="imprimir_<?php echo $array_name_cuenta[$x] ?>">Imprimir</button>
-                </form>
-
               <?php }else if ($cantidad_inventario_sin_liquidar>0){?>
                 <button type="button" class="btn btn-dark" id="liquidar_<?php echo $array_name_cuenta[$x] ?>" 
                 onclick="liquidar(<?php echo $registro_cuenta['id_cuenta']; ?>)">Liquidar</button>
 
-                
-                
+            <?php }?>
+            <?php if(isset($registro_detalle_factura['id_cuenta'])){?>
+              <form target="_blank">
+                  <a name="" id="imprimir_<?php echo $array_name_cuenta[$x] ?>" class="btn btn-info" 
+                  href="generar_factura.php?txtID=<?php echo  $registro_detalle_factura['id_facturas'];?>" 
+                  role="button" target="_blank">Imprimir</a>
+                </form>
             <?php }?>
         </td>
 

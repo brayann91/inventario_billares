@@ -1,12 +1,20 @@
 <?php
-include "../../bd.php";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  
+
+
+ 
+
+
     require_once '../../libs/dompdf/vendor/autoload.php'; // carga la biblioteca DOMPDF
 
-    // Contenido HTML y CSS de la factura
-    $html = '<html>
+    
+
+    ob_start();
+    
+    ?>
+
+    <!DOCTYPE html>
+    <html lang="en">
     <head>
         <title>Factura</title>
         <style>
@@ -50,14 +58,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             .footer .text-right {
                 font-weight: bold;
             }
+            .cantidad {
+                text-align: center;
+            }
         </style>
     </head>
     <body>
-        <div class="header">
-            <p><?php echo date("d/m/Y") ?></p>
-            <h3>Nombre Empresa</h3>
-            <p>Teléfono: telefono</p>
-        </div>
+
+    <?php 
+    
+    include "../../bd.php";
+    session_start();
+
+    $txtID = (isset($_GET['txtID'])) ? $_GET['txtID'] : "";
+
+    $sentencia = $conexion->prepare("SELECT * FROM facturas WHERE id_facturas=:id_facturas");
+    $sentencia->bindParam(":id_facturas", $txtID);
+    $sentencia->execute();
+    $lista_facturas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
+
+    $sentencia = $conexion->prepare("SELECT * FROM sedes WHERE id_sede='" . $_SESSION['id_sede'] . "'");
+    $sentencia->execute();
+    $registro_sedes = $sentencia->fetch(PDO::FETCH_LAZY);
+
+    $sentencia = $conexion->prepare("SELECT * FROM factura_agrupada WHERE id_factura=:id_facturas");
+    $sentencia->bindParam(":id_facturas", $txtID);
+    $sentencia->execute();
+    $lista_factura_agrupada = $sentencia->fetch(PDO::FETCH_LAZY);
+
+    ?>
+
+
+    <div class="header">
+        <h3>Billar <?php echo $registro_sedes["nombre_sede"]; ?></h3>
+        <p>Direccion <?php echo $registro_sedes["direccion_sede"]; ?></p>
+        <p>Teléfono: <?php echo $registro_sedes["telefono_sede"]; ?></p>
+        <p><?php 
+        $ultimo_registro = end($lista_facturas);
+        echo $ultimo_registro["fecha"];
+        ?></p>
+        <p>Persona Natural</p>        
+    </div>
         <table>
             <thead>
                 <tr>
@@ -67,21 +108,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Producto 1</td>
-                    <td class="text-right">3</td>
-                    <td class="text-right">$20.00</td>
-                </tr>
-                <tr>
-                    <td>Producto 2</td>
-                    <td class="text-right">10</td>
-                    <td class="text-right">$40.00</td>
-                </tr>
-            </tbody>
+                <?php foreach ($lista_facturas as $registro) { ?>
+                    <tr>
+                        <td><?php if($registro['nombre_producto'] != ""){ 
+                                echo $registro['nombre_producto'];
+                            }else {
+                                echo "Tiempo";
+                            }?></td>
+                        <td class="text-center align-middle cantidad"><?php if($registro['nombre_producto'] != ""){
+                                echo $registro['cantidad'];
+                            } else{
+                                echo $registro['tiempo_invertido'];
+                            }?></td>
+                        <td class="text-right">$<?php if($registro['nombre_producto'] != ""){ 
+                                echo number_format($registro['precio_total_producto'], 0);
+                            }else{
+                                echo number_format($registro['precio_total_tiempo'], 0);
+                            }?></td>
+                    </tr>
+                <?php }?>
+            </tbody></br>
             <tfoot>
                 <tr>
                     <td colspan="2">Total:</td>
-                    <td class="text-right">$60.00</td>
+                    <td class="text-right">$ <?php echo number_format($lista_factura_agrupada['precio_total'], 2); ?></td>
                 </tr>
             </tfoot>
         </table>
@@ -95,8 +145,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </body>
     </html>
-    ';
 
+    <?php 
+    
+    $html=ob_get_clean();
     // Crea una nueva instancia de DOMPDF
     $dompdf = new Dompdf\Dompdf();
 
@@ -111,5 +163,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Envía el archivo PDF al navegador para su descarga
     $dompdf->stream('factura.pdf', array('Attachment' => false));
-}
+
 ?>

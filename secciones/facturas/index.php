@@ -5,7 +5,7 @@ include "../../bd.php";
 include "../../templates/header.php";
 
 $sentencia = $conexion->prepare("SELECT * FROM factura_agrupada t INNER JOIN cuentas c 
-WHERE c.id_cuenta=t.id_cuenta and c.id_sede = " . $_SESSION['id_sede'] . " ORDER BY t.id_factura DESC");
+WHERE c.id_cuenta=t.id_cuenta and c.id_sede = " . $_SESSION['id_sede'] . "");
 $sentencia->execute();
 $lista_facturas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 

@@ -5,7 +5,7 @@ include "../../bd.php";
 include "../../templates/header.php";
 
 $sentencia = $conexion->prepare("SELECT * FROM cajas 
-WHERE id_sede = " . $_SESSION['id_sede'] . " ORDER BY id_caja DESC");
+WHERE id_sede = " . $_SESSION['id_sede'] . "");
 $sentencia->execute();
 $lista_facturas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 

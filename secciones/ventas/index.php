@@ -79,7 +79,7 @@ if ($_POST) {
         }
     }
 
-    $sentencia = $conexion->prepare("SELECT *
+    $sentencia = $conexion->prepare("SELECT p.*, e.*, c.*, SUM(e.cantidad) total_inventario
     FROM productos p
     INNER JOIN entradas e ON p.id_producto = e.id_producto
     INNER JOIN categorias c ON p.id_categoria = c.id_categoria

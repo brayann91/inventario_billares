@@ -568,7 +568,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
 
                     <tr valign="middle" align="center">
                         <th colspan="1"><?php echo $array_name_cuenta[$x]; ?></th>
-                        <th colspan="4"><label style="font-size: 2em; color: green;" id="precio_<?php echo $array_name_cuenta[$x] ?>" >$ <?php echo number_format($lista_factura_agrupada['precio_total'], 2);?>
+                        <th colspan="4"><label style="font-size: 2em; color: green;" id="precio_<?php echo $array_name_cuenta[$x] ?>" >$ 0
                         </label></th>
                         <th>
                         

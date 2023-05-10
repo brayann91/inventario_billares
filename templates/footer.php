@@ -15,7 +15,8 @@
 
 $(document).ready( function(){
 $("#tabla_id").DataTable({
-    "pagesLength":10,
+    "order": [[ 0, "desc" ]],
+    "pagesLength":50,
     lengthMenu:[
       [20,30,50],
       [20,30,50]

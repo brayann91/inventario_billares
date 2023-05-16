@@ -944,7 +944,7 @@ window.onhashchange();
         success: function(response) {
           setTimeout(function(){
             location.reload();
-          }, 500);
+          }, 1000);
         },
         error: function(xhr, textStatus, errorThrown) {
           console.log(xhr.responseText);
@@ -963,7 +963,7 @@ window.onhashchange();
         success: function(response) {
           setTimeout(function(){
             location.reload();
-          }, 500);
+          }, 1000);
         },
         error: function(xhr, textStatus, errorThrown) {
           console.log(xhr.responseText);

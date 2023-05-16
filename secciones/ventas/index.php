@@ -208,18 +208,39 @@ if ($_POST) {
     }
 
     if (isset($_POST["id_cuenta_temporal"])) {
-        //recolectamos los datos del metodo POST
-        $id_producto_temporal = (isset($_POST["id_producto_temporal"]) ? $_POST["id_producto_temporal"] : "");
-        $nombre_cuenta_temporal = (isset($_POST["nombre_cuenta_temporal"]) ? str_replace('_', ' ', $_POST["nombre_cuenta_temporal"]) : "");
-        $id_cuenta_temporal = (isset($_POST["id_cuenta_temporal"]) ? $_POST["id_cuenta_temporal"] : "");
 
+      //recolectamos los datos del metodo POST
+      $id_producto_temporal = (isset($_POST["id_producto_temporal"]) ? $_POST["id_producto_temporal"] : "");
+      $nombre_cuenta_temporal = (isset($_POST["nombre_cuenta_temporal"]) ? str_replace('_', ' ', $_POST["nombre_cuenta_temporal"]) : "");
+      $id_cuenta_temporal = (isset($_POST["id_cuenta_temporal"]) ? $_POST["id_cuenta_temporal"] : "");
+
+        $sentencia = $conexion->prepare("SELECT * FROM entradas WHERE id_cuenta = :id_cuenta_temporal AND id_producto = :id_producto_temporal AND estado = 1");
+        $sentencia->bindParam(":id_cuenta_temporal", $id_cuenta_temporal);
+        $sentencia->bindParam(":id_producto_temporal", $id_producto_temporal);
+        $sentencia->execute();
+        $registro_entrada = $sentencia->fetch(PDO::FETCH_LAZY);
+
+        $id_entrada = $registro_entrada['id_entrada'];
+        
+
+      if(isset($registro_entrada['estado'])){
+        $sentencia = $conexion->prepare("UPDATE entradas e
+        SET cantidad=cantidad-1,
+          precio_total=precio_total-(SELECT precio FROM productos WHERE id_producto = :id_producto_temporal),
+          fecha=CURRENT_TIMESTAMP()
+          WHERE id_entrada=:id_entrada_mas");
+          $sentencia->bindParam(":id_entrada_mas", $id_entrada);
+          $sentencia->bindParam(":id_producto_temporal", $id_producto_temporal);
+          $sentencia->execute();
+      }else{
         $sentencia = $conexion->prepare("INSERT INTO entradas(cantidad, precio_total, precio_venta, fecha, estado, id_producto, id_cuenta)
-          VALUES (-1, (SELECT precio FROM productos WHERE id_producto = :id_producto_temporal)*-1,
-          (SELECT precio FROM productos WHERE id_producto = :id_producto_temporal)*-1,CURRENT_TIMESTAMP(), 1, :id_producto_temporal,
-          (SELECT id_cuenta FROM cuentas WHERE id_cuenta = :id_cuenta_temporal))");
+        VALUES (-1, (SELECT precio FROM productos WHERE id_producto = :id_producto_temporal)*-1,
+        (SELECT precio FROM productos WHERE id_producto = :id_producto_temporal)*-1,CURRENT_TIMESTAMP(), 1, :id_producto_temporal,
+        (SELECT id_cuenta FROM cuentas WHERE id_cuenta = :id_cuenta_temporal))");
         $sentencia->bindParam(":id_producto_temporal", $id_producto_temporal);
         $sentencia->bindParam(":id_cuenta_temporal", $id_cuenta_temporal);
         $sentencia->execute();
+      }
 
     }
 
@@ -820,7 +841,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
               <form target="_blank">
                   <a name="" id="imprimir_<?php echo $array_name_cuenta[$x] ?>" class="btn btn-info" 
                   href="generar_factura.php?txtID=<?php echo  $registro_detalle_factura['id_facturas'];?>" 
-                  role="button" target="_blank">Imprimir</a>
+                  role="button" target="_blank" onclick="actualizarPagina('<?php echo  $url_base;?>')">Imprimir</a>
                 </form>
             <?php }?>
         </td>
@@ -921,8 +942,9 @@ window.onhashchange();
         method: 'POST',
         data: { estado: 1, idCuenta: idCuenta },
         success: function(response) {
-          $('#nav-' + cuenta + '-tab').show();
-          location.reload();
+          setTimeout(function(){
+            location.reload();
+          }, 500);
         },
         error: function(xhr, textStatus, errorThrown) {
           console.log(xhr.responseText);
@@ -939,8 +961,9 @@ window.onhashchange();
         method: 'POST',
         data: { estado: 0, idCuenta: idCuenta },
         success: function(response) {
-          $('#nav-' + cuenta2 + '-tab').hide();
-          location.reload();
+          setTimeout(function(){
+            location.reload();
+          }, 500);
         },
         error: function(xhr, textStatus, errorThrown) {
           console.log(xhr.responseText);
@@ -1014,15 +1037,9 @@ window.onhashchange();
       method: 'POST',
       data: { id_cuenta_temporal: id_cuenta_temporal, id_producto_temporal: id_producto_temporal },
       success: function(response) {
-        Swal.fire({
-          title: 'Agregado a ' + nombre_cuenta_temporal.replace("_", " "),
-          icon: 'success',
-          timer: 2000,
-          timerProgressBar: true,
-          didClose: () => {
-            location.reload();
-          }
-        });
+        setTimeout(function(){
+          location.reload();
+        }, 500);
       },
       error: function(xhr, textStatus, errorThrown) {
         console.log(xhr.responseText);
@@ -1036,7 +1053,9 @@ window.onhashchange();
       method: 'POST',
       data: { id_entrada_mas: id_entrada_mas, id_producto_mas: id_producto_mas },
       success: function(response) {
-        location.reload();
+        setTimeout(function(){
+          location.reload();
+        }, 500);
       },
       error: function(xhr, textStatus, errorThrown) {
         console.log(xhr.responseText);
@@ -1050,7 +1069,9 @@ window.onhashchange();
       method: 'POST',
       data: { id_entrada_menos: id_entrada_menos, id_producto_menos: id_producto_menos },
       success: function(response) {
-        location.reload();
+        setTimeout(function(){
+          location.reload();
+        }, 500);
       },
       error: function(xhr, textStatus, errorThrown) {
         console.log(xhr.responseText);
@@ -1083,7 +1104,9 @@ window.onhashchange();
       method: 'POST',
       data: { fechaActual: fechaActual, id_cuenta: id_cuenta },
       success: function(response) {
-        location.reload();
+        setTimeout(function(){
+          location.reload();
+        }, 500);
       },
       error: function(xhr, textStatus, errorThrown) {
         console.log(xhr.responseText);
@@ -1098,7 +1121,9 @@ window.onhashchange();
       method: 'POST',
       data: { id_cuenta_end: id_cuenta_end, id_tiempo: id_tiempo },
       success: function(response) {
-        location.reload();
+        setTimeout(function(){
+          location.reload();
+        }, 500);
       },
       error: function(xhr, textStatus, errorThrown) {
         console.log(xhr.responseText);
@@ -1113,7 +1138,9 @@ window.onhashchange();
       method: 'POST',
       data: { id_cuenta_continuar: id_cuenta_continuar, id_tiempo: id_tiempo },
       success: function(response) {
-        location.reload();
+        setTimeout(function(){
+          location.reload();
+        }, 500);
       },
       error: function(xhr, textStatus, errorThrown) {
         console.log(xhr.responseText);
@@ -1218,7 +1245,9 @@ window.onhashchange();
       method: 'POST',
       data: { id_cuenta_liquidar: id_cuenta_liquidar },
       success: function(response) {
-        location.reload();
+        setTimeout(function(){
+          location.reload();
+        }, 500);
       },
       error: function(xhr, textStatus, errorThrown) {
         console.log(xhr.responseText);
@@ -1236,6 +1265,13 @@ window.onhashchange();
           location.reload();
       }
     });
+  }
+
+  function actualizarPagina(url_base) {
+    alert(url_base);
+    setTimeout(function(){
+      window.location.href = url_base + "secciones/ventas/";
+    }, 1000);
   }
   
 </script>

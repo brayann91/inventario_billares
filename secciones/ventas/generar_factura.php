@@ -1,13 +1,6 @@
 <?php
 
-
-
- 
-
-
     require_once '../../libs/dompdf/vendor/autoload.php'; // carga la biblioteca DOMPDF
-
-    
 
     ob_start();
     
@@ -86,6 +79,13 @@
     $sentencia->execute();
     $lista_factura_agrupada = $sentencia->fetch(PDO::FETCH_LAZY);
 
+    $id_cuenta_factura = $lista_factura_agrupada['id_cuenta'];
+    $id_factura = $lista_factura_agrupada['id_factura'];
+
+    $sentencia = $conexion->prepare("UPDATE cuentas SET estado=0 WHERE id_cuenta=:idCuenta ");
+    $sentencia->bindParam(":idCuenta", $id_cuenta_factura);
+    $sentencia->execute();
+
     ?>
 
 
@@ -162,6 +162,25 @@
     $dompdf->render();
 
     // Envía el archivo PDF al navegador para su descarga
-    $dompdf->stream('factura.pdf', array('Attachment' => false));
+    $dompdf->stream('factura_' . $id_factura . '.pdf', array('Attachment' => false));
 
+    $nombrePDF = 'factura_' . $id_factura . '.pdf';
+
+    // Guarda el archivo PDF en una ubicación temporal en el servidor
+    $rutaTemporal = '../../pdf/' . $nombrePDF;
+    file_put_contents($rutaTemporal, $dompdf->output());
+
+    // Decodifica el contenido base64 a datos binarios
+    $contenidoPDF = file_get_contents($rutaTemporal);
+    $contenidoPDFBase64 = base64_encode($contenidoPDF);
+
+    // Guarda el contenido del archivo PDF en la base de datos
+    $sentencia = $conexion->prepare("UPDATE factura_agrupada SET pdf=:pdf WHERE id_factura=:id_facturas");
+    $sentencia->bindParam(":id_facturas", $txtID);
+    $sentencia->bindParam(":pdf", $contenidoPDFBase64);
+    $sentencia->execute();
+
+    // Renombra el archivo temporal con la extensión .pdf
+    $rutaFinal = '../../pdf/factura_' . $id_factura . '.pdf';
+    rename($rutaTemporal, $rutaFinal);
 ?>

@@ -31,6 +31,7 @@ $lista_facturas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
                     <th scope="col">CUENTA</th>
                     <th scope="col">FECHA</th>
                     <th scope="col">PRECIO TOTAL</th>
+                    <th scope="col">FACTURA</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,8 +40,13 @@ $lista_facturas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
                 <tr class="" valign="middle" align="center">
                     <td scope="row"><?php echo $registro['id_factura']; ?></td>
                     <td><?php echo $registro['nombre_cuenta']; ?></td>
-                    <td scope="row"><?php echo $registro['fecha']; ?></td>
+                    <td><?php echo $registro['fecha']; ?></td>
                     <td>$ <?php echo number_format($registro['precio_total'], 1); ?></td>
+                    <td>
+                        <?php if($registro['pdf']<>""){ ?>
+                            <a class="btn btn-info" href="../../pdf/factura_<?php echo $registro['id_factura']; ?>.pdf" target="_blank">Factura</a>
+                        <?php }?>
+                    </td>
                 </tr>
             <?php }?>
             </tbody>

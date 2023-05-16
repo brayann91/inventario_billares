@@ -554,7 +554,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
             </table>
 
         </td>
-        <td class="my-td" style="text-align: center;">
+        <td style="text-align: center;">
 
           <table class="table table-bordered" id="tabla_ventas">
                 <thead>
@@ -944,7 +944,7 @@ window.onhashchange();
         success: function(response) {
           setTimeout(function(){
             location.reload();
-          }, 2000);
+          }, 3000);
         },
         error: function(xhr, textStatus, errorThrown) {
           console.log(xhr.responseText);
@@ -963,7 +963,7 @@ window.onhashchange();
         success: function(response) {
           setTimeout(function(){
             location.reload();
-          }, 1000);
+          }, 3000);
         },
         error: function(xhr, textStatus, errorThrown) {
           console.log(xhr.responseText);

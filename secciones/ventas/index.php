@@ -944,7 +944,7 @@ window.onhashchange();
         success: function(response) {
           setTimeout(function(){
             location.reload();
-          }, 1000);
+          }, 2000);
         },
         error: function(xhr, textStatus, errorThrown) {
           console.log(xhr.responseText);
@@ -1268,7 +1268,6 @@ window.onhashchange();
   }
 
   function actualizarPagina(url_base) {
-    alert(url_base);
     setTimeout(function(){
       window.location.href = url_base + "secciones/ventas/";
     }, 1000);

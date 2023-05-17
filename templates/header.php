@@ -114,9 +114,11 @@ if ($_SESSION['id_cargo'] == 2 && str_contains($url_actual, $url_crear)) {
     <li class="nav-item">
       <button class="nav-link" id="nav-factura-tab" data-bs-toggle="tab" data-bs-target="#nav-factura" type="button" role="tab" aria-controls="nav-factura" aria-selected="false">Facturas</button>
     </li>
-    <li class="nav-item">
-      <button class="nav-link" id="nav-detalle_factura-tab" data-bs-toggle="tab" data-bs-target="#nav-detalle_factura" type="button" role="tab" aria-controls="nav-detalle_factura" aria-selected="false">Detalle Factura</button>
-    </li>
+    <?php if ($_SESSION['id_cargo'] == 1) {?>
+      <li class="nav-item">
+        <button class="nav-link" id="nav-detalle_factura-tab" data-bs-toggle="tab" data-bs-target="#nav-detalle_factura" type="button" role="tab" aria-controls="nav-detalle_factura" aria-selected="false">Detalle Factura</button>
+      </li>
+    <?php }?>
     <li class="nav-item">
       <button class="nav-link" id="nav-caja-tab" data-bs-toggle="tab" data-bs-target="#nav-caja" type="button" role="tab" aria-controls="nav-caja" aria-selected="false">Registro Caja</button>
     </li>
@@ -145,7 +147,9 @@ if ($_SESSION['id_cargo'] == 2 && str_contains($url_actual, $url_crear)) {
     <div class="tab-pane fade" id="nav-usuarios" role="tabpanel" aria-labelledby="nav-usuarios-tab" tabindex="0"></div>
   <?php }?>
   <div class="tab-pane fade" id="nav-factura" role="tabpanel" aria-labelledby="nav-factura-tab" tabindex="0"></div>
-  <div class="tab-pane fade" id="nav-detalle_factura" role="tabpanel" aria-labelledby="nav-detalle_factura-tab" tabindex="0"></div>
+  <?php if ($_SESSION['id_cargo'] == 1) {?>
+    <div class="tab-pane fade" id="nav-detalle_factura" role="tabpanel" aria-labelledby="nav-detalle_factura-tab" tabindex="0"></div>
+  <?php }?>
   <div class="tab-pane fade" id="nav-caja" role="tabpanel" aria-labelledby="nav-caja-tab" tabindex="0"></div>
   <div class="tab-pane fade" id="nav-cajas" role="tabpanel" aria-labelledby="nav-cajas-tab" tabindex="0"></div>
   <div class="tab-pane fade" id="nav-cerrar" role="tabpanel" aria-labelledby="nav-cerrar-tab" tabindex="0"></div>
@@ -206,8 +210,10 @@ var tabId = "";
    document.getElementById("nav-factura-tab").addEventListener("click", function() {
    changeActiveTab("nav-factura-tab",'<?php echo $url_base; ?>secciones/facturas');});
 
-   document.getElementById("nav-detalle_factura-tab").addEventListener("click", function() {
-   changeActiveTab("nav-detalle_factura-tab",'<?php echo $url_base; ?>secciones/detalle_facturas');});
+   <?php if ($_SESSION['id_cargo'] == 1) {?>
+    document.getElementById("nav-detalle_factura-tab").addEventListener("click", function() {
+    changeActiveTab("nav-detalle_factura-tab",'<?php echo $url_base; ?>secciones/detalle_facturas');});
+   <?php }?>
 
    document.getElementById("nav-caja-tab").addEventListener("click", function() {
    changeActiveTab("nav-caja-tab",'<?php echo $url_base; ?>secciones/cajas');});

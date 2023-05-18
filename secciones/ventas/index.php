@@ -940,14 +940,15 @@ window.onhashchange();
 function agregar() {
   var cuenta = $("#cuenta").val();
   var idCuenta = $("#cuenta option:selected").data("id");
-  var estado = $('#cuenta option:selected').data('estado');  
+  var estado = $('#cuenta option:selected').data('estado');
+  
   $.ajax({
     url: 'index.php',
     method: 'POST',
     data: { estado: 1, idCuenta: idCuenta },
     success: function(response) {
         Swal.fire({
-          title: 'Agregado correctamente!',
+          title: 'Caja abierta!',
           icon: 'success',
           timer: 2000,
           timerProgressBar: true,
@@ -955,12 +956,15 @@ function agregar() {
             location.reload();
           }
         });
+        //location.reload();
       },
     error: function(xhr, textStatus, errorThrown) {
       console.log(xhr.responseText);
     }
   });
 }
+
+
 
   function quitar() {
       var cuenta2 = $("#cuenta2").val();
@@ -997,6 +1001,7 @@ function agregar() {
             location.reload();
           }
         });
+        //location.reload();
       },
       error: function(xhr, textStatus, errorThrown) {
         console.log(xhr.responseText);

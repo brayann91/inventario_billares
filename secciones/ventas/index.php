@@ -826,13 +826,17 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
               $cantidad_inventario_sin_liquidar = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];         
             
               if(isset($registro_tiempo['estado_tiempo']) && $registro_tiempo['estado_tiempo']==1){?>
+
                 <button type="button" class="btn btn-dark" id="liquidar_sin_tiempo_detenido_<?php echo $array_name_cuenta[$x] ?>" 
                  onclick="liquidar_sin_tiempo_detenido(<?php echo $registro_cuenta['id_cuenta']; ?>)">Liquidar</button>
+
               <?php }else if (isset($registro_tiempo['estado_liquidado']) && $registro_tiempo['estado_liquidado']==1){?>
+
                 <button type="button" class="btn btn-dark" id="liquidar_<?php echo $array_name_cuenta[$x] ?>" 
                 onclick="liquidar(<?php echo $registro_cuenta['id_cuenta']; ?>)">Liquidar</button>
 
               <?php }else if ($cantidad_inventario_sin_liquidar>0){?>
+
                 <button type="button" class="btn btn-dark" id="liquidar_<?php echo $array_name_cuenta[$x] ?>" 
                 onclick="liquidar(<?php echo $registro_cuenta['id_cuenta']; ?>)">Liquidar</button>
 
@@ -1240,17 +1244,30 @@ window.onhashchange();
   }
 
   function liquidar(id_cuenta_liquidar) {
-    $.ajax({
-      url: 'index.php',
-      method: 'POST',
-      data: { id_cuenta_liquidar: id_cuenta_liquidar },
-      success: function(response) {
-        setTimeout(function(){
-          location.reload();
-        }, 500);
-      },
-      error: function(xhr, textStatus, errorThrown) {
-        console.log(xhr.responseText);
+    Swal.fire({
+      title: '¿Estás seguro de liquidar?',
+      text: 'Esta acción no se puede deshacer',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, liquidar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: 'index.php',
+          method: 'POST',
+          data: { id_cuenta_liquidar: id_cuenta_liquidar },
+          success: function(response) {
+            setTimeout(function(){
+              location.reload();
+            }, 500);
+          },
+          error: function(xhr, textStatus, errorThrown) {
+            console.log(xhr.responseText);
+          }
+        });
       }
     });
   }

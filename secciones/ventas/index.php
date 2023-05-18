@@ -940,23 +940,22 @@ window.onhashchange();
 function agregar() {
   var cuenta = $("#cuenta").val();
   var idCuenta = $("#cuenta option:selected").data("id");
-  var estado = $('#cuenta option:selected').data('estado');
-  
-  // Guardar la posición de desplazamiento actual
-  var scrollTop = $(window).scrollTop();
-  
+  var estado = $('#cuenta option:selected').data('estado');  
   $.ajax({
     url: 'index.php',
     method: 'POST',
     data: { estado: 1, idCuenta: idCuenta },
     success: function(response) {
-      // Esperar 3 segundos antes de recargar la página
-      setTimeout(function() {
-        // Restaurar la posición de desplazamiento después de la recarga
-        $(window).scrollTop(scrollTop);
-        location.reload();
-      }, 3000);
-    },
+        Swal.fire({
+          title: 'Agregado correctamente!',
+          icon: 'success',
+          timer: 2000,
+          timerProgressBar: true,
+          didClose: () => {
+            location.reload();
+          }
+        });
+      },
     error: function(xhr, textStatus, errorThrown) {
       console.log(xhr.responseText);
     }
@@ -998,7 +997,6 @@ function agregar() {
             location.reload();
           }
         });
-        //location.reload();
       },
       error: function(xhr, textStatus, errorThrown) {
         console.log(xhr.responseText);

@@ -937,7 +937,7 @@ window.onhashchange();
 
 <script>
 
-function agregar() {
+  function agregar() {
       var cuenta = $("#cuenta").val();
       var idCuenta = $("#cuenta option:selected").data("id");
       var estado = $('#cuenta option:selected').data('estado');
@@ -947,7 +947,15 @@ function agregar() {
         data: { estado: 1, idCuenta: idCuenta },
         success: function(response) {
           $('#nav-' + cuenta + '-tab').show();
-          //location.reload();
+          Swal.fire({
+            title: 'Se agrego correctamente!',
+            icon: 'success',
+            timer: 2000,
+            timerProgressBar: true,
+            didClose: () => {
+              location.reload();
+            }
+          });
         },
         error: function(xhr, textStatus, errorThrown) {
           console.log(xhr.responseText);
@@ -964,7 +972,15 @@ function agregar() {
         data: { estado: 0, idCuenta: idCuenta },
         success: function(response) {
           $('#nav-' + cuenta2 + '-tab').hide();
-          //location.reload();
+          Swal.fire({
+            title: 'Se quito correctamente!',
+            icon: 'success',
+            timer: 2000,
+            timerProgressBar: true,
+            didClose: () => {
+              location.reload();
+            }
+          });
         },
         error: function(xhr, textStatus, errorThrown) {
           console.log(xhr.responseText);

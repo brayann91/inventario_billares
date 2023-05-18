@@ -938,34 +938,22 @@ window.onhashchange();
 <script>
 
 function agregar() {
-  var cuenta = $("#cuenta").val();
-  var idCuenta = $("#cuenta option:selected").data("id");
-  var estado = $('#cuenta option:selected').data('estado');
-  
-  $.ajax({
-    url: 'index.php',
-    method: 'POST',
-    data: { estado: 1, idCuenta: idCuenta },
-    success: function(response) {
-        Swal.fire({
-          title: 'Caja abierta!',
-          icon: 'success',
-          timer: 2000,
-          timerProgressBar: true,
-          didClose: () => {
-            location.reload();
-          }
-        });
-        //location.reload();
-      },
-    error: function(xhr, textStatus, errorThrown) {
-      console.log(xhr.responseText);
-    }
-  });
-}
-
-
-
+      var cuenta = $("#cuenta").val();
+      var idCuenta = $("#cuenta option:selected").data("id");
+      var estado = $('#cuenta option:selected').data('estado');
+      $.ajax({
+        url: 'index.php',
+        method: 'POST',
+        data: { estado: 1, idCuenta: idCuenta },
+        success: function(response) {
+          $('#nav-' + cuenta + '-tab').show();
+          //location.reload();
+        },
+        error: function(xhr, textStatus, errorThrown) {
+          console.log(xhr.responseText);
+        }
+      });
+  }
   function quitar() {
       var cuenta2 = $("#cuenta2").val();
       var idCuenta = $("#cuenta2 option:selected").data("id");
@@ -975,9 +963,8 @@ function agregar() {
         method: 'POST',
         data: { estado: 0, idCuenta: idCuenta },
         success: function(response) {
-          setTimeout(function(){
-            location.reload();
-          }, 3000);
+          $('#nav-' + cuenta2 + '-tab').hide();
+          //location.reload();
         },
         error: function(xhr, textStatus, errorThrown) {
           console.log(xhr.responseText);

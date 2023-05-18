@@ -942,6 +942,9 @@ function agregar() {
   var idCuenta = $("#cuenta option:selected").data("id");
   var estado = $('#cuenta option:selected').data('estado');
   
+  // Guardar la posición de desplazamiento actual
+  var scrollTop = $(window).scrollTop();
+  
   $.ajax({
     url: 'index.php',
     method: 'POST',
@@ -949,16 +952,16 @@ function agregar() {
     success: function(response) {
       // Esperar 3 segundos antes de recargar la página
       setTimeout(function() {
+        // Restaurar la posición de desplazamiento después de la recarga
+        $(window).scrollTop(scrollTop);
         location.reload();
-      }, 2000);
+      }, 3000);
     },
     error: function(xhr, textStatus, errorThrown) {
       console.log(xhr.responseText);
     }
   });
 }
-
-
 
   function quitar() {
       var cuenta2 = $("#cuenta2").val();

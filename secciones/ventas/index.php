@@ -941,23 +941,23 @@ function agregar() {
   var cuenta = $("#cuenta").val();
   var idCuenta = $("#cuenta option:selected").data("id");
   var estado = $('#cuenta option:selected').data('estado');
+  
   $.ajax({
     url: 'index.php',
     method: 'POST',
     data: { estado: 1, idCuenta: idCuenta },
     success: function(response) {
       // Esperar 3 segundos antes de recargar la página
-      new Promise(function(resolve) {
-        setTimeout(resolve, 2000);
-      }).then(function() {
+      setTimeout(function() {
         location.reload();
-      });
+      }, 2000);
     },
     error: function(xhr, textStatus, errorThrown) {
       console.log(xhr.responseText);
     }
   });
 }
+
 
 
   function quitar() {

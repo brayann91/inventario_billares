@@ -133,7 +133,10 @@ function liquidar(id_cuenta_liquidar) {
                     setTimeout(function() {
                         window.location.href = url;
                     }, 3000);
-                    pdf(id_cuenta_liquidar);
+                    var urlpdf = "generar_factura.php?txtID=" + id_cuenta_liquidar;
+                        setTimeout(function() {
+                            window.open(urlpdf, "_blank");
+                        }, 4000);
                 },
                 error: function(xhr, textStatus, errorThrown) {
                     console.log(xhr.responseText);

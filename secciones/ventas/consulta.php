@@ -70,7 +70,7 @@ if ($_POST) {
         font-family: Arial, sans-serif;
         margin: 0;
     }.card {
-        margin: 0 200px; /* Márgenes a la izquierda y derecha */
+        margin: 0 0px; /* Márgenes a la izquierda y derecha */
     }
     table {
         width: 100%;

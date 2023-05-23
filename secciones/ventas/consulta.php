@@ -159,7 +159,7 @@ function pdf(txtID) {
     <h3 style="font-size: 34px;">Billar <?php echo $registro_sedes["nombre_sede"]; ?></h3>
     <p style="font-size: 28px;">Dirección <?php echo $registro_sedes["direccion_sede"]; ?></p>
     <p style="font-size: 28px;">Teléfono: <?php echo $registro_sedes["telefono_sede"]; ?></p>
-    </p>        
+    </br></br>        
 </div>
 
 <div class="card">

@@ -53,10 +53,6 @@ if ($_POST) {
     ?>
 
     <script>
-        window.onload = function() {
-            abrirPDF();
-        };
-
         function abrirPDF() {
             var url_pdf = '<?php echo $registro_detalle_factura['id_facturas']; ?>';
             window.open("generar_factura.php?txtID=" + url_pdf, '_blank');
@@ -137,6 +133,7 @@ function liquidar(id_cuenta_liquidar) {
                     setTimeout(function() {
                         window.location.href = url;
                     }, 3000);
+                    abrirPDF();
                 },
                 error: function(xhr, textStatus, errorThrown) {
                     console.log(xhr.responseText);
@@ -202,7 +199,7 @@ function pdf(txtID) {
             <br>
             <br>
             <div style="text-align: center;">
-                <button type="button" class="btn btn-success" onclick="liquidar('<?php echo $txtID;?>'); pdf('<?php echo $txtID;?>')">Liquidar</button>
+                <button type="button" class="btn btn-success" onclick="liquidar('<?php echo $txtID;?>')">Liquidar</button>
                 <a name="" id="" class="btn btn-secondary" href="index.php" role="button">Cancelar</a>
             </div>
             <div class="mb-3">

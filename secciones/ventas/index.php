@@ -152,7 +152,7 @@ if ($_POST) {
       $sentencia->bindParam(":id_caja", $id_caja);
       $sentencia->execute();
 
-      $sentencia = $conexion->prepare("UPDATE cuentas SET estado=0 WHERE id_sede= '" . $_SESSION['id_sede'] . "'");
+      $sentencia = $conexion->prepare("UPDATE cuentas SET estado=0 WHERE id_sede= " . $_SESSION['id_sede'] . " AND nombre_cuenta NOT LIKE 'MESA%'");
       $sentencia->execute();
 
     }

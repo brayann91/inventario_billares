@@ -386,8 +386,8 @@ if ($_POST) {
             $sentencia->bindParam(":id_cuenta_liquidar", $id_cuenta_liquidar);
             $sentencia->execute();
 
-    }
-    
+
+    }     
 
 }
 
@@ -437,7 +437,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
             ><?php echo $registro['nombre_cuenta']; ?></option>
           <?php }?>
         </select>
-        <button type="submit" class="btn btn-success" onClick="agregar()">Agregar</button>
+        <button type="button" class="btn btn-success" onClick="agregar()">Agregar</button>
       </form>
       <?php } ?>
     </td>
@@ -466,7 +466,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
               ><?php echo $registro['nombre_cuenta']; ?></option>
             <?php }?>
           </select>
-          <button type="submit" class="btn btn-danger" onClick="quitar()">Quitar</button>
+          <button type="button" class="btn btn-danger" onClick="quitar()">Quitar</button>
         </form>
       <?php } ?>
     </td>
@@ -823,8 +823,8 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
               INNER JOIN productos p ON p.id_producto=e.id_producto WHERE e.estado=1 AND e.id_cuenta='" . $registro_cuenta['id_cuenta'] . "'" .
               " AND p.id_sede= '" . $_SESSION['id_sede'] . "'");
               $sentencia->execute();
-              $cantidad_inventario_sin_liquidar = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];         
-            
+              $cantidad_inventario_sin_liquidar = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];  
+                          
               if(isset($registro_tiempo['estado_tiempo']) && $registro_tiempo['estado_tiempo']==1){?>
 
                 <button type="button" class="btn btn-dark" id="liquidar_sin_tiempo_detenido_<?php echo $array_name_cuenta[$x] ?>" 
@@ -832,22 +832,16 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
 
               <?php }else if (isset($registro_tiempo['estado_liquidado']) && $registro_tiempo['estado_liquidado']==1){?>
 
-                <button type="button" class="btn btn-dark" id="liquidar_<?php echo $array_name_cuenta[$x] ?>" 
-                onclick="liquidar(<?php echo $registro_cuenta['id_cuenta']; ?>)">Liquidar</button>
+                <a type="button" class="btn btn-dark" id="liquidar_<?php echo $array_name_cuenta[$x] ?>" 
+                role="button" href="consulta.php?txtID=<?php echo $registro_cuenta['id_cuenta']?>" >Liquidar</a>
 
               <?php }else if ($cantidad_inventario_sin_liquidar>0){?>
 
-                <button type="button" class="btn btn-dark" id="liquidar_<?php echo $array_name_cuenta[$x] ?>" 
-                onclick="liquidar(<?php echo $registro_cuenta['id_cuenta']; ?>)">Liquidar</button>
+                <a type="button" class="btn btn-dark" id="liquidar_<?php echo $array_name_cuenta[$x] ?>" 
+                role="button" href="consulta.php?txtID=<?php echo $registro_cuenta['id_cuenta']?>" >Liquidar</a>
 
             <?php }?>
-            <?php if($registro_tiempo['estado_tiempo']==0 && $cantidad_inventario_sin_liquidar==0){?>
-              <form target="_blank">
-                  <a name="" id="imprimir_<?php echo $array_name_cuenta[$x] ?>" class="btn btn-info" 
-                  href="generar_factura.php?txtID=<?php echo  $registro_detalle_factura['id_facturas'];?>" 
-                  role="button" target="_blank" onclick="actualizarPagina('<?php echo  $url_base;?>')">Imprimir</a>
-                </form>
-            <?php }?>
+            
         </td>
 
       </tr>
@@ -1295,12 +1289,6 @@ window.onhashchange();
           location.reload();
       }
     });
-  }
-
-  function actualizarPagina(url_base) {
-    setTimeout(function(){
-      window.location.href = url_base + "secciones/ventas/";
-    }, 1000);
   }
   
 </script>

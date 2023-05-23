@@ -65,8 +65,16 @@
 
     $txtID = (isset($_GET['txtID'])) ? $_GET['txtID'] : "";
 
+    $sentencia = $conexion->prepare("SELECT * FROM factura_agrupada WHERE id_sede=" . $_SESSION['id_sede'] . " 
+    AND id_cuenta=:id_cuenta ORDER BY id_factura DESC LIMIT 1");
+    $sentencia->bindParam(":id_cuenta", $txtID);
+    $sentencia->execute();
+    $registro_factura_agrupada = $sentencia->fetch(PDO::FETCH_LAZY);
+
+    $ID = $registro_factura_agrupada['id_factura'];
+
     $sentencia = $conexion->prepare("SELECT * FROM facturas WHERE id_facturas=:id_facturas");
-    $sentencia->bindParam(":id_facturas", $txtID);
+    $sentencia->bindParam(":id_facturas", $ID);
     $sentencia->execute();
     $lista_facturas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
@@ -75,7 +83,7 @@
     $registro_sedes = $sentencia->fetch(PDO::FETCH_LAZY);
 
     $sentencia = $conexion->prepare("SELECT * FROM factura_agrupada WHERE id_factura=:id_facturas");
-    $sentencia->bindParam(":id_facturas", $txtID);
+    $sentencia->bindParam(":id_facturas", $ID);
     $sentencia->execute();
     $lista_factura_agrupada = $sentencia->fetch(PDO::FETCH_LAZY);
 
@@ -176,7 +184,7 @@
 
     // Guarda el contenido del archivo PDF en la base de datos
     $sentencia = $conexion->prepare("UPDATE factura_agrupada SET pdf=:pdf WHERE id_factura=:id_facturas");
-    $sentencia->bindParam(":id_facturas", $txtID);
+    $sentencia->bindParam(":id_facturas", $ID);
     $sentencia->bindParam(":pdf", $contenidoPDFBase64);
     $sentencia->execute();
 

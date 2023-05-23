@@ -133,7 +133,7 @@ function liquidar(id_cuenta_liquidar) {
                     setTimeout(function() {
                         window.location.href = url;
                     }, 3000);
-                    abrirPDF();
+                    pdf(id_cuenta_liquidar);
                 },
                 error: function(xhr, textStatus, errorThrown) {
                     console.log(xhr.responseText);

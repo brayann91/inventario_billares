@@ -94,6 +94,9 @@ if ($_SESSION['id_cargo'] == 2 && str_contains($url_actual, $url_crear)) {
       <li class="nav-item">
         <button class="nav-link" id="nav-entradas-tab" data-bs-toggle="tab" data-bs-target="#nav-entradas" type="button" role="tab" aria-controls="nav-entradas" aria-selected="false">Inventario</button>
       </li>
+      <li class="nav-item">
+        <button class="nav-link" id="nav-detalle-entradas-tab" data-bs-toggle="tab" data-bs-target="#nav-detalle-entradas" type="button" role="tab" aria-controls="nav-detalle-entradas" aria-selected="false">Entradas Inventario</button>
+      </li>
     <li class="nav-item">
       <button class="nav-link" id="nav-cuentas-tab" data-bs-toggle="tab" data-bs-target="#nav-cuentas" type="button" role="tab" aria-controls="nav-cuentas" aria-selected="false">Cuentas</button>
     </li>
@@ -139,6 +142,7 @@ if ($_SESSION['id_cargo'] == 2 && str_contains($url_actual, $url_crear)) {
     <div class="tab-pane fade" id="nav-productos" role="tabpanel" aria-labelledby="nav-productos-tab" tabindex="0"></div>
   <?php }?>
   <div class="tab-pane fade" id="nav-entradas" role="tabpanel" aria-labelledby="nav-entradas-tab" tabindex="0"></div>
+  <div class="tab-pane fade" id="nav-detalle-entradas" role="tabpanel" aria-labelledby="nav-detalle-entradas-tab" tabindex="0"></div>
   <div class="tab-pane fade" id="nav-cuentas" role="tabpanel" aria-labelledby="nav-cuentas-tab" tabindex="0"></div>
   <div class="tab-pane fade" id="nav-tiempos" role="tabpanel" aria-labelledby="nav-tiempos-tab" tabindex="0"></div>
   <?php if ($_SESSION['id_cargo'] == 1) {?>
@@ -189,6 +193,9 @@ var tabId = "";
 
    document.getElementById("nav-entradas-tab").addEventListener("click", function() {
    changeActiveTab("nav-entradas-tab",'<?php echo $url_base; ?>secciones/entradas');});
+
+   document.getElementById("nav-detalle-entradas-tab").addEventListener("click", function() {
+   changeActiveTab("nav-detalle-entradas-tab",'<?php echo $url_base; ?>secciones/entradas_inventario');});
 
    document.getElementById("nav-cuentas-tab").addEventListener("click", function() {
    changeActiveTab("nav-cuentas-tab",'<?php echo $url_base; ?>secciones/cuentas');});

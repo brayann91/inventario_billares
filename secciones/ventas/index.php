@@ -776,7 +776,11 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                           <img width="60"
                           src="<?php echo "../productos/" . $registro['image']; ?>"
                           class="img-fluid rounded" alt=""
-                          >
+                          style="background-repeat: no-repeat;
+                              background-position: center center;
+                              background-size: cover;
+                              width: 50px;
+                              height: 50px;">
                         </td>
                         <td><?php echo $registro['nombre_producto']; ?></td>
                         <td>$ <?php echo number_format(abs($registro['precio']), 1); ?></td>

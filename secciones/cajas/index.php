@@ -43,6 +43,7 @@ $lista_facturas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
                     <th scope="col">REGISTRO DE VALOR</th>
                     <th scope="col">CANTIDAD EN CAJA</th>
                     <th scope="col">ESTADO CAJA</th>
+                    <th scope="col">FACTURA CAJA</th>
                 </tr>
             </thead>
             <tbody>
@@ -62,7 +63,12 @@ $lista_facturas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
                             echo "Cerrada";
                           }
                         ?>
-                     </td>
+                    </td>
+                    <td>
+                      <?php if($registro['pdf_caja']<>""){ ?>
+                        <a class="btn btn-info" href="../../pdf/factura_caja_<?php echo $registro['id_caja']; ?>.pdf" target="_blank">Factura</a>
+                      <?php }?>
+                    </td>
                 </tr>
             <?php }?>
             </tbody>

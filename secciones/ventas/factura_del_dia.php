@@ -63,36 +63,29 @@
     include "../../bd.php";
     session_start();
 
-    $txtID = (isset($_GET['txtID'])) ? $_GET['txtID'] : "";
-
-    $sentencia = $conexion->prepare("SELECT * FROM factura_agrupada WHERE id_sede=" . $_SESSION['id_sede'] . " 
-    AND id_cuenta=:id_cuenta ORDER BY id_factura DESC LIMIT 1");
-    $sentencia->bindParam(":id_cuenta", $txtID);
+    $sentencia = $conexion->prepare("SELECT * FROM cajas WHERE id_sede=" . $_SESSION['id_sede'] . " 
+    ORDER BY id_caja DESC LIMIT 1");
     $sentencia->execute();
-    $registro_factura_agrupada = $sentencia->fetch(PDO::FETCH_LAZY);
+    $registro_caja = $sentencia->fetch(PDO::FETCH_LAZY);
 
-    $ID = $registro_factura_agrupada['id_factura'];
+    $fecha_apertura_caja = $registro_caja['fecha_apertura'];
+    $fecha_cierre_caja = $registro_caja['fecha_cierre'];
+    $ID = $registro_caja['id_caja'];
 
-    $sentencia = $conexion->prepare("SELECT * FROM facturas WHERE id_facturas=:id_facturas");
-    $sentencia->bindParam(":id_facturas", $ID);
+    $sentencia = $conexion->prepare("SELECT f.id_cuenta, c.nombre_cuenta, f.nombre_producto, f.cantidad, f.fecha,
+    SUM(f.precio_total_producto) precio_total_producto, SUBSTRING_INDEX(SEC_TO_TIME(SUM(TIME_TO_SEC(f.tiempo_invertido))), '.', 1) tiempo_invertido,
+    SUM(f.precio_total_tiempo) precio_total_tiempo, SUM(f.cantidad) cantidad
+    FROM facturas f 
+    INNER JOIN cuentas c ON c.id_cuenta=f.id_cuenta 
+    WHERE c.id_sede=" . $_SESSION['id_sede'] . " AND f.fecha BETWEEN :fecha_apertura AND :fecha_cierre GROUP BY f.nombre_producto");
+    $sentencia->bindParam(":fecha_apertura", $fecha_apertura_caja);
+    $sentencia->bindParam(":fecha_cierre", $fecha_cierre_caja);
     $sentencia->execute();
     $lista_facturas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
     $sentencia = $conexion->prepare("SELECT * FROM sedes WHERE id_sede='" . $_SESSION['id_sede'] . "'");
     $sentencia->execute();
     $registro_sedes = $sentencia->fetch(PDO::FETCH_LAZY);
-
-    $sentencia = $conexion->prepare("SELECT * FROM factura_agrupada WHERE id_factura=:id_facturas");
-    $sentencia->bindParam(":id_facturas", $ID);
-    $sentencia->execute();
-    $lista_factura_agrupada = $sentencia->fetch(PDO::FETCH_LAZY);
-
-    $id_cuenta_factura = $lista_factura_agrupada['id_cuenta'];
-    $id_factura = $lista_factura_agrupada['id_factura'];
-
-    $sentencia = $conexion->prepare("UPDATE cuentas SET estado=0 WHERE id_cuenta=:idCuenta AND nombre_cuenta NOT LIKE 'MESA%'");
-    $sentencia->bindParam(":idCuenta", $id_cuenta_factura);
-    $sentencia->execute();
 
     ?>
 
@@ -110,36 +103,37 @@
         <table>
             <thead>
                 <tr>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
+                    <th>Producto<br><br></th>
+                    <th>Cantidad<br><br></th>
+                    <th>Precio<br><br></th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($lista_facturas as $registro) { ?>
-                    <tr>
-                        <td><?php if($registro['nombre_producto'] != ""){ 
-                                echo $registro['nombre_producto'];
-                            }else {
-                                echo "Tiempo";
-                            }?></td>
-                        <td class="text-center align-middle cantidad"><?php if($registro['nombre_producto'] != ""){
-                                echo $registro['cantidad'];
-                            } else{
-                                echo $registro['tiempo_invertido'];
-                            }?></td>
-                        <td class="text-right">$<?php if($registro['nombre_producto'] != ""){ 
-                                echo number_format($registro['precio_total_producto'], 0);
-                            }else{
-                                echo number_format($registro['precio_total_tiempo'], 0);
-                            }?></td>
-                    </tr>
-                <?php }?>
+            <?php foreach ($lista_facturas as $registro) { ?>
+                  <tr>
+                      <td><?php if($registro['nombre_producto'] != ""){ 
+                              echo $registro['nombre_producto'];
+                          }else {
+                              echo "Tiempo";
+                          }?></td>
+                      <td class="text-center align-middle cantidad"><?php if($registro['nombre_producto'] != ""){
+                              echo $registro['cantidad'];
+                          } else{
+                              echo $registro['tiempo_invertido'];
+                          }?></td>
+                      <td class="text-right">$<?php if($registro['nombre_producto'] != ""){ 
+                              echo number_format($registro['precio_total_producto'], 0);
+                          }else{
+                              echo number_format($registro['precio_total_tiempo'], 0);
+                          }?></td>
+                  </tr>
+              <?php } ?>
+
             </tbody></br>
             <tfoot>
                 <tr>
                     <td colspan="2">Total:</td>
-                    <td class="text-right">$ <?php echo number_format($lista_factura_agrupada['precio_total'], 2); ?></td>
+                    <td class="text-right">$ <?php echo number_format($registro_caja['valor'], 2); ?></td>
                 </tr>
             </tfoot>
         </table>
@@ -170,9 +164,9 @@
     $dompdf->render();
 
     // Envía el archivo PDF al navegador para su descarga
-    $dompdf->stream('factura_' . $id_factura . '.pdf', array('Attachment' => false));
+    $dompdf->stream('factura_caja_' . $ID . '.pdf', array('Attachment' => false));
 
-    $nombrePDF = 'factura_' . $id_factura . '.pdf';
+    $nombrePDF = 'factura_caja_' . $ID . '.pdf';
 
     // Guarda el archivo PDF en una ubicación temporal en el servidor
     $rutaTemporal = '../../pdf/' . $nombrePDF;
@@ -183,12 +177,12 @@
     $contenidoPDFBase64 = base64_encode($contenidoPDF);
 
     // Guarda el contenido del archivo PDF en la base de datos
-    $sentencia = $conexion->prepare("UPDATE factura_agrupada SET pdf=:pdf WHERE id_factura=:id_facturas");
-    $sentencia->bindParam(":id_facturas", $ID);
+    $sentencia = $conexion->prepare("UPDATE cajas SET pdf_caja=:pdf WHERE id_caja=:id_caja");
+    $sentencia->bindParam(":id_caja", $ID);
     $sentencia->bindParam(":pdf", $contenidoPDFBase64);
     $sentencia->execute();
 
     // Renombra el archivo temporal con la extensión .pdf
-    $rutaFinal = '../../pdf/factura_' . $id_factura . '.pdf';
+    $rutaFinal = '../../pdf/factura_caja_' . $ID . '.pdf';
     rename($rutaTemporal, $rutaFinal);
 ?>

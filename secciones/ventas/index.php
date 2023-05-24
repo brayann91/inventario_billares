@@ -852,7 +852,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                                   var urlindex = 'index.php';
                                   setTimeout(function() {
                                     window.open(urlpdf, "_blank");
-                                  }, 2000);    
+                                  }, 1000);    
                                   setTimeout(function() {
                                     window.location.href = urlindex;
                                   }, 3000);
@@ -1050,27 +1050,39 @@ window.onhashchange();
   }
 
   function cerrarCaja(id_caja) {
-    $.ajax({
-      url: 'index.php',
-      method: 'POST',
-      data: { id_caja: id_caja },
-      success: function(response) {
-        Swal.fire({
-          title: 'Caja cerrada!',
-          icon: 'success',
-          timer: 2000,
-          timerProgressBar: true,
-          didClose: () => {
-            location.reload();
-          }
-        });
-        
-      },
-      error: function(xhr, textStatus, errorThrown) {
-        console.log(xhr.responseText);
-      }
-    });
-  }
+  Swal.fire({
+    title: '¿Está seguro de que desea cerrar la caja?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: 'index.php',
+        method: 'POST',
+        data: { id_caja: id_caja },
+        success: function(response) {
+          var urlpdf = "factura_del_dia.php";
+          Swal.fire({
+            title: 'Caja cerrada!',
+            icon: 'success',
+            timer: 2000,
+            timerProgressBar: true,
+            didClose: () => {
+              location.reload();
+              window.open(urlpdf, "_blank");
+            }
+          });
+        },
+        error: function(xhr, textStatus, errorThrown) {
+          console.log(xhr.responseText);
+        }
+      });
+    }
+  });
+}
+
 
   function cerrar_caja_sin_liquidar() {
       Swal.fire({
@@ -1291,35 +1303,6 @@ window.onhashchange();
       ('0' + second).slice(-2);
 
     return fechaActual;
-  }
-
-  function liquidar(id_cuenta_liquidar) {
-    Swal.fire({
-      title: '¿Estás seguro de liquidar?',
-      text: 'Esta acción no se puede deshacer',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, liquidar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        $.ajax({
-          url: 'index.php',
-          method: 'POST',
-          data: { id_cuenta_liquidar: id_cuenta_liquidar },
-          success: function(response) {
-            setTimeout(function(){
-              location.reload();
-            }, 500);
-          },
-          error: function(xhr, textStatus, errorThrown) {
-            console.log(xhr.responseText);
-          }
-        });
-      }
-    });
   }
 
   function liquidar_sin_tiempo_detenido(id_cuenta_liquidar) {

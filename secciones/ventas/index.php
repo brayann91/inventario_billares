@@ -542,7 +542,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                               height: 50px;"
                           class="img-fluid rounded" alt=""
                           onClick="agregarProductoACuenta('<?php echo $array_name_cuenta[$x] ?>', '<?php echo $registro['id_producto']; ?>',
-                          '<?php echo $registro_cuenta['id_cuenta']; ?>')"
+                          '<?php echo $registro_cuenta['id_cuenta']; ?>', '<?php echo $registro['precio']; ?>')"
                           >
                         </td>
                         <td><?php echo $registro['nombre_producto']; ?></td>
@@ -782,9 +782,9 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                               width: 50px;
                               height: 50px;">
                         </td>
-                        <td><?php echo $registro['nombre_producto']; ?></td>
-                        <td>$ <?php echo number_format(abs($registro['precio']), 1); ?></td>
-                        <td><?php echo abs($registro['cantidad']); ?></td>
+                        <td id="nombre_p_<?php echo $array_name_cuenta[$x];?>_<?php echo $registro['id_producto'];?>"><?php echo $registro['nombre_producto']; ?></td>
+                        <td id="precio_p_<?php echo $array_name_cuenta[$x];?>_<?php echo $registro['id_producto'];?>">$ <?php echo number_format(abs($registro['precio']), 1); ?></td>
+                        <td id="cantidad_p_<?php echo $array_name_cuenta[$x];?>_<?php echo $registro['id_producto'];?>"><?php echo abs($registro['cantidad']); ?></td>
                         <td>
                           <button style="background-color: red; width: 30px; height: 30px; display: inline-block;"
                             onClick="agregarMenosProductoACuenta('<?php echo $registro['id_entrada']; ?>',
@@ -1097,20 +1097,50 @@ window.onhashchange();
 
   }
 
-  function agregarProductoACuenta(nombre_cuenta_temporal, id_producto_temporal, id_cuenta_temporal) {
-    $.ajax({
-      url: 'index.php',
-      method: 'POST',
-      data: { id_cuenta_temporal: id_cuenta_temporal, id_producto_temporal: id_producto_temporal },
-      success: function(response) {
-        setTimeout(function(){
-          location.reload();
-        }, 500);
-      },
-      error: function(xhr, textStatus, errorThrown) {
-        console.log(xhr.responseText);
-      }
-    });
+  function agregarProductoACuenta(nombre_cuenta_temporal, id_producto_temporal, id_cuenta_temporal, precio) {
+    var nombreProducto = document.getElementById("nombre_p_" + nombre_cuenta_temporal + "_" + id_producto_temporal); 
+    var precioProducto = document.getElementById("precio_p_" + nombre_cuenta_temporal + "_" + id_producto_temporal); 
+    var cantidadProducto = document.getElementById("cantidad_p_" + nombre_cuenta_temporal + "_" + id_producto_temporal);
+    
+    if (nombreProducto) {
+      $.ajax({
+        url: 'index.php',
+        method: 'POST',
+        data: { id_cuenta_temporal: id_cuenta_temporal, id_producto_temporal: id_producto_temporal },
+        success: function(response) {
+          var precioActual = parseFloat(precioProducto.innerHTML.replace(/[^0-9.]/g, ''));
+          if (!isNaN(precioActual)) {
+          var nuevoPrecio = precioActual + parseInt(precio);
+          precioProducto.innerHTML = "$ " + nuevoPrecio.toLocaleString(undefined, { minimumFractionDigits: 1 }).replace(/\./g, "@").replace(/,/g, ".").replace(/@/g, ",");
+          } else {
+            console.log("El contenido de precioProducto no es un número válido.");
+          }
+          var cantidadActual = parseInt(cantidadProducto.innerHTML);
+          if (!isNaN(cantidadActual)) {
+            cantidadProducto.innerHTML = cantidadActual + 1;
+          } else {
+            console.log("El contenido de cantidadProducto no es un número válido.");
+          }
+        },
+        error: function(xhr, textStatus, errorThrown) {
+          console.log(xhr.responseText);
+        }
+      });
+    } else {
+      $.ajax({
+        url: 'index.php',
+        method: 'POST',
+        data: { id_cuenta_temporal: id_cuenta_temporal, id_producto_temporal: id_producto_temporal },
+        success: function(response) {
+          setTimeout(function(){
+            location.reload();
+          }, 500);
+        },
+        error: function(xhr, textStatus, errorThrown) {
+          console.log(xhr.responseText);
+        }
+      });
+    }
   }
 
   function agregarMasProductoACuenta(id_entrada_mas, id_producto_mas) {

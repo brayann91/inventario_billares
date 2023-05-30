@@ -87,9 +87,11 @@ $lista_productos=$sentencia->fetchAll(PDO::FETCH_ASSOC);
                 <tr class="" valign="middle" align="center">
                     <td scope="row"><?php echo $registro['id_producto'];?></td>
                     <td>
-                        <img width="60" height="60"
-                        src="<?php echo $registro['image'];?>" 
-                        class="img-fluid rounded" alt="">
+                    <img width="60" height="60"
+                        src="<?php echo $registro['image'];?>"
+                        class="img-fluid rounded"
+                        style="height: 60px !important;"
+                        alt="">
                     </td>
                     <td><?php echo $registro['nombre_producto'];?></td>
                     <td>$ <?php echo number_format($registro['precio'],1);?></td>

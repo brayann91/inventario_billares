@@ -39,6 +39,10 @@ if($_POST){
   header("Location:index.php?mensaje=".$mensaje);
 }
 
+$sentencia = $conexion->prepare("SELECT * FROM grupo_sedes");
+$sentencia->execute();
+$lista_sedes = $sentencia->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <?php include("../../templates/header.php"); ?>
@@ -80,6 +84,17 @@ if($_POST){
                value="<?php echo $telefono_sede;?>"
                  class="form-control" name="telefono_sede" id="telefono_sede" aria-describedby="helpId" placeholder="Telefono Sede">
              </div>
+
+             <div class="mb-3">
+                <label for="id_grupo_sede" class="form-label">Grupo Sede</label>
+                <select class="form-select form-select-sm" name="id_grupo_sede" id="id_grupo_sede" required>
+                  <?php foreach ($lista_sedes as $registro) {?>
+                      <option value="<?php echo $registro['id_grupo_sede']; ?>">
+                        <?php echo $registro['nombre_grupo_sede']; ?>
+                      </option>
+                  <?php }?>
+                </select>
+            </div>
 
              <br/>
  

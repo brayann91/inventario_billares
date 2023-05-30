@@ -14,13 +14,10 @@ if(isset($_GET['txtID'])){
 
 include("../../templates/header.php"); 
 
-$sentencia=$conexion->prepare("SELECT DISTINCT u.*, c.nombre_cargo, s.nombre_sede
-FROM usuarios u
-INNER JOIN cargo c ON u.id_cargo = c.id_cargo
-INNER JOIN sedes s ON u.id_sede = s.id_sede
-GROUP BY u.id_usuario");
+$sentencia = $conexion->prepare("SELECT * FROM usuarios u INNER JOIN cargo c ON u.id_cargo = c.id_cargo
+INNER JOIN sedes s ON u.id_sede = s.id_sede INNER JOIN grupo_sedes g ON s.id_grupo_sede=g.id_grupo_sede");
 $sentencia->execute();
-$lista_usuarios=$sentencia->fetchAll(PDO::FETCH_ASSOC);
+$lista_usuarios = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -51,6 +48,7 @@ $lista_usuarios=$sentencia->fetchAll(PDO::FETCH_ASSOC);
                      <th scope="col">TELEFONO</th>
                      <th scope="col">ROL</th>
                      <th scope="col">SEDE</th>
+                     <th scope="col">GRUPO SEDE</th>
                      <th scope="col">ACCIONES</th>
                  </tr>
              </thead>
@@ -65,6 +63,7 @@ $lista_usuarios=$sentencia->fetchAll(PDO::FETCH_ASSOC);
                      <td><?php echo $registro['telefono'];?></td>
                      <td><?php echo $registro['nombre_cargo'];?></td>
                      <td><?php echo $registro['nombre_sede'];?></td>
+                     <td><?php echo $registro['nombre_grupo_sede'];?></td>
                      <td>
                         <a name="" id="editar_usuario" class="btn btn-info" href="editar.php?txtID=<?php echo $registro['id_usuario']; ?>" role="button">Editar</a>
                         <a name="" id="eliminar_usuario" class="btn btn-danger" href="javascript:borrar(<?php echo $registro['id_usuario']; ?>);" role="button">Borrar</a>

@@ -6,14 +6,14 @@ if (isset($_GET['txtID'])) {
 
     $txtID = (isset($_GET['txtID'])) ? $_GET['txtID'] : "";
 
-    $sentencia = $conexion->prepare("DELETE FROM sedes WHERE id_sede=:id_sede");
-    $sentencia->bindParam(":id_sede", $txtID);
+    $sentencia = $conexion->prepare("DELETE FROM grupo_sedes WHERE id_grupo_sede=:id_grupo_sede");
+    $sentencia->bindParam(":id_grupo_sede", $txtID);
     $sentencia->execute();
     $mensaje = "Registro eliminado";
     header("Location:index.php?mensaje=" . $mensaje);
 }
 
-$sentencia = $conexion->prepare("SELECT * FROM sedes s INNER JOIN grupo_sedes g ON g.id_grupo_sede=s.id_grupo_sede");
+$sentencia = $conexion->prepare("SELECT * FROM grupo_sedes");
 $sentencia->execute();
 $lista_sedes = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
@@ -23,7 +23,7 @@ $lista_sedes = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
 <br/>
 
-   <h4>SEDES</h4>
+   <h4>GRUPO SEDES</h4>
 
    <br/>
 
@@ -44,9 +44,6 @@ $lista_sedes = $sentencia->fetchAll(PDO::FETCH_ASSOC);
                  <tr>
                      <th scope="col">ID</th>
                      <th scope="col">NOMBRE</th>
-                     <th scope="col">DIRECCION</th>
-                     <th scope="col">TELEFONO</th>
-                     <th scope="col">GRUPO SEDE</th>
                      <?php if ($_SESSION['id_cargo'] != 2) {?>
                      <th scope="col">ACCIONES</th> <?php }?>
                  </tr>
@@ -56,15 +53,12 @@ $lista_sedes = $sentencia->fetchAll(PDO::FETCH_ASSOC);
              <?php foreach ($lista_sedes as $registro) {?>
 
                  <tr class="">
-                     <td scope="row"><?php echo $registro['id_sede']; ?></td>
-                     <td><?php echo $registro['nombre_sede']; ?></td>
-                     <td><?php echo $registro['direccion_sede']; ?></td>
-                     <td><?php echo $registro['telefono_sede']; ?></td>
+                     <td scope="row"><?php echo $registro['id_grupo_sede']; ?></td>
                      <td><?php echo $registro['nombre_grupo_sede']; ?></td>
                      <?php if ($_SESSION['id_cargo'] != 2) {?>
                      <td>
-                        <a name="" id="editar_sede" class="btn btn-info" href="editar.php?txtID=<?php echo $registro['id_sede']; ?>" role="button">Editar</a>
-                         <a name="" id="eliminar_sede" class="btn btn-danger" href="javascript:borrar(<?php echo $registro['id_sede']; ?>);" role="button">Borrar</a>
+                        <a name="" id="editar_grupo_sede" class="btn btn-info" href="editar.php?txtID=<?php echo $registro['id_grupo_sede']; ?>" role="button">Editar</a>
+                         <a name="" id="eliminar_grupo_sede" class="btn btn-danger" href="javascript:borrar(<?php echo $registro['id_grupo_sede']; ?>);" role="button">Borrar</a>
                      </td>
                      <?php }?>
                  </tr>

@@ -19,6 +19,10 @@ $sentencia = $conexion->prepare("SELECT * FROM sedes WHERE id_sede=" . $_SESSION
 $sentencia->execute();
 $sede_actual = $sentencia->fetch(PDO::FETCH_LAZY);
 
+$sentencia = $conexion->prepare("SELECT * FROM sedes WHERE id_grupo_sede=" . $sede_actual['id_grupo_sede'] . "");
+$sentencia->execute();
+$lista_grupo_sedes = $sentencia->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
   <br/>
@@ -31,32 +35,53 @@ $sede_actual = $sentencia->fetch(PDO::FETCH_LAZY);
         </div>
       </div>
 
-      <?php if($_SESSION['id_cargo']!=2){ ?>
+      <?php  ?>
 
-      <form action="" method="post" enctype="multipart/form-data">
+        <?php if($_SESSION['id_cargo']==1){ ?>
 
-      <div class="mb-3">
-        <label for="id_sede" class="form-label">Seleccione la Sede:</label>
-        <select class="form-select form-select-sm" name="id_sede" id="id_sede" required>
-          <option value="">Seleccione una opción</option> <!-- Agregar esta opción -->
-          <?php foreach ($lista_sedes as $registro) {?>
-            <option value="<?php echo $registro['id_sede']; ?>">
-              <?php echo $registro['nombre_sede']; ?>
-            </option>
-          <?php }?>
-        </select>
-      </div>
+          <form action="" method="post" enctype="multipart/form-data">
 
-      <button type="submit" class="btn btn-success">Actualizar sede</button>
+          <div class="mb-3">
+            <label for="id_sede" class="form-label">Seleccione la Sede:</label>
+            <select class="form-select form-select-sm" name="id_sede" id="id_sede" required>
+              <option value="">Seleccione una opción</option> <!-- Agregar esta opción -->
+              <?php foreach ($lista_sedes as $registro) {?>
+                <option value="<?php echo $registro['id_sede']; ?>">
+                  <?php echo $registro['nombre_sede']; ?>
+                </option>
+              <?php }?>
+            </select>
+          </div>
 
-      </form>
+          <button type="submit" class="btn btn-success">Actualizar sede</button>
 
-          </br>
-          </br>
-          </br>
+          </form>
+          
+        <?php } else if($_SESSION['id_cargo']==3){ ?>
 
-      <?php } ?>
+          <form action="" method="post" enctype="multipart/form-data">
 
+          <div class="mb-3">
+            <label for="id_sede" class="form-label">Seleccione la Sede:</label>
+            <select class="form-select form-select-sm" name="id_sede" id="id_sede" required>
+              <option value="">Seleccione una opción</option> <!-- Agregar esta opción -->
+              <?php foreach ($lista_grupo_sedes as $registro) {?>
+                <option value="<?php echo $registro['id_sede']; ?>">
+                  <?php echo $registro['nombre_sede']; ?>
+                </option>
+              <?php }?>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-success">Actualizar sede</button>
+
+          </form>
+
+        <?php } ?>
+
+      </br>
+      </br>
+      </br>
 
 
 <?php include "templates/footer.php";?>

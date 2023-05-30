@@ -105,6 +105,9 @@ if ($_SESSION['id_cargo'] == 2 && str_contains($url_actual, $url_crear)) {
     </li>
     <?php if ($_SESSION['id_cargo'] == 1) {?>
       <li class="nav-item">
+        <button class="nav-link" id="nav-grupo-sedes-tab" data-bs-toggle="tab" data-bs-target="#nav-grupo-sedes" type="button" role="tab" aria-controls="nav-grupo-sedes" aria-selected="false">Grupo Sedes</button>
+      </li>
+      <li class="nav-item">
         <button class="nav-link" id="nav-sedes-tab" data-bs-toggle="tab" data-bs-target="#nav-sedes" type="button" role="tab" aria-controls="nav-sedes" aria-selected="false">Sedes</button>
       </li>
       <li class="nav-item">
@@ -146,6 +149,7 @@ if ($_SESSION['id_cargo'] == 2 && str_contains($url_actual, $url_crear)) {
   <div class="tab-pane fade" id="nav-cuentas" role="tabpanel" aria-labelledby="nav-cuentas-tab" tabindex="0"></div>
   <div class="tab-pane fade" id="nav-tiempos" role="tabpanel" aria-labelledby="nav-tiempos-tab" tabindex="0"></div>
   <?php if ($_SESSION['id_cargo'] == 1) {?>
+    <div class="tab-pane fade" id="nav-grupo-sedes" role="tabpanel" aria-labelledby="nav-grupo-sedes-tab" tabindex="0"></div>
     <div class="tab-pane fade" id="nav-sedes" role="tabpanel" aria-labelledby="nav-sedes-tab" tabindex="0"></div>
     <div class="tab-pane fade" id="nav-cargo" role="tabpanel" aria-labelledby="nav-cargo-tab" tabindex="0"></div>
     <div class="tab-pane fade" id="nav-usuarios" role="tabpanel" aria-labelledby="nav-usuarios-tab" tabindex="0"></div>
@@ -204,6 +208,9 @@ var tabId = "";
    changeActiveTab("nav-tiempos-tab",'<?php echo $url_base; ?>secciones/tiempos');});
 
    <?php if ($_SESSION['id_cargo'] == 1) {?>
+    document.getElementById("nav-grupo-sedes-tab").addEventListener("click", function() {
+    changeActiveTab("nav-grupo-sedes-tab",'<?php echo $url_base; ?>secciones/grupo_sedes');});
+
     document.getElementById("nav-sedes-tab").addEventListener("click", function() {
     changeActiveTab("nav-sedes-tab",'<?php echo $url_base; ?>secciones/sedes');});
 

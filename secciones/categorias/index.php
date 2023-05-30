@@ -2,7 +2,7 @@
 
 include("../../bd.php");
 
-<?php include("../../templates/header.php"); ?>
+include("../../templates/header.php");
 
 if(isset($_GET['txtID'])){
 

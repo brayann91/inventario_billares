@@ -4,11 +4,17 @@ include "../../bd.php";
 
 include "../../templates/header.php";
 
-$sentencia = $conexion->prepare("SELECT * FROM cajas 
-WHERE id_sede = " . $_SESSION['id_sede'] . "");
-$sentencia->execute();
-$lista_facturas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
-
+if($_SESSION['id_cargo']!=2){ 
+  $sentencia = $conexion->prepare("SELECT * FROM cajas 
+  WHERE id_sede = " . $_SESSION['id_sede'] . "");
+  $sentencia->execute();
+  $lista_facturas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
+}else{
+  $sentencia = $conexion->prepare("SELECT * FROM cajas 
+  WHERE valor>=0 AND id_sede = " . $_SESSION['id_sede'] . "");
+  $sentencia->execute();
+  $lista_facturas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
 
 <br/>

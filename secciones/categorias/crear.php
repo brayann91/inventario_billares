@@ -2,6 +2,8 @@
 
 include "../../bd.php";
 
+include "../../templates/header.php";
+
 if ($_POST) {
 
     //recolectamos los datos del metodo POST
@@ -18,7 +20,6 @@ if ($_POST) {
 
 ?>
 
-<?php include "../../templates/header.php";?>
 
 <br/>
 

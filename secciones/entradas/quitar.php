@@ -56,7 +56,7 @@ $cantidad = (isset($_POST["cantidad"]) ? $_POST["cantidad"] : "");
             <?php 
             // Formulario
 
-            $sentencia = $conexion->prepare("SELECT id_categoria, nombre_categoria from categorias");
+            $sentencia = $conexion->prepare("SELECT id_categoria, nombre_categoria from categorias WHERE id_sede = " . $_SESSION['id_sede'] . "");
             $sentencia->execute();
             $resultado_categorias = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 

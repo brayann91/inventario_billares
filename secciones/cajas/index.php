@@ -40,8 +40,10 @@ $lista_facturas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
                     <th scope="col">ID</th>
                     <th scope="col">FECHA APERTURA</th>
                     <th scope="col">FECHA CIERRE</th>
-                    <th scope="col">REGISTRO DE VALOR</th>
-                    <th scope="col">CANTIDAD EN CAJA</th>
+                    <?php if($_SESSION['id_cargo']!=2){ ?>
+                      <th scope="col">REGISTRO DE VALOR</th>
+                      <th scope="col">CANTIDAD EN CAJA</th>
+                    <?php } ?>
                     <th scope="col">ESTADO CAJA</th>
                     <th scope="col">FACTURA CAJA</th>
                 </tr>
@@ -53,8 +55,10 @@ $lista_facturas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
                     <td scope="row"><?php echo $registro['id_caja']; ?></td>
                     <td><?php echo $registro['fecha_apertura']; ?></td>
                     <td><?php echo $registro['fecha_cierre']; ?></td>
-                    <td>$ <?php echo number_format($registro['valor'], 1); ?></td>
-                    <td>$ <?php echo number_format($registro['valor_acomulado'], 1); ?></td>
+                    <?php if($_SESSION['id_cargo']!=2){ ?>
+                      <td>$ <?php echo number_format($registro['valor'], 1); ?></td>
+                      <td>$ <?php echo number_format($registro['valor_acomulado'], 1); ?></td>
+                    <?php } ?>
                     <td>
                         <?php 
                           if ($registro['estado'] == 1){

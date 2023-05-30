@@ -79,6 +79,7 @@ $lista_productos=$sentencia->fetchAll(PDO::FETCH_ASSOC);
                     <th scope="col">CATEGORIA</th>
                     <th scope="col">CREACIÓN</th>
                     <th scope="col">ACTUALIZACIÓN</th>
+                    <th scope="col">SEDE</th>
                     <th scope="col">ACCIONES</th>
                 </tr>
             </thead>
@@ -99,6 +100,7 @@ $lista_productos=$sentencia->fetchAll(PDO::FETCH_ASSOC);
                     <td><?php echo $registro['nombre_categoria'];?></td>
                     <td><?php echo date('M-d H:i:s', strtotime($registro['created_at']));?></td>
                     <td><?php echo date('M-d H:i:s', strtotime($registro['updated_at']));?></td>
+                    <td><?php echo $registro['id_sede'];?></td>
                     <td>
                         <a name="" id="editar_producto" class="btn btn-info" href="editar.php?txtID=<?php echo $registro['id_producto']; ?>" role="button">Editar</a>
                         <a name="" id="eliminar_producto" class="btn btn-danger" href="javascript:borrar(<?php echo $registro['id_producto']; ?>);" role="button">Borrar</a>

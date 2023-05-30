@@ -13,7 +13,7 @@ if(isset($_GET['txtID'])){
     header("Location:index.php?mensaje=".$mensaje);
 }
 
-$sentencia=$conexion->prepare("SELECT * FROM categorias");
+$sentencia=$conexion->prepare("SELECT * FROM categorias WHERE id_sede = " . $_SESSION['id_sede']. "");
 $sentencia->execute();
 $lista_categorias=$sentencia->fetchAll(PDO::FETCH_ASSOC);
 
@@ -44,7 +44,6 @@ $lista_categorias=$sentencia->fetchAll(PDO::FETCH_ASSOC);
                  <tr>
                      <th scope="col">ID</th>
                      <th scope="col">NOMBRE</th>
-                     <th scope="col">SEDE</th>
                      <?php if($_SESSION['id_cargo']!=2){ ?> <th scope="col">ACCIONES</th> <?php } ?>
                  </tr>
              </thead>
@@ -54,7 +53,6 @@ $lista_categorias=$sentencia->fetchAll(PDO::FETCH_ASSOC);
 
                  <tr class="">
                      <td scope="row"><?php echo $registro['id_categoria'];?></td>
-                     <td><?php echo $registro['nombre_categoria'];?></td>
                      <td><?php echo $registro['nombre_categoria'];?></td>
                      <?php if($_SESSION['id_cargo']!=2){ ?>
                      <td>

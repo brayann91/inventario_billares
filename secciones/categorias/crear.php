@@ -8,10 +8,9 @@ if ($_POST) {
     $nombre_categoria = (isset($_POST["nombre_categoria"]) ? $_POST["nombre_categoria"] : "");
 
     //Preparar la insersion de los datos
-    $sentencia = $conexion->prepare("INSERT INTO categorias(nombre_categoria) VALUES (:nombre_categoria)");
-
-    //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
+    $sentencia = $conexion->prepare("INSERT INTO categorias(nombre_categoria, id_sede) VALUES (:nombre_categoria, :id_sede)");
     $sentencia->bindParam(":nombre_categoria", $nombre_categoria);
+    $sentencia->bindParam(":id_sede", $_SESSION['id_sede']);
     $sentencia->execute();
     $mensaje = "Registro agregado";
     header("Location:index.php?mensaje=" . $mensaje);

@@ -64,7 +64,7 @@ $lista_productos = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_POST) {
 
-    $sentencia = $conexion->prepare("SELECT * FROM categorias");
+    $sentencia = $conexion->prepare("SELECT * FROM categorias WHERE id_sede = " . $_SESSION['id_sede'] . "");
     $sentencia->execute();
     $lista_categorias = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
@@ -391,7 +391,7 @@ if ($_POST) {
 
 }
 
-$sentencia = $conexion->prepare("SELECT * FROM categorias");
+$sentencia = $conexion->prepare("SELECT * FROM categorias WHERE id_sede = " . $_SESSION['id_sede'] . "");
 $sentencia->execute();
 $lista_categorias = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 

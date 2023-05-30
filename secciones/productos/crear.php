@@ -39,17 +39,15 @@ if ($_POST) {
     header("Location:index.php?mensaje=" . $mensaje);
 }
 
-$sentencia = $conexion->prepare("SELECT * FROM `categorias`");
+include "../../templates/header.php";
+
+$sentencia = $conexion->prepare("SELECT * FROM categorias WHERE id_sede = " . $_SESSION['id_sede'] . "");
 $sentencia->execute();
 $lista_categorias = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
 $sentencia = $conexion->prepare("SELECT * FROM `proveedores`");
 $sentencia->execute();
 $lista_proovedores = $sentencia->fetchAll(PDO::FETCH_ASSOC);
-
-?>
-
-<?php include "../../templates/header.php";
 
 $sentencia = $conexion->prepare("SELECT * FROM sedes s INNER JOIN usuarios u WHERE s.id_sede= " . $_SESSION['id_sede']);
 $sentencia->execute();

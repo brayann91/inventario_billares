@@ -2,8 +2,6 @@
 
 include("../../bd.php");
 
-include("../../templates/header.php");
-
 if(isset($_GET['txtID'])){
 
     $txtID=(isset($_GET['txtID']))?$_GET['txtID']:"";
@@ -14,6 +12,8 @@ if(isset($_GET['txtID'])){
     $mensaje="Registro eliminado";
     header("Location:index.php?mensaje=".$mensaje);
 }
+
+include("../../templates/header.php");
 
 $sentencia=$conexion->prepare("SELECT * FROM categorias WHERE id_sede = " . $_SESSION['id_sede']. "");
 $sentencia->execute();

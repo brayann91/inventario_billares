@@ -2,10 +2,9 @@
 
 include "../../bd.php";
 
-include "../../templates/header.php";
-
 if ($_POST) {
 
+    session_start();
     //recolectamos los datos del metodo POST
     $nombre_categoria = (isset($_POST["nombre_categoria"]) ? $_POST["nombre_categoria"] : "");
 
@@ -17,6 +16,8 @@ if ($_POST) {
     $mensaje = "Registro agregado";
     header("Location:index.php?mensaje=" . $mensaje);
 }
+
+include "../../templates/header.php";
 
 ?>
 

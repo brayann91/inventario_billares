@@ -37,9 +37,6 @@ if(isset($_GET['txtID'])){
         $mensaje="Registro eliminado";
         header("Location:index.php?mensaje=".$mensaje);
     }
-
-    
-    
 }
 
 include("../../templates/header.php");

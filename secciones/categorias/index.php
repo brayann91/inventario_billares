@@ -2,6 +2,8 @@
 
 include("../../bd.php");
 
+<?php include("../../templates/header.php"); ?>
+
 if(isset($_GET['txtID'])){
 
     $txtID=(isset($_GET['txtID']))?$_GET['txtID']:"";
@@ -18,8 +20,6 @@ $sentencia->execute();
 $lista_categorias=$sentencia->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
-
-<?php include("../../templates/header.php"); ?>
 
 <br/>
    

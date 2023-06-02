@@ -14,7 +14,7 @@ $lista_entradas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
   <h4>INVENTARIO:</h4>
 
   <br/>
-
+  <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/jquery.table2excel.min.js"></script>
   <div class="card">
     <div class="card-header">
 
@@ -29,7 +29,7 @@ $lista_entradas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
         role="button">
         Quitar Stock</a>
 
-        <button id="exportButton" class="btn btn-success">Exportar a Excel</button>
+        <button id="exportButton" type="submit" class="btn btn-success">Exportar a Excel</button>
     <?php }?>
 
     </div>
@@ -72,6 +72,32 @@ $lista_entradas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
   </div>
+
+  
+
+
+<!-- Resto del código HTML -->
+
+<script>
+$(function() {
+        $("#exportButton").click(function(e){
+          var table = $("#tabla_id");
+          if(table && table.length){
+            $(table).table2excel({
+              exclude: ".noExl",
+              name: "Excel Document Name",
+              filename: "Inventario" + new Date().toISOString().replace(/[\-\:\.]/g, "") + ".xls",
+              fileext: ".xls",
+              exclude_img: true,
+              exclude_links: true,
+              exclude_inputs: true,
+              preserveColors: false
+            });
+          }
+        });
+        
+      });
+</script>
 
 
 <?php include "../../templates/footer.php";?>

@@ -5,7 +5,7 @@ include "../../bd.php";
 include "../../templates/header.php";
 
 $sentencia = $conexion->prepare("SELECT e.cantidad, e.id_entrada, p.image, p.nombre_producto, p.precio, e.precio_total, e.fecha
-FROM productos p INNER JOIN entradas e Where e.id_producto=p.id_producto AND p.id_sede= " . $_SESSION['id_sede'] . " AND e.cantidad >= 0");
+FROM productos p INNER JOIN entradas e Where e.id_producto=p.id_producto AND p.id_sede= " . $_SESSION['id_sede'] . " AND e.id_cuenta = 0");
 $sentencia->execute();
 $lista_entradas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 

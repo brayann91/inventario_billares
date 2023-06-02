@@ -126,8 +126,8 @@ if ($_POST) {
       $sentencia = $conexion->prepare("SELECT SUM(precio_total) precio_total
       FROM entradas e
       INNER JOIN productos p ON p.id_producto = e.id_producto
-      WHERE p.id_sede=" . $_SESSION['id_sede'] . 
-      " AND e.fecha>=(SELECT fecha_apertura FROM cajas WHERE id_caja=:id_caja)
+      WHERE p.id_sede=" . $_SESSION['id_sede'] . " AND e.id_cuenta<>0
+      AND e.fecha>=(SELECT fecha_apertura FROM cajas WHERE id_caja=:id_caja)
       GROUP BY e.fecha>=(SELECT fecha_apertura FROM cajas WHERE id_caja=:id_caja)");
       $sentencia->bindParam(":id_caja", $id_caja);
       $sentencia->execute();

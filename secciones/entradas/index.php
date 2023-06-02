@@ -29,8 +29,9 @@ $lista_entradas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
         role="button">
         Quitar Stock</a>
 
-        <button id="exportButton" type="submit" class="btn btn-success">Exportar a Excel</button>
     <?php }?>
+
+        <button id="exportButton" type="submit" class="btn btn-success">Exportar a Excel</button>
 
     </div>
     <div class="card-body">

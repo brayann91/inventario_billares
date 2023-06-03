@@ -357,7 +357,7 @@ if ($_POST) {
         $sentencia->execute();
       }
 
-      if($lista_tiempos_liquidados['estado_liquidado']==1){
+      if(isset($lista_tiempos_liquidados['estado_liquidado'])){
         $sentencia = $conexion->prepare("INSERT INTO facturas (fecha, nombre_cuenta, precio_tiempo, precio_total_tiempo, tiempo_invertido, id_cuenta, id_facturas)
           VALUES (CURRENT_TIMESTAMP(),
           (SELECT nombre_cuenta FROM cuentas WHERE id_cuenta = :id_cuenta_liquidar),
@@ -852,7 +852,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                                   var urlindex = 'index.php';
                                   setTimeout(function() {
                                     window.open(urlpdf, "_blank");
-                                  }, 1000);    
+                                  }, 2000);    
                                   setTimeout(function() {
                                     window.location.href = urlindex;
                                   }, 3000);

@@ -98,7 +98,8 @@
         $ultimo_registro = end($lista_facturas);
         echo $ultimo_registro["fecha"];
         ?></p>
-        <p>Persona Natural</p>        
+        <p>Persona Natural</p>
+        <p>Registro de caja #: <?php echo $ID; ?></p>
     </div>
         <table>
             <thead>
@@ -133,7 +134,7 @@
             <tfoot>
                 <tr>
                     <td colspan="2">Total:</td>
-                    <td class="text-right">$ <?php echo number_format($registro_caja['valor'], 2); ?></td>
+                    <td class="text-right">$ <?php echo number_format($registro_caja['valor'], 0); ?></td>
                 </tr>
             </tfoot>
         </table>

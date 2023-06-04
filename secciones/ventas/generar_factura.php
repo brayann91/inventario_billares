@@ -105,7 +105,8 @@
         $ultimo_registro = end($lista_facturas);
         echo $ultimo_registro["fecha"];
         ?></p>
-        <p>Persona Natural</p>        
+        <p>Persona Natural</p>
+        <p>Factura #: <?php echo $id_factura; ?> </p>
     </div>
         <table>
             <thead>

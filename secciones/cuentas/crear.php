@@ -53,7 +53,7 @@ $id_sede = $registro["id_sede"];
      </div>
      <div class="card-body">
          
-         <form action="" method="post" enctype="multipart/form-data">
+         <form action="" method="post" enctype="multipart/form-data" onsubmit="return validarNombreCuenta()">
 
              <div class="mb-3">
                <label for="nombre_cuenta" class="form-label">Nombre cuenta:</label>
@@ -88,6 +88,20 @@ $id_sede = $registro["id_sede"];
  
      </div>
    </div>
+
+   <script>
+      function validarNombreCuenta() {
+          var nombreCuenta = document.getElementById("nombre_cuenta").value;
+          var regex = /^[a-zA-Z0-9\s]*$/; // Expresión regular para permitir solo letras, números y espacios
+
+          if (nombreCuenta.includes("ñ") || !regex.test(nombreCuenta)) {
+              alert("El nombre de la cuenta no puede contener una 'ñ' o caracteres especiales.");
+              return false; // Evita que el formulario se envíe
+          }
+
+          return true; // Permite enviar el formulario si cumple con la validación
+      }
+  </script>
 
 
 <?php include("../../templates/footer.php"); ?>

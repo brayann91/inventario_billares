@@ -47,47 +47,58 @@ $id_sede = $registro["id_sede"];
 
 <br/>
 
-   <div class="card">
-     <div class="card-header">
-         Agregar cuenta
-     </div>
-     <div class="card-body">
+<div class="card">
+    <div class="card-header">
+        Agregar cuenta
+    </div>
+    <div class="card-body">
 
-         <form action="" method="post" enctype="multipart/form-data">
+        <form action="" method="post" enctype="multipart/form-data" onsubmit="return validarNombreCuenta()">
 
-             <div class="mb-3">
-               <label for="nombre_cuenta" class="form-label">Nombre cuenta:</label>
-               <input type="text" required
-                 class="form-control" name="nombre_cuenta" id="nombre_cuenta" aria-describedby="helpId" placeholder="Nombre cuenta">
-             </div>
-
-             <div class="mb-3">
-               <label for="precio_cuenta" class="form-label">Precio por hora:</label>
-               <input type="text" required
-                 class="form-control" name="precio_cuenta" id="precio_cuenta" aria-describedby="helpId" placeholder="$10.000">
-             </div>
-
-             <div class="mb-3" style="display:none;">
-              <label for="id_sede" class="form-label">Id Sede:</label>
-              <input type="text"
-              value="<?php echo $id_sede; ?>"
-                class="form-control" readonly required name="id_sede" id="id_sede" aria-describedby="helpId" placeholder="$ 10.000">
+            <div class="mb-3">
+                <label for="nombre_cuenta" class="form-label">Nombre cuenta:</label>
+                <input type="text" required class="form-control" name="nombre_cuenta" id="nombre_cuenta" aria-describedby="helpId" placeholder="Nombre cuenta">
             </div>
 
-         <div class="mb-3">
-           <label for="nombre_sede" class="form-label">Sede:</label>
-           <h5 name="nombre_sede" id="nombre_sede"> <?php echo $nombre_sede; ?></h5>
-         </div>
+            <div class="mb-3">
+                <label for="precio_cuenta" class="form-label">Precio por hora:</label>
+                <input type="text" required class="form-control" name="precio_cuenta" id="precio_cuenta" aria-describedby="helpId" placeholder="$10.000">
+            </div>
 
-             <br/>
+            <div class="mb-3" style="display:none;">
+                <label for="id_sede" class="form-label">Id Sede:</label>
+                <input type="text" value="<?php echo $id_sede; ?>" class="form-control" readonly required name="id_sede" id="id_sede" aria-describedby="helpId" placeholder="$ 10.000">
+            </div>
 
-             <button type="submit" class="btn btn-success">Agregar registro</button>
-             <a name="" id="" class="btn btn-secondary" href="index.php" role="button">Cancelar</a>
+            <div class="mb-3">
+                <label for="nombre_sede" class="form-label">Sede:</label>
+                <h5 name="nombre_sede" id="nombre_sede"><?php echo $nombre_sede; ?></h5>
+            </div>
 
-         </form>
+            <br/>
 
-     </div>
-   </div>
+            <button type="submit" class="btn btn-success">Agregar registro</button>
+            <a name="" id="" class="btn btn-secondary" href="index.php" role="button">Cancelar</a>
+
+        </form>
+
+    </div>
+</div>
+
+<script>
+    function validarNombreCuenta() {
+        var nombreCuenta = document.getElementById("nombre_cuenta").value;
+        var regex = /^[a-zA-Z0-9\s]*$/; // Expresión regular para permitir solo letras, números y espacios
+
+        if (nombreCuenta.includes("ñ") || !regex.test(nombreCuenta)) {
+            alert("El nombre de la cuenta no puede contener una 'ñ' o caracteres especiales.");
+            return false; // Evita que el formulario se envíe
+        }
+
+        return true; // Permite enviar el formulario si cumple con la validación
+    }
+</script>
+
 
 
 <?php include("../../templates/footer.php"); ?>

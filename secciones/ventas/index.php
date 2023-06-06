@@ -169,6 +169,22 @@ if ($_POST) {
         $sentencia->execute();
     }
 
+    if (isset($_POST["actualizar_id_tiempo"])) {
+      //recolectamos los datos del metodo POST
+      $actualizar_id_tiempo = (isset($_POST["actualizar_id_tiempo"]) ? $_POST["actualizar_id_tiempo"] : "");
+
+      $sentencia = $conexion->prepare("UPDATE tiempos t
+    INNER JOIN cuentas c ON t.id_cuenta=c.id_cuenta
+    SET t.fecha_fin=CURRENT_TIMESTAMP(),
+        t.tiempo_invertido=SEC_TO_TIME(TIMESTAMPDIFF(SECOND, t.fecha_inicio, CURRENT_TIMESTAMP())),
+        t.precio_final=(TIME_TO_SEC(SEC_TO_TIME(TIMESTAMPDIFF(SECOND, t.fecha_inicio, CURRENT_TIMESTAMP()))) / 3600) * c.precio_cuenta
+    WHERE id_tiempo=:actualizar_id_tiempo;");
+
+      //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
+      $sentencia->bindParam(":actualizar_id_tiempo", $actualizar_id_tiempo);
+      $sentencia->execute();
+  }
+
     if (isset($_POST["id_cuenta_end"])) {
         //recolectamos los datos del metodo POST
         $id_cuenta_end = (isset($_POST["id_cuenta_end"]) ? $_POST["id_cuenta_end"] : "");
@@ -570,6 +586,12 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                         $sentencia->execute();
                         $registro_tiempo = $sentencia->fetch(PDO::FETCH_LAZY);
 
+                        $sentencia = $conexion->prepare("SELECT * FROM tiempos t
+                                              INNER JOIN cuentas c ON t.id_cuenta=c.id_cuenta WHERE c.nombre_cuenta='" . str_replace('_', ' ', $array_name_cuenta[$x]) . "'" .
+                                              " AND c.id_sede=" . $_SESSION['id_sede'] . " AND estado_liquidado = 1");
+                        $sentencia->execute();
+                        $registro_tiempo_sin_liquidar = $sentencia->fetch(PDO::FETCH_LAZY);
+
                         $sentencia = $conexion->prepare("SELECT SUM(e.precio_total) precio_total
                           FROM productos p
                           INNER JOIN entradas e ON p.id_producto = e.id_producto
@@ -589,7 +611,16 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
 
                     <tr valign="middle" align="center">
                         <th colspan="1"><?php echo $array_name_cuenta[$x]; ?></th>
-                        <th colspan="4"><label style="font-size: 2em; color: green;" id="precio_<?php echo $array_name_cuenta[$x] ?>" >$ 0
+                        <th colspan="4"><label style="font-size: 2em; color: green;" id="precio_<?php echo $array_name_cuenta[$x] ?>" >$ 
+                        <?php if(isset($lista_precio_productos_agregados['precio_total']) && isset($registro_tiempo_sin_liquidar['precio_final'])){
+                          echo number_format((abs($lista_precio_productos_agregados['precio_total']) + $registro_tiempo_sin_liquidar['precio_final']), 1);
+                        } else if(!isset($lista_precio_productos_agregados['precio_total']) && isset($registro_tiempo_sin_liquidar['precio_final'])){
+                          echo number_format(($registro_tiempo_sin_liquidar['precio_final']), 1);
+                        } else if(isset($lista_precio_productos_agregados['precio_total']) && !isset($registro_tiempo_sin_liquidar['precio_final'])){
+                          echo number_format((abs($lista_precio_productos_agregados['precio_total'])), 1);
+                        } else{
+                          echo 0;
+                        }?>
                         </label></th>
                         <th>
                         
@@ -599,10 +630,10 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                                 background-repeat: no-repeat;
                                 background-position: center center;
                                 background-size: cover;
-                                width: 40px;
+                                border: none;
+                                width: 35px;
                                 height: 40px;"
-                            onclick="actualizarTiempo('<?php echo $array_name_cuenta[$x] ?>', '<?php echo $registro_tiempo['fecha_inicio'] ?>', 
-                            '0', '<?php echo $registro_tiempo['precio_cuenta'] ?>', '<?php echo $lista_precio_productos_agregados['precio_total'] ?>')">
+                            onclick="actualizarTotal('<?php echo $registro_tiempo_sin_liquidar['id_tiempo']; ?>')">
                           </input>
                         <?php }else if(isset($registro_tiempo['estado_tiempo']) && $registro_tiempo['estado_tiempo'] == 1){?>
                           <input type="button"
@@ -610,10 +641,10 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                                 background-repeat: no-repeat;
                                 background-position: center center;
                                 background-size: cover;
-                                width: 40px;
+                                border: none;
+                                width: 35px;
                                 height: 40px;"
-                            onclick="actualizarTiempo('<?php echo $array_name_cuenta[$x] ?>', '<?php echo $registro_tiempo['fecha_inicio'] ?>', 
-                            '0', '<?php echo $registro_tiempo['precio_cuenta'] ?>', '0')">
+                            onclick="actualizarTotal('<?php echo $registro_tiempo_sin_liquidar['id_tiempo']; ?>')">
                           </input>
                         <?php }else if(isset($registro_tiempo['estado_liquidado']) && $registro_tiempo['estado_liquidado'] == 1 && isset($lista_precio_productos_agregados['precio_total'])){?>
                           <input type="button"
@@ -621,10 +652,10 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                                 background-repeat: no-repeat;
                                 background-position: center center;
                                 background-size: cover;
-                                width: 40px;
+                                border: none;
+                                width: 35px;
                                 height: 40px;"
-                            onclick="actualizarTiempo('<?php echo $array_name_cuenta[$x] ?>', '<?php echo $registro_tiempo['fecha_inicio'] ?>', 
-                            '<?php echo $registro_tiempo['precio_final'] ?>', '<?php echo $registro_tiempo['precio_cuenta'] ?>', '<?php echo $lista_precio_productos_agregados['precio_total'] ?>')">
+                            onclick="actualizarTotal('<?php echo $registro_tiempo_sin_liquidar['id_tiempo']; ?>')">
                           </input>
                         <?php }else if(isset($registro_tiempo['estado_liquidado']) && $registro_tiempo['estado_liquidado'] == 1 && !isset($lista_precio_productos_agregados['precio_total'])){?>
                           <input type="button"
@@ -632,10 +663,10 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                                 background-repeat: no-repeat;
                                 background-position: center center;
                                 background-size: cover;
-                                width: 40px;
+                                border: none;
+                                width: 35px;
                                 height: 40px;"
-                            onclick="actualizarTiempo('<?php echo $array_name_cuenta[$x] ?>', '<?php echo $registro_tiempo['fecha_inicio'] ?>', 
-                            '<?php echo $registro_tiempo['precio_final'] ?>', '<?php echo $registro_tiempo['precio_cuenta'] ?>', '0')">
+                            onclick="actualizarTotal('<?php echo $registro_tiempo_sin_liquidar['id_tiempo']; ?>')">
                           </input>
                         <?php }else if (isset($lista_precio_productos_agregados['precio_total'])){?>
                           <input type="button"
@@ -643,10 +674,10 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                                 background-repeat: no-repeat;
                                 background-position: center center;
                                 background-size: cover;
-                                width: 40px;
+                                border: none;
+                                width: 35px;
                                 height: 40px;"
-                            onclick="actualizarTiempo('<?php echo $array_name_cuenta[$x] ?>', '0', 
-                            '0', '0', '<?php echo $lista_precio_productos_agregados['precio_total'] ?>')">
+                            onclick="actualizarTotal('<?php echo $registro_tiempo_sin_liquidar['id_tiempo']; ?>')">
                           </input>
                         <?php }?>
                       </th>
@@ -654,6 +685,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                 </thead>
                 <tbody>
 
+                <?php if($registro_cuenta['precio_cuenta']!=0){?>
                     <tr class="" valign="middle" align="center">
 
                         <td rowspan="2">
@@ -697,7 +729,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                         <?php }?>
                         </td>
                     </tr>
-
+                
                     <tr class="" valign="middle" align="center">
 
                         <td id="tiempo_inicio_<?php echo $array_name_cuenta[$x] ?>">
@@ -745,6 +777,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                         ?>
                         </td>
                     </tr>
+                  <?php }?>
                 </tbody>
             </table>
 
@@ -1101,6 +1134,7 @@ window.onhashchange();
     var nombreProducto = document.getElementById("nombre_p_" + nombre_cuenta_temporal + "_" + id_producto_temporal); 
     var precioProducto = document.getElementById("precio_p_" + nombre_cuenta_temporal + "_" + id_producto_temporal); 
     var cantidadProducto = document.getElementById("cantidad_p_" + nombre_cuenta_temporal + "_" + id_producto_temporal);
+    var precioTotal = document.getElementById("precio_" + nombre_cuenta_temporal); 
     
     if (nombreProducto) {
       $.ajax({
@@ -1109,9 +1143,12 @@ window.onhashchange();
         data: { id_cuenta_temporal: id_cuenta_temporal, id_producto_temporal: id_producto_temporal },
         success: function(response) {
           var precioActual = parseFloat(precioProducto.innerHTML.replace(/[^0-9.]/g, ''));
+          var precioActualTotal = parseFloat(precioTotal.innerHTML.replace(/[^0-9.]/g, ''));
           if (!isNaN(precioActual)) {
           var nuevoPrecio = precioActual + parseInt(precio);
+          var nuevoPrecioTotal = precioActualTotal + parseInt(precio);
           precioProducto.innerHTML = "$ " + nuevoPrecio.toLocaleString(undefined, { minimumFractionDigits: 1 }).replace(/\./g, "@").replace(/,/g, ".").replace(/@/g, ",");
+          precioTotal.innerHTML = "$ " + nuevoPrecioTotal.toLocaleString(undefined, { minimumFractionDigits: 1 }).replace(/\./g, "@").replace(/,/g, ".").replace(/@/g, ",");
           } else {
             console.log("El contenido de precioProducto no es un número válido.");
           }
@@ -1216,6 +1253,24 @@ window.onhashchange();
       url: 'index.php',
       method: 'POST',
       data: { id_cuenta_end: id_cuenta_end, id_tiempo: id_tiempo },
+      success: function(response) {
+        setTimeout(function(){
+          location.reload();
+        }, 500);
+      },
+      error: function(xhr, textStatus, errorThrown) {
+        console.log(xhr.responseText);
+      }
+    });
+
+  }
+
+  
+  function actualizarTotal(actualizar_id_tiempo) {
+    $.ajax({
+      url: 'index.php',
+      method: 'POST',
+      data: { actualizar_id_tiempo: actualizar_id_tiempo },
       success: function(response) {
         setTimeout(function(){
           location.reload();

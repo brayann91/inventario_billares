@@ -77,6 +77,9 @@ if($_SESSION['id_cargo']!=2){
                     <td>
                       <?php if($registro['pdf_caja']<>""){ ?>
                         <a class="btn btn-info" href="../../pdf/factura_caja_<?php echo $registro['id_caja']; ?>.pdf" target="_blank">Factura</a>
+                      <?php }else if($registro['fecha_apertura'] != $registro['fecha_cierre'] && $registro['valor'] != 0){?>
+                        <a class="btn btn-light" href="factura_del_dia.php?txtID=<?php echo $registro['id_caja']; ?>" 
+                        target="_blank" onclick="setTimeout(function(){location.reload()}, 1000)">Generar pdf</a>
                       <?php }?>
                     </td>
                 </tr>

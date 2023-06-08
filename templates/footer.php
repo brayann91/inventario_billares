@@ -16,10 +16,10 @@
 $(document).ready( function(){
 $("#tabla_id").DataTable({
     "order": [[ 0, "desc" ]],
-    "pagesLength":50,
+    "pagesLength":30,
     lengthMenu:[
-      [20,30,50],
-      [20,30,50]
+      [50,80,100],
+      [50,80,100]
     ],
     "language":{
       "url":"https://cdn.datatables.net/plug-ins/1.13.1/i18n/es-ES.json"

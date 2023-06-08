@@ -45,7 +45,10 @@ $lista_facturas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
                     <td>
                         <?php if($registro['pdf']<>""){ ?>
                             <a class="btn btn-info" href="../../pdf/factura_<?php echo $registro['id_factura']; ?>.pdf" target="_blank">Factura</a>
-                        <?php }?>
+                        <?php } else{?>
+                            <a class="btn btn-light" href="generar_factura.php?txtID=<?php echo $registro['id_factura']; ?>" 
+                            target="_blank" onclick="setTimeout(function(){location.reload()}, 1000)">Generar pdf</a>
+                        <?php } ?>
                     </td>
                 </tr>
             <?php }?>

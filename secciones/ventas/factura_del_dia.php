@@ -64,7 +64,7 @@
     session_start();
 
     $sentencia = $conexion->prepare("SELECT * FROM cajas WHERE id_sede=" . $_SESSION['id_sede'] . " 
-    AND id_caja=143");
+    ORDER BY id_caja DESC LIMIT 1");
     $sentencia->execute();
     $registro_caja = $sentencia->fetch(PDO::FETCH_LAZY);
 

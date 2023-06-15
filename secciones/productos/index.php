@@ -31,6 +31,10 @@ if(isset($_GET['txtID'])){
         $mensaje="No se puede eliminar el producto cuando existe inventario activo";
         header("Location:index.php?mensaje=".$mensaje);
     }else{
+        $sentencia=$conexion->prepare("DELETE FROM entradas WHERE id_producto=:id_producto");
+        $sentencia->bindParam(":id_producto", $txtID);
+        $sentencia->execute();
+
         $sentencia=$conexion->prepare("DELETE FROM productos WHERE id_producto=:id_producto");
         $sentencia->bindParam(":id_producto", $txtID);
         $sentencia->execute();

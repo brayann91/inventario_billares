@@ -127,12 +127,14 @@
                         <td class="text-center align-middle cantidad"><?php if($registro['nombre_producto'] != ""){
                                 echo $registro['cantidad'];
                             } else{
-                                echo $registro['tiempo_invertido'];
+                                echo $registro['tiempo_invertido'] . "\n";
+                                echo $registro['inicio_tiempo'];
                             }?></td>
                         <td class="text-right">$<?php if($registro['nombre_producto'] != ""){ 
                                 echo number_format($registro['precio_total_producto'], 0);
                             }else{
-                                echo number_format($registro['precio_total_tiempo'], 0);
+                                echo number_format($registro['precio_total_tiempo'], 0) . "\n";
+                                echo $registro['fin_tiempo'];
                             }?></td>
                     </tr>
                 <?php }?>

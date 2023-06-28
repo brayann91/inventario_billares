@@ -94,10 +94,8 @@
         <h3>Billar <?php echo $registro_sedes["nombre_sede"]; ?></h3>
         <p>Direccion <?php echo $registro_sedes["direccion_sede"]; ?></p>
         <p>Teléfono: <?php echo $registro_sedes["telefono_sede"]; ?></p>
-        <p><?php 
-        $ultimo_registro = end($lista_facturas);
-        echo $ultimo_registro["fecha"];
-        ?></p>
+        <p>Apertura: <?php echo $fecha_apertura_caja; ?></p>
+        <p>Cierre: <?php echo $fecha_cierre_caja; ?></p>
         <p>Persona Natural</p>
         <p>Registro de caja #: <?php echo $ID; ?></p>
     </div>

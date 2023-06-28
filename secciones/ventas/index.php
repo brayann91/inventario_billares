@@ -318,7 +318,7 @@ if ($_POST) {
 
       $id_cuenta_liquidar = (isset($_POST["id_cuenta_liquidar"]) ? $_POST["id_cuenta_liquidar"] : "");
 
-      $sentencia = $conexion->prepare("SELECT tiempo_invertido, c.precio_cuenta, precio_final, estado_liquidado
+      $sentencia = $conexion->prepare("SELECT tiempo_invertido, c.precio_cuenta, precio_final, estado_liquidado, t.fecha_inicio, t.fecha_fin
       FROM tiempos t
       INNER JOIN cuentas c ON c.id_cuenta = t.id_cuenta
       WHERE t.id_cuenta=:id_cuenta_liquidar AND t.estado_liquidado=1 AND c.id_sede= '" . $_SESSION['id_sede'] . "'");
@@ -374,9 +374,15 @@ if ($_POST) {
       }
 
       if(isset($lista_tiempos_liquidados['estado_liquidado'])){
-        $sentencia = $conexion->prepare("INSERT INTO facturas (fecha, nombre_cuenta, precio_tiempo, precio_total_tiempo, tiempo_invertido, id_cuenta, id_facturas)
+
+        $inicio = date("H:i:s", strtotime($lista_tiempos_liquidados['fecha_inicio']));
+        $fin = date("H:i:s", strtotime($lista_tiempos_liquidados['fecha_fin']));
+
+        $sentencia = $conexion->prepare("INSERT INTO facturas (fecha, nombre_cuenta, inicio_tiempo, fin_tiempo, precio_tiempo, precio_total_tiempo, tiempo_invertido, id_cuenta, id_facturas)
           VALUES (CURRENT_TIMESTAMP(),
           (SELECT nombre_cuenta FROM cuentas WHERE id_cuenta = :id_cuenta_liquidar),
+          '{$inicio}',
+          '{$fin}',
           '{$lista_tiempos_liquidados['precio_cuenta']}',
           '{$lista_tiempos_liquidados['precio_final']}',
           '{$lista_tiempos_liquidados['tiempo_invertido']}',        

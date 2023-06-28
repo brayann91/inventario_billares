@@ -375,8 +375,8 @@ if ($_POST) {
 
       if(isset($lista_tiempos_liquidados['estado_liquidado'])){
 
-        $inicio = date("H:i:s", strtotime($lista_tiempos_liquidados['fecha_inicio']));
-        $fin = date("H:i:s", strtotime($lista_tiempos_liquidados['fecha_fin']));
+        $inicio = date("H:i", strtotime($lista_tiempos_liquidados['fecha_inicio']));
+        $fin = date("H:i", strtotime($lista_tiempos_liquidados['fecha_fin']));
 
         $sentencia = $conexion->prepare("INSERT INTO facturas (fecha, nombre_cuenta, inicio_tiempo, fin_tiempo, precio_tiempo, precio_total_tiempo, tiempo_invertido, id_cuenta, id_facturas)
           VALUES (CURRENT_TIMESTAMP(),

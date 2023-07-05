@@ -133,12 +133,12 @@ if ($_POST) {
       $sentencia->execute();
       $lista_productos_vendidos = $sentencia->fetch(PDO::FETCH_LAZY);
 
-      $sentencia = $conexion->prepare("SELECT SUM(precio_final) precio_final
-      FROM tiempos t
+      $sentencia = $conexion->prepare("SELECT SUM(precio_total_tiempo) precio_final
+      FROM facturas t
       INNER JOIN cuentas c ON c.id_cuenta = t.id_cuenta
       WHERE c.id_sede=" . $_SESSION['id_sede'] . 
-      " AND t.fecha_inicio>=(SELECT fecha_apertura FROM cajas WHERE id_caja=:id_caja)
-      GROUP BY t.fecha_inicio>=(SELECT fecha_apertura FROM cajas WHERE id_caja=:id_caja)");
+      " AND t.fecha>=(SELECT fecha_apertura FROM cajas WHERE id_caja=:id_caja)
+      GROUP BY t.fecha>=(SELECT fecha_apertura FROM cajas WHERE id_caja=:id_caja)");
       $sentencia->bindParam(":id_caja", $id_caja);
       $sentencia->execute();
       $lista_tiempos_vendidos = $sentencia->fetch(PDO::FETCH_LAZY);

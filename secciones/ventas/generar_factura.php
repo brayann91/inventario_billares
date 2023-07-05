@@ -73,6 +73,11 @@
 
     $ID = $registro_factura_agrupada['id_factura'];
 
+    $sentencia = $conexion->prepare("SELECT * FROM cuentas WHERE id_cuenta=:id_cuenta");
+    $sentencia->bindParam(":id_cuenta", $txtID);
+    $sentencia->execute();
+    $registro_cuenta = $sentencia->fetch(PDO::FETCH_LAZY);
+
     $sentencia = $conexion->prepare("SELECT * FROM facturas WHERE id_facturas=:id_facturas");
     $sentencia->bindParam(":id_facturas", $ID);
     $sentencia->execute();
@@ -105,6 +110,7 @@
         $ultimo_registro = end($lista_facturas);
         echo $ultimo_registro["fecha"];
         ?></p>
+        <p><?php echo $registro_cuenta['nombre_cuenta']; ?></p>
         <p>Persona Natural</p>
         <p>Factura #: <?php echo $id_factura; ?> </p>
     </div>
@@ -122,13 +128,14 @@
                         <td><?php if($registro['nombre_producto'] != ""){ 
                                 echo $registro['nombre_producto'];
                             }else {
-                                echo "Tiempo";
+                                echo "Tiempo<br>";
+                                echo $registro['inicio_tiempo'] . "-" . $registro['fin_tiempo'];
                             }?></td>
                         <td class="text-center align-middle cantidad"><?php if($registro['nombre_producto'] != ""){
                                 echo $registro['cantidad'];
                             } else{
-                                echo $registro['tiempo_invertido'] . "\n";
-                                echo $registro['inicio_tiempo'] . "-" . $registro['fin_tiempo'];
+                                echo $registro['tiempo_invertido'];
+                                
                             }?></td>
                         <td class="text-right">$<?php if($registro['nombre_producto'] != ""){ 
                                 echo number_format($registro['precio_total_producto'], 0);

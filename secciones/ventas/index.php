@@ -162,9 +162,7 @@ if ($_POST) {
         $id_cuenta = (isset($_POST["id_cuenta"]) ? $_POST["id_cuenta"] : "");
 
         $sentencia = $conexion->prepare("INSERT INTO tiempos(fecha_inicio, fecha_fin, tiempo_invertido, precio_final, estado_tiempo, estado_liquidado, id_cuenta)
-      VALUES (CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), SEC_TO_TIME(TIMESTAMPDIFF(SECOND, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())), null, 1, 1, :id_cuenta)");
-
-        //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
+        VALUES (CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), SEC_TO_TIME(TIMESTAMPDIFF(SECOND, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())), null, 1, 1, :id_cuenta)");
         $sentencia->bindParam(":id_cuenta", $id_cuenta);
         $sentencia->execute();
     }
@@ -173,16 +171,23 @@ if ($_POST) {
       //recolectamos los datos del metodo POST
       $actualizar_id_tiempo = (isset($_POST["actualizar_id_tiempo"]) ? $_POST["actualizar_id_tiempo"] : "");
 
-      $sentencia = $conexion->prepare("UPDATE tiempos t
-    INNER JOIN cuentas c ON t.id_cuenta=c.id_cuenta
-    SET t.fecha_fin=CURRENT_TIMESTAMP(),
-        t.tiempo_invertido=SEC_TO_TIME(TIMESTAMPDIFF(SECOND, t.fecha_inicio, CURRENT_TIMESTAMP())),
-        t.precio_final=(TIME_TO_SEC(SEC_TO_TIME(TIMESTAMPDIFF(SECOND, t.fecha_inicio, CURRENT_TIMESTAMP()))) / 3600) * c.precio_cuenta
-    WHERE id_tiempo=:actualizar_id_tiempo;");
-
-      //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
-      $sentencia->bindParam(":actualizar_id_tiempo", $actualizar_id_tiempo);
+      $sentencia = $conexion->prepare("SELECT * FROM tiempos WHERE id_tiempo=:id_tiempo");
+      $sentencia->bindParam(":id_tiempo", $actualizar_id_tiempo);
       $sentencia->execute();
+      $lista_tiempos = $sentencia->fetch(PDO::FETCH_LAZY);
+
+      if($lista_tiempos['estado_tiempo'] == 1){
+        $sentencia = $conexion->prepare("UPDATE tiempos t
+        INNER JOIN cuentas c ON t.id_cuenta=c.id_cuenta
+        SET t.fecha_fin=CURRENT_TIMESTAMP(),
+          t.tiempo_invertido=SEC_TO_TIME(TIMESTAMPDIFF(SECOND, t.fecha_inicio, CURRENT_TIMESTAMP())),
+          t.precio_final=(TIME_TO_SEC(SEC_TO_TIME(TIMESTAMPDIFF(SECOND, t.fecha_inicio, CURRENT_TIMESTAMP()))) / 3600) * c.precio_cuenta
+        WHERE id_tiempo=:actualizar_id_tiempo;");
+        $sentencia->bindParam(":actualizar_id_tiempo", $actualizar_id_tiempo);
+        $sentencia->execute();
+      }
+
+      
   }
 
     if (isset($_POST["id_cuenta_end"])) {
@@ -209,7 +214,7 @@ if ($_POST) {
         $id_cuenta_continuar = (isset($_POST["id_cuenta_continuar"]) ? $_POST["id_cuenta_continuar"] : "");
         $id_tiempo = (isset($_POST["id_tiempo"]) ? $_POST["id_tiempo"] : "");
 
-        $sentencia = $conexion->prepare("UPDATE tiempos t
+        /*$sentencia = $conexion->prepare("UPDATE tiempos t
       INNER JOIN cuentas c ON t.id_cuenta=c.id_cuenta
       SET t.fecha_fin=CURRENT_TIMESTAMP(),
           t.tiempo_invertido=SEC_TO_TIME(TIMESTAMPDIFF(SECOND, t.fecha_inicio, CURRENT_TIMESTAMP())),
@@ -220,6 +225,11 @@ if ($_POST) {
         //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
         $sentencia->bindParam(":id_cuenta_continuar", $id_cuenta_continuar);
         $sentencia->bindParam(":id_tiempo", $id_tiempo);
+        $sentencia->execute();*/
+
+        $sentencia = $conexion->prepare("INSERT INTO tiempos(fecha_inicio, fecha_fin, tiempo_invertido, precio_final, estado_tiempo, estado_liquidado, id_cuenta)
+        VALUES (CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), SEC_TO_TIME(TIMESTAMPDIFF(SECOND, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())), null, 1, 1, :id_cuenta)");
+        $sentencia->bindParam(":id_cuenta", $id_cuenta_continuar);
         $sentencia->execute();
     }
 
@@ -324,7 +334,15 @@ if ($_POST) {
       WHERE t.id_cuenta=:id_cuenta_liquidar AND t.estado_liquidado=1 AND c.id_sede= '" . $_SESSION['id_sede'] . "'");
       $sentencia->bindParam(":id_cuenta_liquidar", $id_cuenta_liquidar);
       $sentencia->execute();
-      $lista_tiempos_liquidados = $sentencia->fetch(PDO::FETCH_LAZY);
+      $lista_tiempos_liquidados = $sentencia->fetchAll(PDO::FETCH_ASSOC);
+
+      $sentencia = $conexion->prepare("SELECT SUM(precio_final) precio_final
+      FROM tiempos t
+      INNER JOIN cuentas c ON c.id_cuenta = t.id_cuenta
+      WHERE t.id_cuenta=:id_cuenta_liquidar AND t.estado_liquidado=1 AND c.id_sede= '" . $_SESSION['id_sede'] . "'");
+      $sentencia->bindParam(":id_cuenta_liquidar", $id_cuenta_liquidar);
+      $sentencia->execute();
+      $suma_tiempos_liquidados = $sentencia->fetch(PDO::FETCH_LAZY);
 
       $sentencia = $conexion->prepare("SELECT nombre_producto, cantidad, precio, precio_total
         FROM entradas e
@@ -343,7 +361,7 @@ if ($_POST) {
       $sentencia->execute();
       $lista_productos_liquidados_agrupados = $sentencia->fetch(PDO::FETCH_LAZY);
 
-      $total = abs($lista_productos_liquidados_agrupados['precio_total']) + $lista_tiempos_liquidados['precio_final'];
+      $total = abs($lista_productos_liquidados_agrupados['precio_total']) + $suma_tiempos_liquidados['precio_final'];
 
       $sentencia = $conexion->prepare("INSERT INTO factura_agrupada (fecha, precio_total, id_cuenta, id_sede)
         VALUES (CURRENT_TIMESTAMP(),
@@ -353,7 +371,6 @@ if ($_POST) {
         $sentencia->bindParam(":id_cuenta_liquidar", $id_cuenta_liquidar);
         $sentencia->execute();
 
-        
         // Obtener el ID del registro recién insertado
         $id_registro = $conexion->lastInsertId();
 
@@ -373,24 +390,22 @@ if ($_POST) {
         $sentencia->execute();
       }
 
-      if(isset($lista_tiempos_liquidados['estado_liquidado'])){
+        foreach ($lista_tiempos_liquidados as $registro) {
+          $inicio = date("H:i", strtotime($registro['fecha_inicio']));
+          $fin = date("H:i", strtotime($registro['fecha_fin']));
 
-        $inicio = date("H:i", strtotime($lista_tiempos_liquidados['fecha_inicio']));
-        $fin = date("H:i", strtotime($lista_tiempos_liquidados['fecha_fin']));
-
-        $sentencia = $conexion->prepare("INSERT INTO facturas (fecha, nombre_cuenta, inicio_tiempo, fin_tiempo, precio_tiempo, precio_total_tiempo, tiempo_invertido, id_cuenta, id_facturas)
-          VALUES (CURRENT_TIMESTAMP(),
-          (SELECT nombre_cuenta FROM cuentas WHERE id_cuenta = :id_cuenta_liquidar),
-          '{$inicio}',
-          '{$fin}',
-          '{$lista_tiempos_liquidados['precio_cuenta']}',
-          '{$lista_tiempos_liquidados['precio_final']}',
-          '{$lista_tiempos_liquidados['tiempo_invertido']}',        
-          :id_cuenta_liquidar, '{$id_registro}')");
-          $sentencia->bindParam(":id_cuenta_liquidar", $id_cuenta_liquidar);
-          $sentencia->execute();
-      }
-        
+          $sentencia = $conexion->prepare("INSERT INTO facturas (fecha, nombre_cuenta, inicio_tiempo, fin_tiempo, precio_tiempo, precio_total_tiempo, tiempo_invertido, id_cuenta, id_facturas)
+            VALUES (CURRENT_TIMESTAMP(),
+            (SELECT nombre_cuenta FROM cuentas WHERE id_cuenta = :id_cuenta_liquidar),
+            '{$inicio}',
+            '{$fin}',
+            '{$registro['precio_cuenta']}',
+            '{$registro['precio_final']}',
+            '{$registro['tiempo_invertido']}',        
+            :id_cuenta_liquidar, '{$id_registro}')");
+            $sentencia->bindParam(":id_cuenta_liquidar", $id_cuenta_liquidar);
+            $sentencia->execute();
+        }      
 
       $sentencia = $conexion->prepare("UPDATE entradas e
             INNER JOIN productos p ON p.id_producto = e.id_producto
@@ -593,10 +608,16 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                         $registro_tiempo = $sentencia->fetch(PDO::FETCH_LAZY);
 
                         $sentencia = $conexion->prepare("SELECT * FROM tiempos t
-                                              INNER JOIN cuentas c ON t.id_cuenta=c.id_cuenta WHERE c.nombre_cuenta='" . str_replace('_', ' ', $array_name_cuenta[$x]) . "'" .
-                                              " AND c.id_sede=" . $_SESSION['id_sede'] . " AND estado_liquidado = 1");
+                        INNER JOIN cuentas c ON t.id_cuenta=c.id_cuenta WHERE c.nombre_cuenta='" . str_replace('_', ' ', $array_name_cuenta[$x]) . "'" .
+                        " AND c.id_sede=" . $_SESSION['id_sede'] . " AND estado_liquidado = 1 ORDER BY t.id_tiempo DESC LIMIT 1");
                         $sentencia->execute();
                         $registro_tiempo_sin_liquidar = $sentencia->fetch(PDO::FETCH_LAZY);
+
+                        $sentencia = $conexion->prepare("SELECT SUM(precio_final) precio_final FROM tiempos t
+                        INNER JOIN cuentas c ON t.id_cuenta=c.id_cuenta WHERE c.nombre_cuenta='" . str_replace('_', ' ', $array_name_cuenta[$x]) . "'" .
+                        " AND c.id_sede=" . $_SESSION['id_sede'] . " AND estado_liquidado = 1");
+                        $sentencia->execute();
+                        $suma_tiempo_sin_liquidar = $sentencia->fetch(PDO::FETCH_LAZY);
 
                         $sentencia = $conexion->prepare("SELECT SUM(e.precio_total) precio_total
                           FROM productos p
@@ -618,11 +639,11 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                     <tr valign="middle" align="center">
                         <th colspan="1"><?php echo $array_name_cuenta[$x]; ?></th>
                         <th colspan="4"><label style="font-size: 2em; color: green;" id="precio_<?php echo $array_name_cuenta[$x] ?>" >$ 
-                        <?php if(isset($lista_precio_productos_agregados['precio_total']) && isset($registro_tiempo_sin_liquidar['precio_final'])){
-                          echo number_format((abs($lista_precio_productos_agregados['precio_total']) + $registro_tiempo_sin_liquidar['precio_final']), 1);
-                        } else if(!isset($lista_precio_productos_agregados['precio_total']) && isset($registro_tiempo_sin_liquidar['precio_final'])){
-                          echo number_format(($registro_tiempo_sin_liquidar['precio_final']), 1);
-                        } else if(isset($lista_precio_productos_agregados['precio_total']) && !isset($registro_tiempo_sin_liquidar['precio_final'])){
+                        <?php if(isset($lista_precio_productos_agregados['precio_total']) && isset($suma_tiempo_sin_liquidar['precio_final'])){
+                          echo number_format((abs($lista_precio_productos_agregados['precio_total']) + $suma_tiempo_sin_liquidar['precio_final']), 1);
+                        } else if(!isset($lista_precio_productos_agregados['precio_total']) && isset($suma_tiempo_sin_liquidar['precio_final'])){
+                          echo number_format(($suma_tiempo_sin_liquidar['precio_final']), 1);
+                        } else if(isset($lista_precio_productos_agregados['precio_total']) && !isset($suma_tiempo_sin_liquidar['precio_final'])){
                           echo number_format((abs($lista_precio_productos_agregados['precio_total'])), 1);
                         } else{
                           echo 0;

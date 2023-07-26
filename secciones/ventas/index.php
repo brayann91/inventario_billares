@@ -10,7 +10,8 @@ if(isset($_GET['txtID'])){
   
 }
 
-$sentencia = $conexion->prepare("SELECT * FROM cuentas c INNER JOIN sedes s ON c.id_sede=s.id_sede WHERE c.nombre_cuenta NOT LIKE 'borrada_%' AND c.id_sede= '" . $_SESSION['id_sede'] . "'");
+$sentencia = $conexion->prepare("SELECT * FROM cuentas c INNER JOIN sedes s ON c.id_sede=s.id_sede 
+WHERE c.nombre_cuenta NOT LIKE 'borrada_%' AND c.id_sede= '" . $_SESSION['id_sede'] . "'");
 $sentencia->execute();
 $lista_cuentas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
@@ -89,14 +90,11 @@ if ($_POST) {
     $lista_productos = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
     if (isset($_POST["idCuenta"])) {
-      //recolectamos los datos del metodo POST
+      
       $idCuenta = (isset($_POST["idCuenta"]) ? $_POST["idCuenta"] : "");
       $estado = (isset($_POST["estado"]) ? $_POST["estado"] : "");
 
-      //Preparar la insersion de los datos
       $sentencia = $conexion->prepare("UPDATE cuentas SET estado=:estado WHERE id_cuenta=:idCuenta ");
-
-      //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
       $sentencia->bindParam(":idCuenta", $idCuenta);
       $sentencia->bindParam(":estado", $estado);
       $sentencia->execute();
@@ -106,7 +104,6 @@ if ($_POST) {
     " ORDER BY id_caja DESC LIMIT 1");
     $sentencia->execute();
     $registro_caja = $sentencia->fetch(PDO::FETCH_LAZY);
-
     
     $sentencia = $conexion->prepare("SELECT * FROM cajas WHERE id_sede='" . $_SESSION['id_sede'] . "'" .
     " ORDER BY id_caja DESC LIMIT 1 OFFSET 1");
@@ -158,7 +155,7 @@ if ($_POST) {
     }
 
     if (isset($_POST["id_cuenta"])) {
-        //recolectamos los datos del metodo POST
+        
         $id_cuenta = (isset($_POST["id_cuenta"]) ? $_POST["id_cuenta"] : "");
 
         $sentencia = $conexion->prepare("INSERT INTO tiempos(fecha_inicio, fecha_fin, tiempo_invertido, precio_final, estado_tiempo, estado_liquidado, id_cuenta)
@@ -168,7 +165,7 @@ if ($_POST) {
     }
 
     if (isset($_POST["actualizar_id_tiempo"])) {
-      //recolectamos los datos del metodo POST
+      
       $actualizar_id_tiempo = (isset($_POST["actualizar_id_tiempo"]) ? $_POST["actualizar_id_tiempo"] : "");
 
       $sentencia = $conexion->prepare("SELECT * FROM tiempos WHERE id_tiempo=:id_tiempo");
@@ -191,7 +188,7 @@ if ($_POST) {
   }
 
     if (isset($_POST["id_cuenta_end"])) {
-        //recolectamos los datos del metodo POST
+        
         $id_cuenta_end = (isset($_POST["id_cuenta_end"]) ? $_POST["id_cuenta_end"] : "");
         $id_tiempo = (isset($_POST["id_tiempo"]) ? $_POST["id_tiempo"] : "");
 
@@ -203,29 +200,14 @@ if ($_POST) {
           t.id_cuenta=:id_cuenta_end
       WHERE id_tiempo=:id_tiempo;");
 
-        //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
         $sentencia->bindParam(":id_cuenta_end", $id_cuenta_end);
         $sentencia->bindParam(":id_tiempo", $id_tiempo);
         $sentencia->execute();
     }
 
     if (isset($_POST["id_cuenta_continuar"])) {
-        //recolectamos los datos del metodo POST
         $id_cuenta_continuar = (isset($_POST["id_cuenta_continuar"]) ? $_POST["id_cuenta_continuar"] : "");
         $id_tiempo = (isset($_POST["id_tiempo"]) ? $_POST["id_tiempo"] : "");
-
-        /*$sentencia = $conexion->prepare("UPDATE tiempos t
-      INNER JOIN cuentas c ON t.id_cuenta=c.id_cuenta
-      SET t.fecha_fin=CURRENT_TIMESTAMP(),
-          t.tiempo_invertido=SEC_TO_TIME(TIMESTAMPDIFF(SECOND, t.fecha_inicio, CURRENT_TIMESTAMP())),
-          t.precio_final=(TIME_TO_SEC(SEC_TO_TIME(TIMESTAMPDIFF(SECOND, t.fecha_inicio, CURRENT_TIMESTAMP()))) / 3600) * c.precio_cuenta, t.estado_tiempo=1,
-          t.id_cuenta=:id_cuenta_continuar
-      WHERE id_tiempo=:id_tiempo;");
-
-        //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
-        $sentencia->bindParam(":id_cuenta_continuar", $id_cuenta_continuar);
-        $sentencia->bindParam(":id_tiempo", $id_tiempo);
-        $sentencia->execute();*/
 
         $sentencia = $conexion->prepare("INSERT INTO tiempos(fecha_inicio, fecha_fin, tiempo_invertido, precio_final, estado_tiempo, estado_liquidado, id_cuenta)
         VALUES (CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), SEC_TO_TIME(TIMESTAMPDIFF(SECOND, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())), null, 1, 1, :id_cuenta)");
@@ -235,7 +217,6 @@ if ($_POST) {
 
     if (isset($_POST["id_cuenta_temporal"])) {
 
-      //recolectamos los datos del metodo POST
       $id_producto_temporal = (isset($_POST["id_producto_temporal"]) ? $_POST["id_producto_temporal"] : "");
       $nombre_cuenta_temporal = (isset($_POST["nombre_cuenta_temporal"]) ? str_replace('_', ' ', $_POST["nombre_cuenta_temporal"]) : "");
       $id_cuenta_temporal = (isset($_POST["id_cuenta_temporal"]) ? $_POST["id_cuenta_temporal"] : "");
@@ -248,7 +229,6 @@ if ($_POST) {
 
         $id_entrada = $registro_entrada['id_entrada'];
         
-
       if(isset($registro_entrada['estado'])){
         $sentencia = $conexion->prepare("UPDATE entradas e
         SET cantidad=cantidad-1,
@@ -271,7 +251,7 @@ if ($_POST) {
     }
 
     if (isset($_POST["id_entrada_mas"])) {
-        //recolectamos los datos del metodo POST
+        
         $id_entrada_mas = (isset($_POST["id_entrada_mas"]) ? $_POST["id_entrada_mas"] : "");
         $id_producto_mas = (isset($_POST["id_producto_mas"]) ? $_POST["id_producto_mas"] : "");
 
@@ -281,14 +261,31 @@ if ($_POST) {
           fecha=CURRENT_TIMESTAMP()
       WHERE id_entrada=:id_entrada_mas");
 
-        //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
         $sentencia->bindParam(":id_entrada_mas", $id_entrada_mas);
         $sentencia->bindParam(":id_producto_mas", $id_producto_mas);
         $sentencia->execute();
     }
 
+    if (isset($_POST["id_entrada_muchos"])) {
+        
+      $id_entrada_muchos = (isset($_POST["id_entrada_muchos"]) ? $_POST["id_entrada_muchos"] : "");
+      $id_producto_muchos = (isset($_POST["id_producto_muchos"]) ? $_POST["id_producto_muchos"] : "");
+      $cantidad = (isset($_POST["cantidad"]) ? $_POST["cantidad"] : "");
+
+      $sentencia = $conexion->prepare("UPDATE entradas e
+      SET cantidad=cantidad-:cantidad,
+        precio_total=precio_total-((SELECT precio FROM productos WHERE id_producto = :id_producto_muchos) * :cantidad),
+        fecha=CURRENT_TIMESTAMP()
+      WHERE id_entrada=:id_entrada_muchos");
+
+      $sentencia->bindParam(":id_entrada_muchos", $id_entrada_muchos);
+      $sentencia->bindParam(":id_producto_muchos", $id_producto_muchos);
+      $sentencia->bindParam(":cantidad", $cantidad);
+      $sentencia->execute();
+    }
+
     if (isset($_POST["id_entrada_menos"])) {
-        //recolectamos los datos del metodo POST
+        
         $id_entrada_menos = (isset($_POST["id_entrada_menos"]) ? $_POST["id_entrada_menos"] : "");
         $id_producto_menos = (isset($_POST["id_producto_menos"]) ? $_POST["id_producto_menos"] : "");
 
@@ -303,13 +300,11 @@ if ($_POST) {
                 fecha=CURRENT_TIMESTAMP()
             WHERE id_entrada=:id_entrada_menos");
 
-            //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
             $sentencia->bindParam(":id_entrada_menos", $id_entrada_menos);
             $sentencia->bindParam(":id_producto_menos", $id_producto_menos);
             $sentencia->execute();
         }else{
           $sentencia = $conexion->prepare("DELETE FROM entradas WHERE id_entrada=:id_entrada_menos");
-          // Asignando los valores que vienen del metodo POST (los que vienen del formulario)
           $sentencia->bindParam(":id_entrada_menos", $id_entrada_menos);
           $sentencia->execute();
         }
@@ -319,7 +314,6 @@ if ($_POST) {
       $id_entrada_borrar = (isset($_POST["id_entrada_borrar"]) ? $_POST["id_entrada_borrar"] : "");
 
       $sentencia = $conexion->prepare("DELETE FROM entradas WHERE id_entrada=:id_entrada_borrar");
-          // Asignando los valores que vienen del metodo POST (los que vienen del formulario)
           $sentencia->bindParam(":id_entrada_borrar", $id_entrada_borrar);
           $sentencia->execute();
     }
@@ -371,7 +365,6 @@ if ($_POST) {
         $sentencia->bindParam(":id_cuenta_liquidar", $id_cuenta_liquidar);
         $sentencia->execute();
 
-        // Obtener el ID del registro recién insertado
         $id_registro = $conexion->lastInsertId();
 
       foreach ($lista_productos_liquidados as $registro) {
@@ -411,7 +404,7 @@ if ($_POST) {
             INNER JOIN productos p ON p.id_producto = e.id_producto
             SET estado=0
             WHERE id_cuenta=:id_cuenta_liquidar AND p.id_sede= '" . $_SESSION['id_sede'] . "'");
-            //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
+            
             $sentencia->bindParam(":id_cuenta_liquidar", $id_cuenta_liquidar);
             $sentencia->execute();
 
@@ -419,10 +412,9 @@ if ($_POST) {
             INNER JOIN cuentas c ON c.id_cuenta = t.id_cuenta
             SET estado_liquidado=0
             WHERE t.id_cuenta=:id_cuenta_liquidar AND c.id_sede= '" . $_SESSION['id_sede'] . "'");
-            //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
+            
             $sentencia->bindParam(":id_cuenta_liquidar", $id_cuenta_liquidar);
             $sentencia->execute();
-
 
     }     
 
@@ -445,13 +437,11 @@ $sentencia = $conexion->prepare("SELECT * FROM cajas WHERE id_sede='" . $_SESSIO
 $sentencia->execute();
 $registro_caja = $sentencia->fetch(PDO::FETCH_LAZY);
 
-//Consulta para contar la cantidad de registros sin liquidar
 $sentencia = $conexion->prepare("SELECT COUNT(*) AS cantidad FROM entradas e
 INNER JOIN productos p ON p.id_producto=e.id_producto WHERE e.estado=1 AND p.id_sede= '" . $_SESSION['id_sede'] . "'");
 $sentencia->execute();
 $cantidad_inventario_sin_liquidar = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
 
-//Consulta para contar la cantidad de tiempos sin detener
 $sentencia = $conexion->prepare("SELECT COUNT(*) AS cantidad FROM tiempos t
 INNER JOIN cuentas c ON t.id_cuenta=c.id_cuenta WHERE t.estado_liquidado=1  AND c.id_sede= '" . $_SESSION['id_sede'] . "'");
 $sentencia->execute();
@@ -810,7 +800,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
 
             <table class="table table-bordered" id="tabla_id">
               <?php
-                $sentencia = $conexion->prepare("SELECT p.image, p.nombre_producto, SUM(e.precio_total) precio, SUM(cantidad) cantidad, p.id_producto, e.id_entrada
+                $sentencia = $conexion->prepare("SELECT p.image, p.nombre_producto, precio, SUM(precio_total) preciot, SUM(cantidad) cantidad, p.id_producto, e.id_entrada
                 FROM productos p
                 INNER JOIN entradas e ON p.id_producto = e.id_producto
                 INNER JOIN cuentas c ON c.id_cuenta = e.id_cuenta
@@ -843,7 +833,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                               height: 50px;">
                         </td>
                         <td id="nombre_p_<?php echo $array_name_cuenta[$x];?>_<?php echo $registro['id_producto'];?>"><?php echo $registro['nombre_producto']; ?></td>
-                        <td id="precio_p_<?php echo $array_name_cuenta[$x];?>_<?php echo $registro['id_producto'];?>">$ <?php echo number_format(abs($registro['precio']), 1); ?></td>
+                        <td id="precio_p_<?php echo $array_name_cuenta[$x];?>_<?php echo $registro['id_producto'];?>">$ <?php echo number_format(abs($registro['preciot']), 1); ?></td>
                         <td id="cantidad_p_<?php echo $array_name_cuenta[$x];?>_<?php echo $registro['id_producto'];?>"><?php echo abs($registro['cantidad']); ?></td>
                         <td>
                           <button style="background-color: red; width: 30px; height: 30px; display: inline-block;"
@@ -851,8 +841,18 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                             '<?php echo $registro['id_producto']; ?>')" class="nav-link text-green">-</button>
 
                           <button style="background-color: green; width: 30px; height: 30px; display: inline-block;"
-                            onClick="agregarMasProductoACuenta('<?php echo $registro['id_entrada']; ?>',
-                            '<?php echo $registro['id_producto']; ?>')" class="nav-link text-red2">+</button>
+                            onClick="agregarMasProductoACuenta('<?php echo $array_name_cuenta[$x] ?>', '<?php echo $registro['id_entrada']; ?>',
+                            '<?php echo $registro['id_producto']; ?>', '<?php echo $registro['precio']; ?>')" class="nav-link text-red2">+</button>
+
+                            <input type="text" maxlength="2" style="width: 30px; height: 30px; display: inline-block; text-align: center;"
+                              id="masCantidadProducto_<?php echo $array_name_cuenta[$x] ?>_<?php echo $registro['id_producto']; ?>" />
+
+                            <button style="background-image: url('https://w7.pngwing.com/pngs/704/997/png-transparent-computer-icons-font-awesome-arrow-enter-key-angle-text-triangle-thumbnail.png'); 
+                              background-size: cover; width: 30px; height: 30px; display: inline-block;"
+                              onClick="agregarMuchosProductosACuenta('<?php echo $array_name_cuenta[$x] ?>', '<?php echo $registro['id_entrada']; ?>',
+                            '<?php echo $registro['id_producto']; ?>', '<?php echo $registro['precio']; ?>', 
+                            document.getElementById('masCantidadProducto_<?php echo $array_name_cuenta[$x] ?>_<?php echo $registro['id_producto']; ?>').value)" 
+                            >.</button>
 
                             <button style="background-image: url('https://cdn-icons-png.flaticon.com/512/25/25008.png'); 
                             background-size: cover; width: 30px; height: 30px; display: inline-block;"
@@ -916,8 +916,6 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                                   setTimeout(function() {
                                     window.location.href = urlindex;
                                   }, 3000);
-                                  //var urlpdf = "consulta.php?txtID=" + id_cuenta_liquidar;
-                                  //window.open(urlpdf, "_blank");
                               },
                               error: function(xhr, textStatus, errorThrown) {
                                   console.log(xhr.responseText);
@@ -992,7 +990,6 @@ var tabId = "";
 
 function changeActiveTab(Id, urlBase) {
 
-  // Eliminar la clase "active" de todas las pestañas
   var tabs = document.querySelectorAll(".nav-link");
 
   for (var i = 0; i < tabs.length; i++) {
@@ -1010,7 +1007,6 @@ function changeActiveTab(Id, urlBase) {
 }
 
 window.onhashchange = function() {
-  // Obtener el nuevo valor del fragmento de la URL
   var nuevaSeccion = window.location.hash.substring(1); // Eliminar el símbolo '#' del inicio
 
   // Ocultar todas las secciones
@@ -1019,7 +1015,6 @@ window.onhashchange = function() {
     secciones[i].style.display = "none";
   }
 
-  // Mostrar la sección correspondiente al nuevo valor del fragmento de la URL
   var seccionActual = document.getElementById(nuevaSeccion);
   if (seccionActual) {
     seccionActual.style.display = "block";
@@ -1101,7 +1096,6 @@ window.onhashchange();
             location.reload();
           }
         });
-        //location.reload();
       },
       error: function(xhr, textStatus, errorThrown) {
         console.log(xhr.responseText);
@@ -1143,7 +1137,6 @@ window.onhashchange();
   });
 }
 
-
   function cerrar_caja_sin_liquidar() {
       Swal.fire({
         title: 'No se puede cerrar la caja hasta que se hayan liquidado todos los producto y detenido todos los tiempos de las mesas.',
@@ -1158,6 +1151,7 @@ window.onhashchange();
   }
 
   function agregarProductoACuenta(nombre_cuenta_temporal, id_producto_temporal, id_cuenta_temporal, precio) {
+
     var nombreProducto = document.getElementById("nombre_p_" + nombre_cuenta_temporal + "_" + id_producto_temporal); 
     var precioProducto = document.getElementById("precio_p_" + nombre_cuenta_temporal + "_" + id_producto_temporal); 
     var cantidadProducto = document.getElementById("cantidad_p_" + nombre_cuenta_temporal + "_" + id_producto_temporal);
@@ -1174,8 +1168,9 @@ window.onhashchange();
           if (!isNaN(precioActual)) {
           var nuevoPrecio = precioActual + parseInt(precio);
           var nuevoPrecioTotal = precioActualTotal + parseInt(precio);
-          precioProducto.innerHTML = "$ " + nuevoPrecio.toLocaleString(undefined, { minimumFractionDigits: 1 }).replace(/\./g, "@").replace(/,/g, ".").replace(/@/g, ",");
-          precioTotal.innerHTML = "$ " + nuevoPrecioTotal.toLocaleString(undefined, { minimumFractionDigits: 1 }).replace(/\./g, "@").replace(/,/g, ".").replace(/@/g, ",");
+          precioProducto.innerHTML = "$ " + nuevoPrecio.toLocaleString(undefined, { minimumFractionDigits: 1 });
+          precioTotal.innerHTML = "$ " + nuevoPrecioTotal.toLocaleString(undefined, { minimumFractionDigits: 1 });
+
           } else {
             console.log("El contenido de precioProducto no es un número válido.");
           }
@@ -1196,9 +1191,9 @@ window.onhashchange();
         method: 'POST',
         data: { id_cuenta_temporal: id_cuenta_temporal, id_producto_temporal: id_producto_temporal },
         success: function(response) {
-          setTimeout(function(){
+          //setTimeout(function(){
             location.reload();
-          }, 500);
+          //}, 500);
         },
         error: function(xhr, textStatus, errorThrown) {
           console.log(xhr.responseText);
@@ -1207,21 +1202,78 @@ window.onhashchange();
     }
   }
 
-  function agregarMasProductoACuenta(id_entrada_mas, id_producto_mas) {
+  function agregarMasProductoACuenta(nombre_cuenta_temporal, id_entrada_mas, id_producto_mas, precio) {
+
+    var nombreProducto = document.getElementById("nombre_p_" + nombre_cuenta_temporal + "_" + id_producto_mas); 
+    var precioProducto = document.getElementById("precio_p_" + nombre_cuenta_temporal + "_" + id_producto_mas); 
+    var cantidadProducto = document.getElementById("cantidad_p_" + nombre_cuenta_temporal + "_" + id_producto_mas);
+    var precioTotal = document.getElementById("precio_" + nombre_cuenta_temporal); 
+
     $.ajax({
       url: 'index.php',
       method: 'POST',
       data: { id_entrada_mas: id_entrada_mas, id_producto_mas: id_producto_mas },
       success: function(response) {
-        setTimeout(function(){
-          location.reload();
-        }, 500);
+        var precioActual = parseFloat(precioProducto.innerHTML.replace(/[^0-9.]/g, ''));
+          var precioActualTotal = parseFloat(precioTotal.innerHTML.replace(/[^0-9.]/g, ''));
+          if (!isNaN(precioActual)) {
+          var nuevoPrecio = precioActual + parseInt(precio);
+          var nuevoPrecioTotal = precioActualTotal + parseInt(precio);
+          precioProducto.innerHTML = "$ " + nuevoPrecio.toLocaleString(undefined, { minimumFractionDigits: 1 });
+          precioTotal.innerHTML = "$ " + nuevoPrecioTotal.toLocaleString(undefined, { minimumFractionDigits: 1 });
+
+          } else {
+            console.log("El contenido de precioProducto no es un número válido.");
+          }
+          var cantidadActual = parseInt(cantidadProducto.innerHTML);
+          if (!isNaN(cantidadActual)) {
+            cantidadProducto.innerHTML = cantidadActual + 1;
+          } else {
+            console.log("El contenido de cantidadProducto no es un número válido.");
+          }
       },
       error: function(xhr, textStatus, errorThrown) {
         console.log(xhr.responseText);
       }
     });
   }
+
+  function agregarMuchosProductosACuenta(nombre_cuenta_temporal, id_entrada_muchos, id_producto_muchos, precio, cantidad) {
+
+    var nombreProducto = document.getElementById("nombre_p_" + nombre_cuenta_temporal + "_" + id_producto_muchos); 
+    var precioProducto = document.getElementById("precio_p_" + nombre_cuenta_temporal + "_" + id_producto_muchos); 
+    var cantidadProducto = document.getElementById("cantidad_p_" + nombre_cuenta_temporal + "_" + id_producto_muchos);
+    var precioTotal = document.getElementById("precio_" + nombre_cuenta_temporal); 
+
+    $.ajax({
+      url: 'index.php',
+      method: 'POST',
+      data: { id_entrada_muchos: id_entrada_muchos, id_producto_muchos: id_producto_muchos, cantidad: cantidad },
+      success: function(response) {
+        var precioActual = parseFloat(precioProducto.innerHTML.replace(/[^0-9.]/g, ''));
+          var precioActualTotal = parseFloat(precioTotal.innerHTML.replace(/[^0-9.]/g, ''));
+          if (!isNaN(precioActual)) {
+          var nuevoPrecio = precioActual + (parseInt(precio) * cantidad);
+          var nuevoPrecioTotal = precioActualTotal + (parseInt(precio) * cantidad);
+          precioProducto.innerHTML = "$ " + nuevoPrecio.toLocaleString(undefined, { minimumFractionDigits: 1 });
+          precioTotal.innerHTML = "$ " + nuevoPrecioTotal.toLocaleString(undefined, { minimumFractionDigits: 1 });
+
+          } else {
+            console.log("El contenido de precioProducto no es un número válido.");
+          }
+          var cantidadActual = (parseInt(cantidadProducto.innerHTML) + parseInt(cantidad));
+          if (!isNaN(cantidadActual)) {
+            cantidadProducto.innerHTML = cantidadActual;
+          } else {
+            console.log("El contenido de cantidadProducto no es un número válido.");
+          }
+      },
+      error: function(xhr, textStatus, errorThrown) {
+        console.log(xhr.responseText);
+      }
+    });
+  }
+
 
   function agregarMenosProductoACuenta(id_entrada_menos, id_producto_menos) {
     $.ajax({
@@ -1325,96 +1377,6 @@ window.onhashchange();
       }
     });
 
-  }
-
-  function actualizarTiempo(id_nombre_cuenta, fecha_inicial, precio_final, precio_cuenta, precio_productos) {
-    
-    var precioTotal = 0;
-    var tdTiempo = document.getElementById("tiempo_actual_" + id_nombre_cuenta);
-    var tdTranscurrido = document.getElementById("tiempo_transcurrido_" + id_nombre_cuenta);
-    var tdValorTiempo = document.getElementById("valor_tiempo_" + id_nombre_cuenta);
-    var tdPrecio = document.getElementById("precio_" + id_nombre_cuenta);
-
-    if(precio_final!=0){
-      precioTotal=precio_final;
-    }else if(fecha_inicial == 0){
-      precioTotal=0;
-    }else {
-      var fecha_actual = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second: '2-digit'});
-      var fechaActual = obtenerFechaActual();
-
-      var date1 = new Date(fecha_inicial);
-      var date2 = new Date(fechaActual);
-
-      var diff = Math.abs(date1 - date2);
-
-      var hours = Math.floor(diff / 3600000);
-      var minutes = Math.floor((diff % 3600000) / 60000);
-      var seconds = Math.floor(((diff % 3600000) % 60000) / 1000);
-
-      hours = ("0" + hours).slice(-2);
-      minutes = ("0" + minutes).slice(-2);
-      seconds = ("0" + seconds).slice(-2);
-
-      var tiempoTranscurrido = hours + ":" + minutes + ":" + seconds;
-      var tiempoEnSegundos = ((hours * 3600 + minutes * 60 + seconds) / 3600);
-
-      var partes = tiempoTranscurrido.split(":");
-      var horas = parseInt(partes[0]) + parseInt(partes[1])/60 + parseInt(partes[2])/3600;
-
-      //var tiemporecorrido = parseFloat(hours + "." + minutes + seconds);
-      precioTotal = (horas * precio_cuenta);
-    }
-
-    $.ajax({
-      url: 'index.php',
-      method: 'POST',
-      data: { id_nombre_cuenta: id_nombre_cuenta },
-      success: function(response) {
-        if(precio_final!=0){
-          tdPrecio.innerHTML = "$ " + (parseFloat(precioTotal) + Math.abs(parseFloat(precio_productos))).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
-        }else if(fecha_inicial == 0){
-          tdPrecio.innerHTML = "$ " + (Math.abs(parseFloat(precio_productos))).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
-        }else{
-          tdTiempo.innerHTML = fecha_actual;
-          tdTranscurrido.innerHTML = tiempoTranscurrido;
-          tdValorTiempo.innerHTML = "$ " + parseFloat(precioTotal.toFixed(1));
-          tdPrecio.innerHTML = "$ " + (parseFloat(precioTotal.toFixed(1)) + Math.abs(parseFloat(precio_productos))).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
-        }
-      },
-      error: function(xhr, textStatus, errorThrown) {
-        console.log(xhr.responseText);
-      }
-    });
-  }
-
-  function obtenerFechaActual() {
-    let now = new Date();
-    let year = now.getFullYear();
-    let month = now.getMonth() + 1;
-    let day = now.getDate();
-    let hour = now.getHours();
-    let minute = now.getMinutes();
-    let second = now.getSeconds();
-    let timezoneOffset = now.getTimezoneOffset() / 60;
-
-    let timezoneOffsetFormatted = Math.abs(timezoneOffset).toLocaleString('en-US', {
-      minimumIntegerDigits: 2,
-      useGrouping: false
-    });
-
-    let timezoneOffsetSign = timezoneOffset >= 0 ? '-' : '+';
-
-    let timezoneOffsetFormattedFull = timezoneOffsetSign + timezoneOffsetFormatted + ':00';
-
-    let fechaActual = year + '-' +
-      ('0' + month).slice(-2) + '-' +
-      ('0' + day).slice(-2) + ' ' +
-      ('0' + hour).slice(-2) + ':' +
-      ('0' + minute).slice(-2) + ':' +
-      ('0' + second).slice(-2);
-
-    return fechaActual;
   }
 
   function liquidar_sin_tiempo_detenido(id_cuenta_liquidar) {

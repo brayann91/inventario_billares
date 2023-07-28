@@ -1163,11 +1163,11 @@ window.onhashchange();
         method: 'POST',
         data: { id_cuenta_temporal: id_cuenta_temporal, id_producto_temporal: id_producto_temporal },
         success: function(response) {
-          var precioActual = parseFloat(precioProducto.innerHTML.replace(/[^0-9.]/g, ''));
-          var precioActualTotal = parseFloat(precioTotal.innerHTML.replace(/[^0-9.]/g, ''));
+          var precioActual =convertToDoubleWithDecimal(precioProducto.innerHTML);
+          var precioActualTotal = convertToDoubleWithDecimal(precioTotal.innerHTML);
           if (!isNaN(precioActual)) {
-          var nuevoPrecio = precioActual + parseInt(precio);
-          var nuevoPrecioTotal = precioActualTotal + parseInt(precio);
+          var nuevoPrecio = precioActual + parseFloat(precio);
+          var nuevoPrecioTotal = precioActualTotal + parseFloat(precio);
           precioProducto.innerHTML = "$ " + nuevoPrecio.toLocaleString(undefined, { minimumFractionDigits: 1 });
           precioTotal.innerHTML = "$ " + nuevoPrecioTotal.toLocaleString(undefined, { minimumFractionDigits: 1 });
 
@@ -1214,11 +1214,12 @@ window.onhashchange();
       method: 'POST',
       data: { id_entrada_mas: id_entrada_mas, id_producto_mas: id_producto_mas },
       success: function(response) {
-        var precioActual = parseFloat(precioProducto.innerHTML.replace(/[^0-9.]/g, ''));
-          var precioActualTotal = parseFloat(precioTotal.innerHTML.replace(/[^0-9.]/g, ''));
+          var precioActual = convertToDoubleWithDecimal(precioProducto.innerHTML);
+          var precioActualTotal = convertToDoubleWithDecimal(precioTotal.innerHTML);
+
           if (!isNaN(precioActual)) {
-          var nuevoPrecio = precioActual + parseInt(precio);
-          var nuevoPrecioTotal = precioActualTotal + parseInt(precio);
+          var nuevoPrecio = precioActual + parseFloat(precio);
+          var nuevoPrecioTotal = precioActualTotal + parseFloat(precio);
           precioProducto.innerHTML = "$ " + nuevoPrecio.toLocaleString(undefined, { minimumFractionDigits: 1 });
           precioTotal.innerHTML = "$ " + nuevoPrecioTotal.toLocaleString(undefined, { minimumFractionDigits: 1 });
 
@@ -1238,6 +1239,20 @@ window.onhashchange();
     });
   }
 
+  function convertToDoubleWithDecimal(str) {
+    const numberRegex = /\d+/g;
+    const matches = str.match(numberRegex);
+
+    if (matches && matches.length > 0) {
+      const cleanNumber = matches.join('');
+      const lengthWithoutLastDigit = cleanNumber.length - 1;
+      const doubleValue = Number(cleanNumber.substring(0, lengthWithoutLastDigit) + '.' + cleanNumber.charAt(lengthWithoutLastDigit));
+      return doubleValue;
+    } else {
+      return NaN;
+    }
+  }
+
   function agregarMuchosProductosACuenta(nombre_cuenta_temporal, id_entrada_muchos, id_producto_muchos, precio, cantidad) {
 
     var nombreProducto = document.getElementById("nombre_p_" + nombre_cuenta_temporal + "_" + id_producto_muchos); 
@@ -1250,11 +1265,11 @@ window.onhashchange();
       method: 'POST',
       data: { id_entrada_muchos: id_entrada_muchos, id_producto_muchos: id_producto_muchos, cantidad: cantidad },
       success: function(response) {
-        var precioActual = parseFloat(precioProducto.innerHTML.replace(/[^0-9.]/g, ''));
-          var precioActualTotal = parseFloat(precioTotal.innerHTML.replace(/[^0-9.]/g, ''));
+        var precioActual = convertToDoubleWithDecimal(precioProducto.innerHTML);
+          var precioActualTotal = convertToDoubleWithDecimal(precioTotal.innerHTML);
           if (!isNaN(precioActual)) {
-          var nuevoPrecio = precioActual + (parseInt(precio) * cantidad);
-          var nuevoPrecioTotal = precioActualTotal + (parseInt(precio) * cantidad);
+          var nuevoPrecio = precioActual + (parseFloat(precio) * cantidad);
+          var nuevoPrecioTotal = precioActualTotal + (parseFloat(precio) * cantidad);
           precioProducto.innerHTML = "$ " + nuevoPrecio.toLocaleString(undefined, { minimumFractionDigits: 1 });
           precioTotal.innerHTML = "$ " + nuevoPrecioTotal.toLocaleString(undefined, { minimumFractionDigits: 1 });
 

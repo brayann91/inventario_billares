@@ -86,7 +86,6 @@ if($_POST){
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;
             background-image: url('../images/fondo.jpg'); /* Cambia la ruta por la ubicación de tu imagen */
             background-size: cover;
             background-position: center;

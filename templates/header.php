@@ -56,9 +56,9 @@ if ($_SESSION['id_cargo'] == 2 && str_contains($url_actual, $url_crear)) {
    <!-- Bootstrap CSS v5.2.1  -->
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-  <!-- SweetAlert2 CSS -->
+  <!-- SweetAlert2 CSS
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
-  <!-- Popper.js -->
+  Popper.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js" 
   integrity="sha384-eMNCOe7tC1doHpGoWe/6oMVemdAVTMs2xqW4mwXrXsW0L84Iytr2wi5v2QjrP/xp" crossorigin="anonymous"></script>
   <!-- SweetAlert2 JS -->

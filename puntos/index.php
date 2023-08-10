@@ -103,14 +103,14 @@ if($lista_tiempos['estado_tiempo'] == 1){
                 <td></td>
             </tr>
             <tr>
-                <td><a class="table-button" href="limit_jugador2.php?txtID=<?php echo $txtID;?>"><img src="../images/jugador2.png" alt="Botón 2"></a></td>
-                <td><a class="table-button" href="limit_jugador3.php?txtID=<?php echo $txtID;?>"><img src="../images/jugador3.png" alt="Botón 3"></a></td>
-                <td><a class="table-button" href="limit_jugador4.php?txtID=<?php echo $txtID;?>"><img src="../images/jugador4.png" alt="Botón 4"></a></td>
+                <td class="col-4"><a class="table-button" href="limit_jugador2.php?txtID=<?php echo $txtID;?>"><img src="../images/jugador2.png" alt="Botón 2"></a></td>
+                <td class="col-4"><a class="table-button" href="limit_jugador3.php?txtID=<?php echo $txtID;?>"><img src="../images/jugador3.png" alt="Botón 3"></a></td>
+                <td class="col-4"><a class="table-button" href="limit_jugador4.php?txtID=<?php echo $txtID;?>"><img src="../images/jugador4.png" alt="Botón 4"></a></td>
             </tr>
             <tr>
-                <td><p class="centered-text">1 Jugador</p></td>
-                <td><p class="centered-text">2 Jugadores</p></td>
-                <td><p class="centered-text">3 Jugadores</p></td>
+                <td class="col-4"><p class="centered-text">1 Jugador</p></td>
+                <td class="col-4"><p class="centered-text">2 Jugadores</p></td>
+                <td class="col-4"><p class="centered-text">3 Jugadores</p></td>
             </tr>
         </table>
     </div>

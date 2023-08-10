@@ -51,7 +51,6 @@ if($lista_tiempos['estado_tiempo'] == 1){
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            color: white;
             user-select: none;
             font-family: "Rajdhani";
             text-shadow: 0 0 15px rgba(255, 0, 0, 0.6);

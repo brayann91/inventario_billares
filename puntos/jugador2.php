@@ -16,21 +16,6 @@ $sentencia->bindParam(":id_cuenta", $txtID);
 $sentencia->execute();
 $lista_puntos = $sentencia->fetch(PDO::FETCH_LAZY);
 
-if($lista_tiempos['estado_tiempo'] == 1){
-    if($lista_puntos['estado_punto'] == 0 || !isset($lista_puntos['estado_punto'])){
-        $sentencia = $conexion->prepare("INSERT INTO puntos(jugador1, jugador2, jugador3, jugador4, limit_jugador1, limit_jugador2, limit_jugador3, limit_jugador4,
-        serie, entrada, puntos_jugador1, puntos_jugador2, puntos_jugador3, puntos_jugador4, estado_punto, id_cuenta)
-        VALUES ('Jugador 1', 'Jugador 2', 'Jugador 3', 'Jugador 4', 999, 999, 999, 999, 0, 0, 0, 0, 0, 0, 1, :id_cuenta)");
-        $sentencia->bindParam(":id_cuenta", $txtID);
-        $sentencia->execute();
-    }
-}
-
-$sentencia = $conexion->prepare("SELECT * FROM puntos WHERE id_cuenta=:id_cuenta ORDER BY id_punto DESC LIMIT 1");
-$sentencia->bindParam(":id_cuenta", $txtID);
-$sentencia->execute();
-$lista_puntos = $sentencia->fetch(PDO::FETCH_LAZY);
-
 if (isset($_POST["idCuenta1"])) {
     $valorSuma = (isset($_POST["valorSuma"]) ? $_POST["valorSuma"] : "");
 
@@ -201,7 +186,11 @@ if (isset($_POST["valorEntrada"])) {
                         </td>
                         <td colspan="3" class="col-6 text-center">
                             <?php echo $lista_tiempos['nombre_cuenta'];?>
+                            <a href="result_jugador2.php?txtID=<?php echo $txtID;?>">
+                                <img src="../images/end2.png" alt="end">
+                            </a>
                         </td>
+
                         <td rowspan="6" colspan="4" class="col-3">
                             <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', 1); ConteoSerie(1, 'jugador2', '<?php echo $txtID;?>'); 
                             ConteoEntrada(1, '<?php echo $txtID;?>');">
@@ -230,7 +219,13 @@ if (isset($_POST["valorEntrada"])) {
                     </tr>
                     <tr>
                         <td class="col-1 text-center"><?php echo $lista_puntos['jugador1']?></td>
-                        <td class="col-4 text-center"><a class="click" id="entrada"><?php echo $lista_puntos['entrada']?></a></td>
+                        <td class="col-4 text-center">
+                            <img src="../images/back.png" alt="Imagen 1">
+                            <img src="../images/back1.png" alt="Imagen 2">
+                            <a id="entrada"><?php echo $lista_puntos['entrada']?></a>
+                            <img src="../images/play.png" alt="Imagen 3">
+                            <img src="../images/pause.png" alt="Imagen 4">
+                        </td>
                         <td class="col-1 text-center"><?php echo $lista_puntos['jugador2']?></td>
                     </tr>
 

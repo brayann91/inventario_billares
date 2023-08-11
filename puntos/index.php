@@ -103,9 +103,9 @@ if($lista_tiempos['estado_tiempo'] == 1){
                 <td></td>
             </tr>
             <tr>
-                <td class="col-4"><a class="table-button" href="limit_jugador2.php?txtID=<?php echo $txtID;?>"><img src="../images/jugador2.png" alt="Botón 2"></a></td>
-                <td class="col-4"><a class="table-button" href="limit_jugador3.php?txtID=<?php echo $txtID;?>"><img src="../images/jugador3.png" alt="Botón 3"></a></td>
-                <td class="col-4"><a class="table-button" href="limit_jugador4.php?txtID=<?php echo $txtID;?>"><img src="../images/jugador4.png" alt="Botón 4"></a></td>
+                <td class="col-4"><a class="table-button" href="limit_jugador2.php?txtID=<?php echo $txtID;?>"><img src="../images/jugador_2.png" alt="Botón 2"></a></td>
+                <td class="col-4"><a class="table-button" href="limit_jugador3.php?txtID=<?php echo $txtID;?>"><img src="../images/jugador_3.png" alt="Botón 3"></a></td>
+                <td class="col-4"><a class="table-button" href="limit_jugador4.php?txtID=<?php echo $txtID;?>"><img src="../images/jugador_4.png" alt="Botón 4"></a></td>
             </tr>
             <tr>
                 <td class="col-4"><p class="centered-text">1 Jugador</p></td>
@@ -119,6 +119,7 @@ if($lista_tiempos['estado_tiempo'] == 1){
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&display=swap" rel="stylesheet">
 </body>
 </html>
 

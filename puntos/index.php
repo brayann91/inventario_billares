@@ -56,10 +56,7 @@ if($lista_tiempos['estado_tiempo'] == 1){
         }
         .centered-text {
             position: relative;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
+            text-align: top;
             width: 100%;
             font-size: 50px;
             color: white;
@@ -97,10 +94,7 @@ if($lista_tiempos['estado_tiempo'] == 1){
     <div class="container-fluid vh-100 d-flex justify-content-center align-items-center p-0">
         <table class="table table-borderless table-fill m-0">
             <tr>
-                <td></td>
-                <td><h1 id="cuenta" class="centered-text"><?php echo $lista_tiempos['nombre_cuenta'];?></h1>
-                </td>
-                <td></td>
+                <td colspan="3"><h1 id="cuenta" class="centered-text"><?php echo $lista_tiempos['nombre_cuenta'];?></h1></td>
             </tr>
             <tr>
                 <td class="col-4"><a class="table-button" href="limit_jugador2.php?txtID=<?php echo $txtID;?>"><img src="../images/jugador_2.png" alt="Botón 2"></a></td>
@@ -108,9 +102,9 @@ if($lista_tiempos['estado_tiempo'] == 1){
                 <td class="col-4"><a class="table-button" href="limit_jugador4.php?txtID=<?php echo $txtID;?>"><img src="../images/jugador_4.png" alt="Botón 4"></a></td>
             </tr>
             <tr>
-                <td class="col-4"><p class="centered-text">1 Jugador</p></td>
                 <td class="col-4"><p class="centered-text">2 Jugadores</p></td>
                 <td class="col-4"><p class="centered-text">3 Jugadores</p></td>
+                <td class="col-4"><p class="centered-text">4 Jugadores</p></td>
             </tr>
         </table>
     </div>

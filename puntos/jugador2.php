@@ -38,6 +38,17 @@ if (isset($_POST["idCuenta2"])) {
     $sentencia->execute();
 }
 
+if (isset($_POST["idCuenta_entrada"])) {
+    $valorSuma = (isset($_POST["valorSuma"]) ? $_POST["valorSuma"] : "");
+
+    $sentencia = $conexion->prepare("UPDATE puntos SET
+    entrada = (entrada + :valorSuma)
+    WHERE id_punto=:id_punto");
+    $sentencia->bindParam(":id_punto", $lista_puntos['id_punto']);
+    $sentencia->bindParam(":valorSuma", $valorSuma);
+    $sentencia->execute();
+}
+
 if (isset($_POST["conteoSerie"])) {
 
     $conteoSerie = (isset($_POST["conteoSerie"]) ? $_POST["conteoSerie"] : "");
@@ -187,7 +198,7 @@ if (isset($_POST["valorEntrada"])) {
                         <td colspan="3" class="col-6 text-center">
                             <?php echo $lista_tiempos['nombre_cuenta'];?>
                             <a href="result_jugador2.php?txtID=<?php echo $txtID;?>">
-                                <img src="../images/end2.png" alt="end">
+                                <img src="../images/end3.png" alt="end">
                             </a>
                         </td>
 
@@ -207,9 +218,9 @@ if (isset($_POST["valorEntrada"])) {
                         </td>
                     </tr>
                     <tr>
-                        <td class="col-1" rowspan="3"><img class="img-fluid" src="../images/jugador.png"></td>
+                        <td class="col-1" rowspan="3"><img class="img-fluid" src="../images/jugadorr.png"></td>
                         <td class="col-4 text-center">Serie</td>
-                        <td class="col-1" rowspan="3"><img class="img-fluid" src="../images/jugador.png"></td>
+                        <td class="col-1" rowspan="3"><img class="img-fluid" src="../images/jugadorr.png"></td>
                     </tr>
                     <tr>
                         <td class="col-4 text-center"><p id="valorSerie"><?php echo $lista_puntos['serie']?></p></td>
@@ -221,8 +232,10 @@ if (isset($_POST["valorEntrada"])) {
                         <td class="col-1 text-center"><?php echo $lista_puntos['jugador1']?></td>
                         <td class="col-4 text-center">
                             <img src="../images/back.png" alt="Imagen 1">
-                            <img src="../images/back1.png" alt="Imagen 2">
+                            <img src="../images/back1.png" alt="Imagen 2"> -
+                            <img src="../images/menosentrada.png" alt="Menos Entrada" onclick="Entrada('<?php echo $txtID;?>', -1)">
                             <a id="entrada"><?php echo $lista_puntos['entrada']?></a>
+                            <img src="../images/masentrada.png" alt="Mas Entrada" onclick="Entrada('<?php echo $txtID;?>', 1)"> -
                             <img src="../images/play.png" alt="Imagen 3">
                             <img src="../images/pause.png" alt="Imagen 4">
                         </td>
@@ -371,6 +384,7 @@ if (isset($_POST["valorEntrada"])) {
             let valorElement = document.getElementById("valor1");
             let valor = parseInt(valorElement.innerText);
             valor = valor + valorSuma;
+            limite1 = <?php echo $lista_puntos['limit_jugador1']; ?>;
 
             valorElement.innerText = valor;
             $.ajax({
@@ -384,18 +398,66 @@ if (isset($_POST["valorEntrada"])) {
                     console.log(xhr.responseText);
                 }
             });
+
+            if (valor >= limite1) {
+                $.ajax({
+                    url: 'result_jugador2.php?txtID=' + idCuenta1,
+                    method: 'POST',
+                    data: { limite1: limite1 },
+                    success: function(response) {
+                        window.location.href = 'result_jugador2.php?txtID=' + idCuenta1;
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
         }
 
         function incrementarValor2(idCuenta2, valorSuma) {
             let valorElement = document.getElementById("valor2");
             let valor = parseInt(valorElement.innerText);
             valor = valor + valorSuma;
+            limite2 = <?php echo $lista_puntos['limit_jugador2']; ?>;
 
             valorElement.innerText = valor;
             $.ajax({
                 url: 'jugador2.php?txtID=' + idCuenta2,
                 method: 'POST',
                 data: { idCuenta2: idCuenta2, valorSuma: valorSuma },
+                success: function(response) {
+                
+                },
+                    error: function(xhr, textStatus, errorThrown) {
+                    console.log(xhr.responseText);
+                }
+            });
+
+            if (valor >= limite2) {
+                $.ajax({
+                    url: 'result_jugador2.php?txtID=' + idCuenta2,
+                    method: 'POST',
+                    data: { limite2: limite2 },
+                    success: function(response) {
+                        window.location.href = 'result_jugador2.php?txtID=' + idCuenta2;
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+        }
+
+        function Entrada(idCuenta_entrada, valorSuma) {
+            let valorElement = document.getElementById("entrada");
+            let valor = parseInt(valorElement.innerText);
+            valor = valor + valorSuma;
+
+            valorElement.innerText = valor;
+            $.ajax({
+                url: 'jugador2.php?txtID=' + idCuenta_entrada,
+                method: 'POST',
+                data: { idCuenta_entrada: idCuenta_entrada, valorSuma: valorSuma },
                 success: function(response) {
                 
                 },

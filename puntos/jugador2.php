@@ -115,14 +115,14 @@ if (isset($_POST["idCuentaDetener"])) {
     taskkill /IM ffmpeg.exe /F
         
     rem Borra los archivos .ts
-    del /Q "' . $lista_cuenta['cam'] . '\*.ts"
+    del /Q "inventario-billar.net' . $lista_cuenta['cam'] . '\*.ts"
         
     rem Borra el archivo .m3u8 en la ruta ..\ffmpeg\
-    del /Q "' . $lista_cuenta['cam'] . '\stream.m3u8"';
+    del /Q "inventario-billar.net' . $lista_cuenta['cam'] . '\stream.m3u8"';
 
     }else{
         $contenido = "@echo off
-        ffmpeg -v verbose -i " . $lista_cuenta['url'] . " -vf scale=1920:1080  -vcodec libx264 -r 25 -b:v 1000000 -crf 31 -acodec aac  -sc_threshold 0 -f hls  -hls_time 5  -segment_time 5 -hls_list_size 5 " . $lista_cuenta['cam'] . "\stream.m3u8";
+        ffmpeg -v verbose -i " . $lista_cuenta['url'] . " -vf scale=1920:1080  -vcodec libx264 -r 25 -b:v 1000000 -crf 31 -acodec aac  -sc_threshold 0 -f hls  -hls_time 5  -segment_time 5 -hls_list_size 5 inventario-billar.net" . $lista_cuenta['cam'] . "\stream.m3u8";
     }
     
     file_put_contents($comando, $contenido);

@@ -16,6 +16,11 @@ $sentencia->bindParam(":id_cuenta", $txtID);
 $sentencia->execute();
 $lista_puntos = $sentencia->fetch(PDO::FETCH_LAZY);
 
+$sentencia = $conexion->prepare("SELECT * FROM cuentas WHERE id_cuenta=:id_cuenta");
+$sentencia->bindParam(":id_cuenta", $txtID);
+$sentencia->execute();
+$lista_cuenta = $sentencia->fetch(PDO::FETCH_LAZY);
+
 if (isset($_POST["idCuenta1"])) {
     $valorSuma = (isset($_POST["valorSuma"]) ? $_POST["valorSuma"] : "");
 
@@ -92,6 +97,47 @@ if (isset($_POST["valorEntrada"])) {
     $sentencia->execute();
 }
 
+if (isset($_POST["idCuentaDetener"])) {
+
+    $comando = (isset($_POST["comando"]) ? $_POST["comando"] : "");
+    $estado_video = (isset($_POST["estado_video"]) ? $_POST["estado_video"] : "");
+
+    $sentencia = $conexion->prepare("UPDATE cuentas SET
+    estado_video=:estado_video
+    WHERE id_cuenta=:id_cuenta");
+    $sentencia->bindParam(":id_cuenta", $txtID);
+    $sentencia->bindParam(":estado_video", $estado_video);
+    $sentencia->execute();
+
+    if($comando == "stop.bat"){
+
+    $contenido = '@echo off
+    taskkill /IM ffmpeg.exe /F
+        
+    rem Borra los archivos .ts
+    del /Q "' . $lista_cuenta['cam'] . '\*.ts"
+        
+    rem Borra el archivo .m3u8 en la ruta ..\ffmpeg\
+    del /Q "' . $lista_cuenta['cam'] . '\stream.m3u8"';
+
+    }else{
+        $contenido = "@echo off
+        ffmpeg -v verbose -i " . $lista_cuenta['url'] . " -vf scale=1920:1080  -vcodec libx264 -r 25 -b:v 1000000 -crf 31 -acodec aac  -sc_threshold 0 -f hls  -hls_time 5  -segment_time 5 -hls_list_size 5 " . $lista_cuenta['cam'] . "\stream.m3u8";
+    }
+    
+    file_put_contents($comando, $contenido);
+
+    exec($comando, $output, $retorno);
+
+    if ($retorno !== 0) {
+        echo "Error al ejecutar el archivo Batch.";
+        echo "Código de retorno: " . $retorno;
+    } else {
+        echo "Archivo Batch ejecutado con éxito.";
+    }
+
+}
+
 ?>
 
 <!doctype html>
@@ -105,6 +151,7 @@ if (isset($_POST["valorEntrada"])) {
     <title>Tu página</title>
     <!-- Incluye los archivos CSS de Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         html,
         body {
@@ -153,7 +200,6 @@ if (isset($_POST["valorEntrada"])) {
         .image-container {
             position: relative;
         }
-
         .image-text {
             position: absolute;
             top: 50%;
@@ -168,16 +214,21 @@ if (isset($_POST["valorEntrada"])) {
             font-size: 35px;
             color: white;
         }
-        #video-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: black;
-        }
-        #video-stream {
-            width: 100%;
-            border: 2px solid white;
-        }
+        .video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* Proporción 16:9, puedes ajustarlo según la relación de aspecto de tu video */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%; /* Ajusta esto según el ancho máximo que desees para el video */
+}
+
+.video-container video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
 
     </style>
 </head>
@@ -231,13 +282,19 @@ if (isset($_POST["valorEntrada"])) {
                     <tr>
                         <td class="col-1 text-center"><?php echo $lista_puntos['jugador1']?></td>
                         <td class="col-4 text-center">
-                            <img src="../images/back.png" alt="Imagen 1">
-                            <img src="../images/back1.png" alt="Imagen 2"> -
-                            <img src="../images/menosentrada.png" alt="Menos Entrada" onclick="Entrada('<?php echo $txtID;?>', -1)">
+                            <img src="../images/atrasar2.png" alt="Imagen 1" onclick="retrocederVideo(30)">
+                            <img src="../images/atrasar1.png" alt="Imagen 2" onclick="retrocederVideo(15)"> -
+                            <img src="../images/menosentrada3.png" alt="Menos Entrada" onclick="Entrada('<?php echo $txtID;?>', -1)">
                             <a id="entrada"><?php echo $lista_puntos['entrada']?></a>
-                            <img src="../images/masentrada.png" alt="Mas Entrada" onclick="Entrada('<?php echo $txtID;?>', 1)"> -
-                            <img src="../images/play.png" alt="Imagen 3">
-                            <img src="../images/pause.png" alt="Imagen 4">
+                            <img src="../images/masentrada3.png" alt="Mas Entrada" onclick="Entrada('<?php echo $txtID;?>', 1)"> -
+                            <?php
+                                if($lista_cuenta['estado_video'] == 0){
+                                    ?> <img src="../images/play2.png" alt="Imagen 3" onclick="Stream('<?php echo $txtID;?>', 'newcam.bat', '1')"> <?php
+                                }else{
+                                    ?> <img src="../images/detener.png" alt="Imagen 4" onclick="Stream('<?php echo $txtID;?>', 'stop.bat', '0')"> <?php
+                                }
+                            ?>
+                            <img src="../images/live.png" alt="Imagen 4" onclick="enVivo()">
                         </td>
                         <td class="col-1 text-center"><?php echo $lista_puntos['jugador2']?></td>
                     </tr>
@@ -259,10 +316,14 @@ if (isset($_POST["valorEntrada"])) {
                             </div>
                         </td>
                         <td colspan="5" rowspan="3" class="col-6">
-                            <div id="video-container" >
-                                <video id="video-stream" autoplay playsinline></video>
+                            <div class="video-container">
+                            <video id="video" autoplay controls fluid="true" type="application/x-mpegURL">
+                                <source src="../ffmpeg/<?php echo substr($lista_cuenta['cam'], -4);?>/stream.m3u8" />
+                                Not support
+                            </video>
                             </div>
                         </td>
+
                         <td colspan="1" class="col-1 with-background">
                             <div class="image-container">
                                 <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', -1);">
@@ -347,6 +408,7 @@ if (isset($_POST["valorEntrada"])) {
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
     <script>
 
         
@@ -531,18 +593,96 @@ if (isset($_POST["valorEntrada"])) {
                 }
             });
         }
+        
+        if(Hls.isSupported()){
+			var video = document.getElementById('video');
+			var hls = new Hls();
+			hls.attachMedia(video);
+			hls.on(Hls.Events.MEDIA_ATTACHED, function (){
+				console.log("video and hls.js are now bound together !");
+                var url = "../ffmpeg/" + "<?php echo substr($lista_cuenta['cam'], -4);?>" + "/stream.m3u8" ;
+				hls.loadSource(url);
+				hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+					console.log("manifest loaded, found " + data.levels.length + " quiality level");
+				});
+			});
+		}
 
-        async function initCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                const videoElement = document.getElementById('video-stream');
-                videoElement.srcObject = stream;
-            } catch (error) {
-                console.error('Error al acceder a la cámara: ', error);
+        function Stream(idCuentaDetener, comando, estado_video) {
+            
+            var texto = "";
+            var texto2 = "";
+
+            if(estado_video == "1"){
+                texto = "iniciar";
+                texto2 = "inicio";
+            }else{
+                texto = "detener";
+                texto2 = "detuvo";
+            }
+
+            var confirmacion = confirm("¿Desea " + texto + " la transmisión?");
+
+            if (confirmacion) {
+                $.ajax({
+                    url: 'jugador2.php?txtID=' + idCuentaDetener,
+                    method: 'POST',
+                    data: { idCuentaDetener: idCuentaDetener, comando: comando, estado_video: estado_video },
+                    success: function(response) {
+                        setTimeout(function(){
+                            alert("Se " + texto2 + " la transmisión");
+                            location.reload();                        
+                        }, 1500);
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            } else {
+                alert("La transmisión no se " + texto2 + ".");
             }
         }
 
-        window.addEventListener('DOMContentLoaded', initCamera);
+        function enVivo() {
+            var video = document.getElementById('video');
+            video.currentTime = video.duration -5;
+            if (video.paused) {
+                video.play();
+            }
+        }
+
+        function retrocederVideo(tiempo) {
+            var video = document.getElementById('video');
+
+            var nuevoTiempo = video.currentTime - tiempo;
+
+            if (nuevoTiempo < 0) {
+                nuevoTiempo = 0;
+            }
+
+            video.currentTime = nuevoTiempo;
+
+            if (video.paused) {
+                video.play();
+            }
+        }
+
+        function adelantarVideo() {
+            
+            var video = document.getElementById('video');
+
+            var nuevoTiempo = video.currentTime + 15;
+
+            if (nuevoTiempo > video.duration) {
+                nuevoTiempo = video.duration;
+            }
+
+            video.currentTime = nuevoTiempo;
+
+            if (video.paused) {
+                video.play();
+            }
+        }
 
     </script>
 

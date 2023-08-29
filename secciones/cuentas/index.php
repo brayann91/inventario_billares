@@ -50,6 +50,8 @@ $lista_cuentas=$sentencia->fetchAll(PDO::FETCH_ASSOC);
                      <th scope="col">NOMBRE</th>
                      <th scope="col">PRECIO POR HORA</th>
                      <th scope="col">ESTADO CUENTA</th>
+                     <?php if($_SESSION['id_cargo']==1){ ?><th scope="col">URL</th> <?php } ?>
+                     <?php if($_SESSION['id_cargo']==1){ ?><th scope="col">CAM</th> <?php } ?>
                      <?php if($_SESSION['id_cargo']!=2){ ?> <th scope="col">ACCIONES</th> <?php } ?>
                  </tr>
              </thead>
@@ -70,6 +72,8 @@ $lista_cuentas=$sentencia->fetchAll(PDO::FETCH_ASSOC);
                           }
                         ?>
                      </td>
+                     <?php if($_SESSION['id_cargo']==1){ ?><td><?php echo $registro['url'];?></td> <?php } ?>
+                     <?php if($_SESSION['id_cargo']==1){ ?><td><?php echo $registro['cam'];?></td> <?php } ?>
                      <?php if($_SESSION['id_cargo']!=2){ ?>
                      <td>
                         <a name="" id="editar_cuenta" class="btn btn-info" href="editar.php?txtID=<?php echo $registro['id_cuenta']; ?>" role="button">Editar</a>

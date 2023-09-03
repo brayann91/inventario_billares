@@ -109,32 +109,32 @@ if (isset($_POST["idCuentaDetener"])) {
     $sentencia->bindParam(":estado_video", $estado_video);
     $sentencia->execute();
 
-    if($comando == "stop.bat"){
+    //if($comando == "stop.bat"){
 
-    $contenido = '@echo off
-    taskkill /IM ffmpeg.exe /F
+    // $contenido = '@echo off
+    // taskkill /IM ffmpeg.exe /F
         
-    rem Borra los archivos .ts
-    del /Q "inventario-billar.net' . $lista_cuenta['cam'] . '\*.ts"
+    // rem Borra los archivos .ts
+    // del /Q "' . $lista_cuenta['cam'] . '\*.ts"
         
-    rem Borra el archivo .m3u8 en la ruta ..\ffmpeg\
-    del /Q "inventario-billar.net' . $lista_cuenta['cam'] . '\stream.m3u8"';
+    // rem Borra el archivo .m3u8 en la ruta ..\ffmpeg\
+    // del /Q "' . $lista_cuenta['cam'] . '\stream.m3u8"';
 
-    }else{
-        $contenido = "@echo off
-        ffmpeg -v verbose -i " . $lista_cuenta['url'] . " -vf scale=1920:1080  -vcodec libx264 -r 25 -b:v 1000000 -crf 31 -acodec aac  -sc_threshold 0 -f hls  -hls_time 5  -segment_time 5 -hls_list_size 5 inventario-billar.net" . $lista_cuenta['cam'] . "\stream.m3u8";
-    }
+    // }else{
+    //     $contenido = "@echo off
+    //     ffmpeg -v verbose -i " . $lista_cuenta['url'] . " -vf scale=1920:1080  -vcodec libx264 -r 25 -b:v 1000000 -crf 31 -acodec aac  -sc_threshold 0 -f hls  -hls_time 5  -segment_time 5 -hls_list_size 5 " . $lista_cuenta['cam'] . "\stream.m3u8";
+    // }
     
-    file_put_contents($comando, $contenido);
+    // file_put_contents("../libs/ffmpeg/bin/" . $comando, $contenido);
 
-    exec($comando, $output, $retorno);
+    // exec($comando, $output, $retorno);
 
-    if ($retorno !== 0) {
-        echo "Error al ejecutar el archivo Batch.";
-        echo "Código de retorno: " . $retorno;
-    } else {
-        echo "Archivo Batch ejecutado con éxito.";
-    }
+    // if ($retorno !== 0) {
+    //     echo "Error al ejecutar el archivo Batch.";
+    //     echo "Código de retorno: " . $retorno;
+    // } else {
+    //     echo "Archivo Batch ejecutado con éxito.";
+    // }
 
 }
 
@@ -152,6 +152,7 @@ if (isset($_POST["idCuentaDetener"])) {
     <!-- Incluye los archivos CSS de Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script type="text/javascript" src="../jsmpeg.min.js"></script>
     <style>
         html,
         body {
@@ -215,20 +216,23 @@ if (isset($_POST["idCuentaDetener"])) {
             color: white;
         }
         .video-container {
-    position: relative;
-    padding-bottom: 56.25%; /* Proporción 16:9, puedes ajustarlo según la relación de aspecto de tu video */
-    height: 0;
-    overflow: hidden;
-    max-width: 100%; /* Ajusta esto según el ancho máximo que desees para el video */
-}
+            position: relative;
+            padding-bottom: 56.25%; /* Proporción 16:9, puedes ajustarlo según la relación de aspecto de tu video */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%; /* Ajusta esto según el ancho máximo que desees para el video */
+        }
 
-.video-container video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .canvas{
+            width: 100%
+        }
 
     </style>
 </head>
@@ -289,9 +293,9 @@ if (isset($_POST["idCuentaDetener"])) {
                             <img src="../images/masentrada3.png" alt="Mas Entrada" onclick="Entrada('<?php echo $txtID;?>', 1)"> -
                             <?php
                                 if($lista_cuenta['estado_video'] == 0){
-                                    ?> <img src="../images/play2.png" alt="Imagen 3" onclick="Stream('<?php echo $txtID;?>', 'newcam.bat', '1')"> <?php
+                                    ?> <img src="../images/play2.png" id="play" alt="Imagen 3" onclick="Stream('<?php echo $txtID;?>', 'newcam.bat', '1')"> <?php
                                 }else{
-                                    ?> <img src="../images/detener.png" alt="Imagen 4" onclick="Stream('<?php echo $txtID;?>', 'stop.bat', '0')"> <?php
+                                    ?> <img src="../images/detener.png" id="stop" alt="Imagen 4" onclick="Stream('<?php echo $txtID;?>', 'stop.bat', '0')"> <?php
                                 }
                             ?>
                             <img src="../images/live.png" alt="Imagen 4" onclick="enVivo()">
@@ -317,10 +321,7 @@ if (isset($_POST["idCuentaDetener"])) {
                         </td>
                         <td colspan="5" rowspan="3" class="col-6">
                             <div class="video-container">
-                            <video id="video" autoplay controls fluid="true" type="application/x-mpegURL">
-                                <source src="../ffmpeg/<?php echo substr($lista_cuenta['cam'], -4);?>/stream.m3u8" />
-                                Not support
-                            </video>
+                                <canvas id="canvas"></canvas>
                             </div>
                         </td>
 
@@ -630,6 +631,11 @@ if (isset($_POST["idCuentaDetener"])) {
                     data: { idCuentaDetener: idCuentaDetener, comando: comando, estado_video: estado_video },
                     success: function(response) {
                         setTimeout(function(){
+                            if(estado_video == "1"){
+                                fetch("http://localhost:8080/start-stream?port=9000&url=rtsp://888888:888888@192.168.1.38:554?channel=1");
+                            }else{
+                                fetch("http://localhost:8080/stop-stream?port=9000");
+                            }
                             alert("Se " + texto2 + " la transmisión");
                             location.reload();                        
                         }, 1500);
@@ -686,6 +692,14 @@ if (isset($_POST["idCuentaDetener"])) {
 
     </script>
 
+    <script type="text/javascript">
+
+        
+        player = new JSMpeg.Player('ws://inventario-billar.net:9000', {
+            canvas: document.getElementById('canvas') // Canvas should be a canvas DOM element
+        });
+
+    </script>
+
 </body>
 </html>
-

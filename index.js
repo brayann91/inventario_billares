@@ -1,8 +1,10 @@
-const app = require("express")();
+const express = require("express");
 const cors = require('cors');
 const Stream = require('node-rtsp-stream');
 
+const app = express();
 app.use(cors());
+
 const streams = {};
 
 const streams_configs = [
@@ -14,9 +16,9 @@ const streams_configs = [
 ];
 
 const stopStream = (port) => {
-    if(streams[port]){
+    if (streams[port]) {
         streams[port].stop();
-        streams[port] = null;
+        delete streams[port];
     }
 };
 
@@ -25,25 +27,24 @@ const startStream = (name, streamUrl, wsPort) => {
         name,
         streamUrl,
         wsPort,
-        ffmpegOptions: { 
-          "-stats": "", 
-          "-r": 30,
+        ffmpegOptions: {
+            "-stats": "",
+            "-r": 30,
         },
-      });
+    });
 
-      streams[wsPort] = stream;
-}
+    streams[wsPort] = stream;
+};
 
-app.get('/start-stream', (req, res)=>{
-
-    const {url, port, key = 'stream'} = req.query;
-    if(!url && !port){
+app.get('/start-stream', (req, res) => {
+    const { url, port, key = 'stream' } = req.query;
+    if (!url || !port) {
         return res.json({
             message: "Bad input",
         });
     }
 
-    if(streams[port]){
+    if (streams[port]) {
         return res.json({
             message: "Port is in use",
         });
@@ -56,24 +57,29 @@ app.get('/start-stream', (req, res)=>{
     });
 });
 
-app.get('/stop-stream', (req, res)=>{
-    const {port} = req.query;
+app.get('/stop-stream', (req, res) => {
+    const { port } = req.query;
 
-    if (!streams[port]){
+    if (!streams[port]) {
         return res.json({
             message: "Port is not in use",
         });
     }
     stopStream(port);
 
-    returnres.json({
+    res.json({
         message: "Stopped Stream",
     });
 });
 
-app.listen(8080, ()=> {
-    console.log('Server running 8080')
-    streams_configs.forEach((config)=>{
+const server = app.listen(7000, () => {
+    console.log('Server running on port 7000');
+    streams_configs.forEach((config) => {
         startStream(config.key, config.url, config.port);
     });
+});
+
+// Manejo de errores de servidor
+server.on('error', (error) => {
+    console.error('Error en el servidor:', error.message);
 });

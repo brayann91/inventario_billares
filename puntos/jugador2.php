@@ -632,9 +632,9 @@ if (isset($_POST["idCuentaDetener"])) {
                     success: function(response) {
                         setTimeout(function(){
                             if(estado_video == "1"){
-                                fetch("http://inventario-billar.net:8080/start-stream?port=9000&url=rtsp://888888:888888@192.168.1.38:554?channel=1");
+                                fetch("http://localhost:7000/start-stream?port=9000&url=rtsp://888888:888888@192.168.1.38:554?channel=1");
                             }else{
-                                fetch("http://inventario-billar.net:8080/stop-stream?port=9000");
+                                fetch("http://localhost:7000/stop-stream?port=9000");
                             }
                             alert("Se " + texto2 + " la transmisión");
                             location.reload();                        
@@ -694,8 +694,7 @@ if (isset($_POST["idCuentaDetener"])) {
 
     <script type="text/javascript">
 
-        
-        player = new JSMpeg.Player('ws://inventario-billar.net:9000', {
+        player = new JSMpeg.Player('ws://localhost:9000', {
             canvas: document.getElementById('canvas') // Canvas should be a canvas DOM element
         });
 

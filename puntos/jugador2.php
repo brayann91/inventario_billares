@@ -109,32 +109,32 @@ if (isset($_POST["idCuentaDetener"])) {
     $sentencia->bindParam(":estado_video", $estado_video);
     $sentencia->execute();
 
-    //if($comando == "stop.bat"){
+    if($comando == "stop.bat"){
 
-    // $contenido = '@echo off
-    // taskkill /IM ffmpeg.exe /F
+    $contenido = '@echo off
+    taskkill /IM ffmpeg.exe /F
         
-    // rem Borra los archivos .ts
-    // del /Q "' . $lista_cuenta['cam'] . '\*.ts"
+    rem Borra los archivos .ts
+    del /Q "' . $lista_cuenta['cam'] . '\*.ts"
         
-    // rem Borra el archivo .m3u8 en la ruta ..\ffmpeg\
-    // del /Q "' . $lista_cuenta['cam'] . '\stream.m3u8"';
+    rem Borra el archivo .m3u8 en la ruta ..\ffmpeg\
+    del /Q "' . $lista_cuenta['cam'] . '\stream.m3u8"';
 
-    // }else{
-    //     $contenido = "@echo off
-    //     ffmpeg -v verbose -i " . $lista_cuenta['url'] . " -vf scale=1920:1080  -vcodec libx264 -r 25 -b:v 1000000 -crf 31 -acodec aac  -sc_threshold 0 -f hls  -hls_time 5  -segment_time 5 -hls_list_size 5 " . $lista_cuenta['cam'] . "\stream.m3u8";
-    // }
+    }else{
+         $contenido = '@echo off
+         ffmpeg -v verbose -i "' . $lista_cuenta['url'] . '" -vf scale=1280x720 -an -vcodec libx264 -preset ultrafast -tune zerolatency -crf 23 -sc_threshold 0 -f hls -hls_time 5 -segment_time 5 -hls_list_size 5 ' . $lista_cuenta["cam"] . '\stream.m3u8';
+     }
     
-    // file_put_contents("../libs/ffmpeg/bin/" . $comando, $contenido);
+     file_put_contents($comando, $contenido);
 
-    // exec($comando, $output, $retorno);
+     exec($comando, $output, $retorno);
 
-    // if ($retorno !== 0) {
-    //     echo "Error al ejecutar el archivo Batch.";
-    //     echo "Código de retorno: " . $retorno;
-    // } else {
-    //     echo "Archivo Batch ejecutado con éxito.";
-    // }
+     if ($retorno !== 0) {
+         echo "Error al ejecutar el archivo Batch.";
+         echo "Código de retorno: " . $retorno;
+     } else {
+         echo "Archivo Batch ejecutado con éxito.";
+     }
 
 }
 
@@ -148,7 +148,7 @@ if (isset($_POST["idCuentaDetener"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Tu página</title>
+    <title>2 Players</title>
     <!-- Incluye los archivos CSS de Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -156,6 +156,7 @@ if (isset($_POST["idCuentaDetener"])) {
     <style>
         html,
         body {
+            overflow: hidden;
             margin: 0;
             padding: 0;
             width: 100%;
@@ -209,6 +210,9 @@ if (isset($_POST["idCuentaDetener"])) {
             font-size: 18vw;
         }
         .text-center{
+            font-size: 40px;
+        }
+        .text-player{
             font-size: 30px;
         }
         .click{
@@ -217,10 +221,11 @@ if (isset($_POST["idCuentaDetener"])) {
         }
         .video-container {
             position: relative;
-            padding-bottom: 56.25%; /* Proporción 16:9, puedes ajustarlo según la relación de aspecto de tu video */
+            padding-bottom: 56.25%;
             height: 0;
             overflow: hidden;
-            max-width: 100%; /* Ajusta esto según el ancho máximo que desees para el video */
+            max-width: 100%;
+            transition: transform 0.5s ease; 
         }
 
         .video-container video {
@@ -235,15 +240,30 @@ if (isset($_POST["idCuentaDetener"])) {
         }
 
     </style>
+
+<script>
+    function handleDoubleClick() {
+        var videoContainer = document.getElementById('video-container');
+
+        if (videoContainer.style.transform === 'scale(1)') {
+            videoContainer.style.transform = 'scale(1.5)';
+        } else {
+            videoContainer.style.transform = 'scale(1)';
+        }
+    }
+</script>
+
 </head>
+<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <body>
         <div class="container-fluid vh-100 d-flex justify-content-center align-items-top p-0">
             <div class="row w-100">
                 <table class="table table-borderless">
                     <tr style="max-height: 30px;">
                         <td rowspan="6" colspan="4" class="col-3">
-                            <a class="table-button" onclick="incrementarValor1('<?php echo $txtID;?>', 1); ConteoSerie(1, 'jugador1', '<?php echo $txtID;?>'); 
-                            ConteoEntrada(1, '<?php echo $txtID;?>');">
+                            <a class="table-button" onclick="incrementarValor1('<?php echo $txtID;?>', 1); ConteoSerie(1, 'jugador1', '<?php echo $txtID;?>');">
                             <div class="image-container">
                             <img src="../images/bola_blanca.png" class="img-fluid" alt="Bola Blanca" id="bola-blanca">
                             <p class="image-text" id="valor1" style="color: black;"><?php echo $lista_puntos['puntos_jugador1']?></p>
@@ -258,7 +278,7 @@ if (isset($_POST["idCuentaDetener"])) {
                         </td>
 
                         <td rowspan="6" colspan="4" class="col-3">
-                            <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', 1); ConteoSerie(1, 'jugador2', '<?php echo $txtID;?>'); 
+                            <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', 1); ConteoSerie(1, 'jugador2', '<?php echo $txtID;?>');
                             ConteoEntrada(1, '<?php echo $txtID;?>');">
                             <div class="image-container">
                                 <img src="../images/bola_amarilla.png" class="img-fluid" alt="Bola Amarilla" id="bola-amarilla">
@@ -269,7 +289,9 @@ if (isset($_POST["idCuentaDetener"])) {
                     </tr>
                     <tr>
                         <td colspan="3" class="col-6">
-                            <div class="cronometro-texto" id="cronometro">00 : 00 : 00</div>
+                            <!--<div class="cronometro-texto" id="cronometro">00 : 00 : 00</div>-->
+                            <div class="cronometro-texto" id="cronometro"></div>
+                        </td>
                         </td>
                     </tr>
                     <tr>
@@ -284,57 +306,63 @@ if (isset($_POST["idCuentaDetener"])) {
                         <td class="col-4 text-center">Entrada</td>
                     </tr>
                     <tr>
-                        <td class="col-1 text-center"><?php echo $lista_puntos['jugador1']?></td>
+                        <td class="col-1 text-player"><?php echo $lista_puntos['jugador1']?></td>
                         <td class="col-4 text-center">
-                            <img src="../images/atrasar2.png" alt="Imagen 1" onclick="retrocederVideo(30)">
-                            <img src="../images/atrasar1.png" alt="Imagen 2" onclick="retrocederVideo(15)"> -
+                            <img src="../images/lento2.png" id="lento" alt="Imagen 1" onclick="videoLento()">
+                            <img src="../images/atrasnew3.png" id="atras2" alt="Imagen 1" onclick="retrocederVideo(30)">
+                            <img src="../images/atrasnew4.png" id="atras1" alt="Imagen 2" onclick="retrocederVideo(15)"> -
                             <img src="../images/menosentrada3.png" alt="Menos Entrada" onclick="Entrada('<?php echo $txtID;?>', -1)">
                             <a id="entrada"><?php echo $lista_puntos['entrada']?></a>
                             <img src="../images/masentrada3.png" alt="Mas Entrada" onclick="Entrada('<?php echo $txtID;?>', 1)"> -
                             <?php
                                 if($lista_cuenta['estado_video'] == 0){
-                                    ?> <img src="../images/play2.png" id="play" alt="Imagen 3" onclick="Stream('<?php echo $txtID;?>', 'newcam.bat', '1')"> <?php
+                                    ?> <img src="../images/playnew2.png" id="play" alt="Imagen 3" onclick="Stream('<?php echo $txtID;?>', 'newcam.bat', '1')"> <?php
                                 }else{
-                                    ?> <img src="../images/detener.png" id="stop" alt="Imagen 4" onclick="Stream('<?php echo $txtID;?>', 'stop.bat', '0')"> <?php
+                                    ?> <img src="../images/detenernew.png" id="stop" alt="Imagen 4" onclick="Stream('<?php echo $txtID;?>', 'stop.bat', '0')"> <?php
                                 }
                             ?>
-                            <img src="../images/live.png" alt="Imagen 4" onclick="enVivo()">
+                            <img src="../images/livenew2.png" alt="Imagen 4" onclick="enVivo()">
+                            <img src="../images/normal.png" id="normal" alt="Imagen 1" onclick="videoNormal()">
                         </td>
-                        <td class="col-1 text-center"><?php echo $lista_puntos['jugador2']?></td>
+                        <td class="col-1 text-player"><?php echo $lista_puntos['jugador2']?></td>
                     </tr>
 
 
                     <tr>
                         <td colspan="1" class="col-1 with-background">
                             <div class="image-container">
-                                <a class="table-button" onclick="incrementarValor1('<?php echo $txtID;?>', -1);">
+                                <a class="table-button" onclick="incrementarValor1('<?php echo $txtID;?>', -1); ConteoSerie(-1, 'jugador1', '<?php echo $txtID;?>');">
                                 <img class="img-fluid" src="../images/menos.png">
                                 <p class="centered-text" style="color: black;">-1</p>
                             </div>
                         </td>
                         <td colspan="2" class="col-2 with-background">
                             <div class="image-container">
-                                <a class="table-button" onclick="incrementarValor1('<?php echo $txtID;?>', 2);">
+                                <a class="table-button" onclick="incrementarValor1('<?php echo $txtID;?>', 2); ConteoSerie(2, 'jugador1', '<?php echo $txtID;?>');">
                                 <img class="img-fluid" src="../images/mas26.png">
                                 <p class="centered-text">+2</p>
                             </div>
                         </td>
                         <td colspan="5" rowspan="3" class="col-6">
                             <div class="video-container">
-                                <canvas id="canvas"></canvas>
+                                <video id="video" autoplay controls fluid="true" type="application/x-mpegURL">
+                                    <source src="../ffmpeg/Cam1/stream.m3u8" />
+                                    Not support
+                                </video>
                             </div>
                         </td>
 
                         <td colspan="1" class="col-1 with-background">
                             <div class="image-container">
-                                <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', -1);">
+                                <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', -1); ConteoSerie(-1, 'jugador2', '<?php echo $txtID;?>');">
                                 <img class="img-fluid" src="../images/menos.png">
                                 <p class="centered-text" style="color: black;">-1</p>
                             </div>
                         </td>
                         <td colspan="2" class="col-2 with-background">
                             <div class="image-container">
-                                <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', 2);">
+                                <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', 2); ConteoSerie(2, 'jugador2', '<?php echo $txtID;?>');
+                                ConteoEntrada(2, '<?php echo $txtID;?>');">
                                 <img class="img-fluid" src="../images/mas26.png">
                                 <p class="centered-text">+2</p>
                             </div>
@@ -343,28 +371,30 @@ if (isset($_POST["idCuentaDetener"])) {
                     <tr>
                         <td colspan="2" class="col-2 with-background">
                             <div class="image-container">
-                                <a class="table-button" onclick="incrementarValor1('<?php echo $txtID;?>', 3);">
+                                <a class="table-button" onclick="incrementarValor1('<?php echo $txtID;?>', 3); ConteoSerie(3, 'jugador1', '<?php echo $txtID;?>');">
                                 <img class="img-fluid" src="../images/mas3.png">
                                 <p class="centered-text">+3</p>
                             </div>
                         </td>
                         <td colspan="1" class="col-1 with-background">
                             <div class="image-container">
-                                <a class="table-button" onclick="incrementarValor1('<?php echo $txtID;?>', 4);">
+                                <a class="table-button" onclick="incrementarValor1('<?php echo $txtID;?>', 4); ConteoSerie(4, 'jugador1', '<?php echo $txtID;?>');">
                                 <img class="img-fluid" src="../images/mas4.png">
                                 <p class="centered-text">+4</p>
                             </div>
                         </td>
                         <td colspan="2" class="col-2 with-background">
                             <div class="image-container">
-                                <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', 3);">
+                                <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', 3); ConteoSerie(3, 'jugador2', '<?php echo $txtID;?>');
+                                ConteoEntrada(3, '<?php echo $txtID;?>');">
                                 <img class="img-fluid" src="../images/mas3.png">
                                 <p class="centered-text">+3</p>
                             </div>
                         </td>
                         <td colspan="1" class="col-1 with-background">
                             <div class="image-container">
-                                <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', 4);">
+                                <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', 4); ConteoSerie(4, 'jugador2', '<?php echo $txtID;?>');
+                                ConteoEntrada(4, '<?php echo $txtID;?>');">
                                 <img class="img-fluid" src="../images/mas4.png">
                                 <p class="centered-text">+4</p>
                             </div>
@@ -373,30 +403,32 @@ if (isset($_POST["idCuentaDetener"])) {
                     <tr>
                         <td colspan="1" class="col-1 with-background">
                             <div class="image-container">
-                                <a class="table-button" onclick="incrementarValor1('<?php echo $txtID;?>', 5);">
+                                <a class="table-button" onclick="incrementarValor1('<?php echo $txtID;?>', 5); ConteoSerie(5, 'jugador1', '<?php echo $txtID;?>');">
                                 <img class="img-fluid" src="../images/mas5.png">
                                 <p class="centered-text">+5</p>
                             </div>
                         </td>
                         <td colspan="2" class="col-2 with-background">
                             <div class="image-container">
-                                <a class="table-button" onclick="incrementarValor1('<?php echo $txtID;?>', 6);">
+                                <a class="table-button" onclick="incrementarValor1('<?php echo $txtID;?>', 0); ConteoSerie(0, 'jugador1', '<?php echo $txtID;?>');">
                                 <img class="img-fluid" src="../images/mas26.png">
-                                <p class="centered-text">+6</p>
+                                <p class="centered-text">0</p>
                             </div>
                         </td>
                         <td colspan="1" class="col-1 with-background">
                             <div class="image-container">
-                                <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', 5);">
+                                <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', 5); ConteoSerie(5, 'jugador2', '<?php echo $txtID;?>');
+                                ConteoEntrada(5, '<?php echo $txtID;?>');">
                                 <img class="img-fluid" src="../images/mas5.png">
                                 <p class="centered-text">+5</p>
                             </div>
                         </td>
                         <td colspan="2" class="col-2 with-background">
                             <div class="image-container">
-                                <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', 6);">
+                                <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', 0); ConteoSerie(0, 'jugador2', '<?php echo $txtID;?>');
+                                ConteoEntrada(0, '<?php echo $txtID;?>');">
                                 <img class="img-fluid" src="../images/mas26.png">
-                                <p class="centered-text">+6</p>
+                                <p class="centered-text">0</p>
                             </div>
                         </td>   
                     </tr>
@@ -601,7 +633,7 @@ if (isset($_POST["idCuentaDetener"])) {
 			hls.attachMedia(video);
 			hls.on(Hls.Events.MEDIA_ATTACHED, function (){
 				console.log("video and hls.js are now bound together !");
-                var url = "../ffmpeg/" + "<?php echo substr($lista_cuenta['cam'], -4);?>" + "/stream.m3u8" ;
+                var url = "../ffmpeg/Cam1" + "/stream.m3u8" ;
 				hls.loadSource(url);
 				hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
 					console.log("manifest loaded, found " + data.levels.length + " quiality level");
@@ -631,11 +663,6 @@ if (isset($_POST["idCuentaDetener"])) {
                     data: { idCuentaDetener: idCuentaDetener, comando: comando, estado_video: estado_video },
                     success: function(response) {
                         setTimeout(function(){
-                            if(estado_video == "1"){
-                                fetch("http://localhost:7000/start-stream?port=9000&url=rtsp://888888:888888@192.168.1.38:554?channel=1");
-                            }else{
-                                fetch("http://localhost:7000/stop-stream?port=9000");
-                            }
                             alert("Se " + texto2 + " la transmisión");
                             location.reload();                        
                         }, 1500);
@@ -673,29 +700,55 @@ if (isset($_POST["idCuentaDetener"])) {
             }
         }
 
-        function adelantarVideo() {
-            
+        function videoLento() {
             var video = document.getElementById('video');
-
-            var nuevoTiempo = video.currentTime + 15;
-
-            if (nuevoTiempo > video.duration) {
-                nuevoTiempo = video.duration;
-            }
-
-            video.currentTime = nuevoTiempo;
-
-            if (video.paused) {
-                video.play();
-            }
+            video.playbackRate = 0.25;
         }
 
-    </script>
+        function videoNormal() {
+            var video = document.getElementById('video');
+            video.playbackRate = 1;
+        }
 
-    <script type="text/javascript">
+        var videoContainer = document.getElementById("videoContainer");
+        var video = document.getElementById("video");
 
-        player = new JSMpeg.Player('ws://localhost:9000', {
-            canvas: document.getElementById('canvas') // Canvas should be a canvas DOM element
+        var initialPinchDistance = 0;
+        var initialZoomLevel = 1;
+
+        videoContainer.addEventListener("touchstart", function (event) {
+            if (event.touches.length === 2) {
+                
+                initialPinchDistance = Math.hypot(
+                    event.touches[0].pageX - event.touches[1].pageX,
+                    event.touches[0].pageY - event.touches[1].pageY
+                );
+                initialZoomLevel = currentZoomLevel;
+            }
+        });
+
+        videoContainer.addEventListener("touchmove", function (event) {
+            if (event.touches.length === 2) {
+                var currentPinchDistance = Math.hypot(
+                    event.touches[0].pageX - event.touches[1].pageX,
+                    event.touches[0].pageY - event.touches[1].pageY
+                );
+
+                var pinchDelta = currentPinchDistance - initialPinchDistance;
+                var zoomFactor = 0.01;
+                currentZoomLevel = Math.max(
+                    0.1,
+                    Math.min(2, initialZoomLevel + pinchDelta * zoomFactor)
+                );
+
+                videoContainer.style.transform = "scale(" + currentZoomLevel + ")";
+                video.style.transform = "scale(" + 1 / currentZoomLevel + ")";
+            }
+        });
+
+        videoContainer.addEventListener("touchend", function () {
+            initialPinchDistance = 0;
+            initialZoomLevel = currentZoomLevel;
         });
 
     </script>

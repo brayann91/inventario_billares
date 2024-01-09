@@ -35,8 +35,11 @@ if($_POST){
     $txtID = (isset($_GET['txtID'])) ? $_GET['txtID'] : "";
     $puntos_jugador1 = (isset($_POST["puntos_jugador1"]) ? $_POST["puntos_jugador1"] : "");
     $puntos_jugador2 = (isset($_POST["puntos_jugador2"]) ? $_POST["puntos_jugador2"] : "");
+    $puntos_jugador3 = (isset($_POST["puntos_jugador3"]) ? $_POST["puntos_jugador3"] : "");
+
     $nombre_jugador1 = (isset($_POST["nombre_jugador1"]) ? $_POST["nombre_jugador1"] : "");
     $nombre_jugador2 = (isset($_POST["nombre_jugador2"]) ? $_POST["nombre_jugador2"] : "");
+    $nombre_jugador3 = (isset($_POST["nombre_jugador3"]) ? $_POST["nombre_jugador3"] : "");
 
     if($puntos_jugador1 == ""){
         $puntos_jugador1 = 999;
@@ -44,29 +47,39 @@ if($_POST){
     if($puntos_jugador2 == ""){
         $puntos_jugador2 = 999;
     }
+    if($puntos_jugador3 == ""){
+        $puntos_jugador3 = 999;
+    }
+
     if($nombre_jugador1 == ""){
         $nombre_jugador1 = "Jugador 1";
     }
     if($nombre_jugador2 == ""){
         $nombre_jugador2 = "Jugador 2";
     }
+    if($nombre_jugador3 == ""){
+        $nombre_jugador3 = "Jugador 3";
+    }
 
     $sentencia = $conexion->prepare("UPDATE puntos SET
     jugador1=:jugador1,
     jugador2=:jugador2,
+    jugador3=:jugador3,
     limit_jugador1=:limit_jugador1,
-    limit_jugador2=:limit_jugador2
+    limit_jugador2=:limit_jugador2,
+    limit_jugador3=:limit_jugador3
     WHERE id_punto=:id_punto");
 
-    //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
     $sentencia->bindParam(":jugador1", $nombre_jugador1);
     $sentencia->bindParam(":jugador2", $nombre_jugador2);
+    $sentencia->bindParam(":jugador3", $nombre_jugador3);
     $sentencia->bindParam(":limit_jugador1", $puntos_jugador1);
     $sentencia->bindParam(":limit_jugador2", $puntos_jugador2);
+    $sentencia->bindParam(":limit_jugador3", $puntos_jugador3);
     $sentencia->bindParam(":id_punto", $lista_puntos['id_punto']);
     $sentencia->execute();
 
-    header("Location:jugador2.php?txtID=".$txtID);
+    header("Location:jugador3.php?txtID=".$txtID);
 }
 
 ?>
@@ -76,7 +89,7 @@ if($_POST){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Tu página</title>
+    <title>3 Players</title>
     <!-- Incluye los archivos CSS de Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
@@ -141,38 +154,53 @@ if($_POST){
                 <td colspan="4" class="table-cell"><h1>¿A cuantos puntos?</h1></td>
             </tr> 
             <tr class="table-row">
-                <td colspan="2" class="table-cell">
+                <td colspan="1" class="table-cell">
                 <div class="mb-3 d-flex justify-content-center">
                     <input type="number" class="form-control form-control-lg w-25 text-center" name="puntos_jugador1" id="puntos_jugador1" 
                     aria-describedby="helpId" placeholder="999" min="0" max="999" maxlength="3" inputmode="numeric">
                 </div>
                 </td>
-                <td colspan="2" class="table-cell">
+                <td colspan="1" class="table-cell">
                 <div class="mb-3 d-flex justify-content-center">
                     <input type="number" class="form-control form-control-lg w-25 text-center" name="puntos_jugador2" id="puntos_jugador2" 
                     aria-describedby="helpId" placeholder="999" maxlength="3" inputmode="numeric">
                 </div>
                 </td>
+                <td colspan="1" class="table-cell">
+                <div class="mb-3 d-flex justify-content-center">
+                    <input type="number" class="form-control form-control-lg w-25 text-center" name="puntos_jugador3" id="puntos_jugador3" 
+                    aria-describedby="helpId" placeholder="999" maxlength="3" inputmode="numeric">
+                </div>
+                </td>
             </tr>
             <tr class="table-row">
-                <td colspan="2" class="table-cell align-center-top">
-                    <h3>Nombre jugador 1:</h3>
+                <td colspan="1" class="table-cell align-center-top">
+                    <h3>jugador 1:</h3>
                 </td>
-                <td colspan="2" class="table-cell align-center-top">
-                    <h3>Nombre jugador 2:</h3>
+                <td colspan="1" class="table-cell align-center-top">
+                    <h3>jugador 2:</h3>
+                </td>
+                <td colspan="1" class="table-cell align-center-top">
+                    <h3>jugador 3:</h3>
                 </td>
             </tr>  
             <tr class="table-row">
-                <td colspan="2" class="table-cell">
+                <td colspan="1" class="table-cell">
                 <div class="mb-3 d-flex justify-content-center">
                     <input type="text" class="form-control form-control-lg w-50 text-center" name="nombre_jugador1" id="nombre_jugador1" 
                     aria-describedby="helpId" placeholder="Pablo" maxlength="20" inputmode="text">
                 </div>
                 </td>
-                <td colspan="2" class="table-cell">
+                <td colspan="1" class="table-cell">
                 <div class="mb-3 d-flex justify-content-center">
                     <input type="text" class="form-control form-control-lg w-50 text-center" name="nombre_jugador2" id="nombre_jugador2" 
                     aria-describedby="helpId" placeholder="Pedro" maxlength="20" inputmode="text">
+                </div>
+                </td>
+                <td colspan="1" class="table-cell">
+                <div class="mb-3 d-flex justify-content-center">
+                    <input type="text" class="form-control form-control-lg w-50 text-center" name="nombre_jugador3" id="nombre_jugador3" 
+                    aria-describedby="helpId" placeholder="Juan" maxlength="20" inputmode="text">
                 </div>
                 </td>
             </tr> 

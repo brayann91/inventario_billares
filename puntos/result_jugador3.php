@@ -25,6 +25,10 @@ if (isset($_POST["idCuenta"])) {
     jugador2 = 'Jugador 2',
     jugador3 = 'Jugador 3',
     jugador4 = 'Jugador 4',
+    limit_jugador1 = 999,
+    limit_jugador2 = 999,
+    limit_jugador3 = 999,
+    limit_jugador4 = 999,
     serie = 0,
     entrada = 0,
     puntos_jugador1 = 0,
@@ -90,47 +94,77 @@ if (isset($_POST["idCuenta"])) {
                 <td colspan="5" class="table-cell col-12 td"><h1 id="cuenta"><?php echo $lista_tiempos['nombre_cuenta'];?></h1></td>
             </tr>
             <tr>
-                <td rowspan="5" class="table-cell col-3 td"><h1><?php echo $lista_puntos['jugador1'];?></h1></td>
+                <td class="table-cell col-2 td"><h1></h1></td>    
+                <td class="table-cell col-2 td"><h1><?php echo $lista_puntos['jugador1'];?></h1></td>
+                <td class="table-cell col-2 td"><h1><?php echo $lista_puntos['jugador2'];?></h1></td>
+                <td class="table-cell col-2 td"><h1><?php echo $lista_puntos['jugador3'];?></h1></td>
+            </tr>
+            <tr>
+                <?php 
+                $valores  = [$lista_puntos['puntos_jugador1'], $lista_puntos['puntos_jugador2'], $lista_puntos['puntos_jugador3']];
+                $resultado  = ["Ganador", "Segundo", "Tercero"];
+                rsort($valores);?>
 
-                <?php if($lista_puntos['puntos_jugador1'] >= $lista_puntos['puntos_jugador2']) {?>
-                    <td class="table-cell col-2 td"><h1 >Ganador</h1></td>
-                <?php } else {?>
-                    <td class="table-cell col-2 td"><h1>Perdedor</h1></td>
-                <?php }?>
+                <td class="table-cell col-2 td"><h1 >Resultado</h1></td>
 
-                <td class="table-cell col-2"><h1>vs</h1></td>
+                <?php for ($i = 0; $i < count($valores); $i++) {  
+                    if ($valores[$i] == $lista_puntos['puntos_jugador1']){ 
+                    ?>
+                    <td class="table-cell col-2 td"><h1 ><?php echo $resultado[$i]?></h1></td>
+                <?php $i=5;
+                    }
+                }
                 
-                <?php if($lista_puntos['puntos_jugador2'] >= $lista_puntos['puntos_jugador1']) {?>
-                    <td class="table-cell col-2 td"><h1>Ganador</h1></td>
-                <?php } else {?>
-                    <td class="table-cell col-2 td"><h1>Perdedor</h1></td>
-                <?php }?>
-
-                <td rowspan="5" class="table-cell col-3"><h1><?php echo $lista_puntos['jugador2'];?></h1></td>
+                for ($i = 0; $i < count($valores); $i++) {  
+                    if ($valores[$i] == $lista_puntos['puntos_jugador2']){ 
+                    ?>
+                    <td class="table-cell col-2 td"><h1 ><?php echo $resultado[$i]?></h1></td>
+                <?php $i=5;
+                    }
+                }?>
+                
+                <?php for ($i = 0; $i < count($valores); $i++) {  
+                    if ($valores[$i] == $lista_puntos['puntos_jugador3']){ 
+                    ?>
+                    <td class="table-cell col-2 td"><h1 ><?php echo $resultado[$i]?></h1></td>
+                <?php $i=5;
+                    }
+                }?>
+                
             </tr>
 
-            <tr class="table-row">
-                <td class="table-cell col-2"><h1><?php echo $lista_puntos['puntos_jugador1'];?></h1></td>
-                <td class="table-cell col-2"><h1>Resultado</h1></td>
-                <td class="table-cell col-2"><h1><?php echo $lista_puntos['puntos_jugador2'];?></h1></td>
+            <tr>
+                <td class="table-cell col-2 td"><h1>Puntuación</h1></td>    
+                <td class="table-cell col-2 td"><h1><?php echo $lista_puntos['puntos_jugador1'];?></h1></td>
+                <td class="table-cell col-2 td"><h1><?php echo $lista_puntos['puntos_jugador2'];?></h1></td>
+                <td class="table-cell col-2 td"><h1><?php echo $lista_puntos['puntos_jugador3'];?></h1></td>
             </tr>
 
-            <tr class="table-row">
-                <td class="table-cell col-2"><h1><?php echo $lista_puntos['entrada'];?></h1></td>
-                <td class="table-cell col-2"><h1>Entradas</h1></td>
-                <td class="table-cell col-2"><h1><?php echo $lista_puntos['entrada'];?></h1></td>
+            <tr>
+                <td class="table-cell col-2 td"><h1>Entradas</h1></td>
+                <td class="table-cell col-2 td"><h1><?php echo $lista_puntos['entrada'];?></h1></td>
+                <td class="table-cell col-2 td"><h1><?php echo $lista_puntos['entrada'];?></h1></td>
+                <td class="table-cell col-2 td"><h1><?php echo $lista_puntos['entrada'];?></h1></td>
             </tr>
 
-            <tr class="table-row">
-                <td class="table-cell col-2"><h1><?php if($lista_puntos['entrada'] != 0){ echo intval(($lista_puntos['puntos_jugador1'] * 1000) / $lista_puntos['entrada']);}?></h1></td>
-                <td class="table-cell col-2"><h1>Promedio</h1></td>
-                <td class="table-cell col-2"><h1><?php if($lista_puntos['entrada'] != 0){ echo intval(($lista_puntos['puntos_jugador2'] * 1000) / $lista_puntos['entrada']);}?></h1></td>
+            <tr>
+                <td class="table-cell col-2 td"><h1>Promedio</h1></td>
+                <td class="table-cell col-2 td"><h1>
+                    <?php if($lista_puntos['entrada'] != 0){ echo intval(($lista_puntos['puntos_jugador1'] * 1000) / $lista_puntos['entrada']);}?>
+                </h1></td>
+                <td class="table-cell col-2 td"><h1>
+                    <?php if($lista_puntos['entrada'] != 0){ echo intval(($lista_puntos['puntos_jugador2'] * 1000) / $lista_puntos['entrada']);}?>
+                </h1></td>   
+                <td class="table-cell col-2 td"><h1>
+                    <?php if($lista_puntos['entrada'] != 0){ echo intval(($lista_puntos['puntos_jugador3'] * 1000) / $lista_puntos['entrada']);}?>
+                </h1></td>
             </tr>
 
-            <tr class="table-row">
-                <td class="table-cell col-2"><h1><?php echo $lista_puntos['max_serie1'];?></h1></td>
-                <td class="table-cell col-2"><h1>Mayor Serie</h1></td>
-                <td class="table-cell col-2"><h1><?php echo $lista_puntos['max_serie2'];?></h1></td>
+            <tr>
+                <td class="table-cell col-2 td"><h1>Mayor Serie</h1></td>
+                <td class="table-cell col-2 td"><h1><?php echo $lista_puntos['max_serie1'];?></h1></td>
+                <td class="table-cell col-2 td"><h1><?php echo $lista_puntos['max_serie2'];?></h1></td>
+                <td class="table-cell col-2 td"><h1><?php echo $lista_puntos['max_serie3'];?></h1></td>
             </tr>
 
             <tr class="table-row">
@@ -156,7 +190,7 @@ function Restablecer(idCuenta) {
     
     if (confirmacion) {
         $.ajax({
-            url: 'result_jugador2.php?txtID=' + idCuenta,
+            url: 'result_jugador3.php?txtID=' + idCuenta,
             method: 'POST',
             data: { idCuenta: idCuenta },
             success: function(response) {

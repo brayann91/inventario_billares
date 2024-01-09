@@ -1,2 +1,2 @@
 @echo off
-        ffmpeg -v verbose -i rtsp://888888:888888@192.168.1.38:554?channel=1 -vf scale=1920:1080  -vcodec libx264 -r 25 -b:v 1000000 -crf 31 -acodec aac  -sc_threshold 0 -f hls  -hls_time 5  -segment_time 5 -hls_list_size 5 ..\ffmpeg\Cam1\stream.m3u8
+         ffmpeg -v verbose -i "rtsp://888888:888888@192.168.1.38:554/cam/realmonitor?channel=1&subtype=00" -vf scale=1920:1080  -vcodec libx264 -r 25 -b:v 1000000 -crf 31 -acodec aac  -sc_threshold 0 -f hls  -hls_time 5  -segment_time 5 -hls_list_size 5 ..\ffmpeg\Cam1\stream.m3u8

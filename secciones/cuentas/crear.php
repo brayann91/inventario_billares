@@ -23,7 +23,7 @@ if($_POST){
   }
 
   //Preparar la insersion de los datos
-  $sentencia=$conexion->prepare("INSERT INTO cuentas(nombre_cuenta, precio_cuenta, estado, id_sede) VALUES (:nombre_cuenta, :precio_cuenta, 0, :id_sede)");
+  $sentencia=$conexion->prepare("INSERT INTO cuentas(nombre_cuenta, precio_cuenta, estado, estado_cuenta, id_sede) VALUES (:nombre_cuenta, :precio_cuenta, 1, 1, :id_sede)");
   
   //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
   $sentencia->bindParam(":nombre_cuenta", $nombre_cuenta);

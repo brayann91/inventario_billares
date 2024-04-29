@@ -11,7 +11,7 @@ if(isset($_GET['txtID'])){
 }
 
 $sentencia = $conexion->prepare("SELECT * FROM cuentas c INNER JOIN sedes s ON c.id_sede=s.id_sede 
-WHERE c.nombre_cuenta NOT LIKE 'borrada_%' AND c.id_sede= '" . $_SESSION['id_sede'] . "'");
+WHERE c.estado_cuenta = 1 AND c.id_sede= '" . $_SESSION['id_sede'] . "'");
 $sentencia->execute();
 $lista_cuentas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
@@ -424,11 +424,11 @@ $sentencia = $conexion->prepare("SELECT * FROM categorias WHERE id_sede = " . $_
 $sentencia->execute();
 $lista_categorias = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
-$sentencia = $conexion->prepare("SELECT * FROM cuentas WHERE estado<>1 AND nombre_cuenta NOT LIKE 'borrada_%' AND id_sede= '" . $_SESSION['id_sede'] . "'");
+$sentencia = $conexion->prepare("SELECT * FROM cuentas WHERE estado<>1 AND estado_cuenta = 1 AND id_sede= '" . $_SESSION['id_sede'] . "'");
 $sentencia->execute();
 $lista_cuentas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
-$sentencia = $conexion->prepare("SELECT * FROM cuentas WHERE estado<>0 AND nombre_cuenta NOT LIKE 'borrada_%' AND id_sede= '" . $_SESSION['id_sede'] . "'");
+$sentencia = $conexion->prepare("SELECT * FROM cuentas WHERE estado<>0 AND estado_cuenta = 1 AND id_sede= '" . $_SESSION['id_sede'] . "'");
 $sentencia->execute();
 $lista_cuentas2 = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
@@ -455,7 +455,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
   <tr>
     <td>
     <?php if($registro_caja["estado"]==1){ ?>
-      <form id="myForm">
+      <!--<form id="myForm">
         <select name="cuenta" class="form-select-sm" id="cuenta">
           <option value="" selected>Seleccione una Opción</option>
           <?php foreach ($lista_cuentas as $registro) {?>
@@ -465,7 +465,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
           <?php }?>
         </select>
         <button type="button" class="btn btn-success" onClick="agregar()">Agregar</button>
-      </form>
+      </form>-->
       <?php } ?>
     </td>
     <td>
@@ -484,7 +484,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
     </td>
     <td class="text-right">
     <?php if($registro_caja["estado"]==1){ ?>
-      <form id="myForm2">
+      <!--<form id="myForm2">
           <select name="cuenta2" class="form-select-sm" id="cuenta2">
             <option value="" selected>Seleccione una Opción</option>
             <?php foreach ($lista_cuentas2 as $registro) {?>
@@ -494,7 +494,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
             <?php }?>
           </select>
           <button type="button" class="btn btn-danger" onClick="quitar()">Quitar</button>
-        </form>
+        </form>-->
       <?php } ?>
     </td>
   </tr>

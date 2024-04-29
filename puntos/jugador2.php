@@ -289,13 +289,7 @@ if (isset($_POST["idCuentaDetener"])) {
                             </a>
                         </td>
                     </tr>
-                    <tr>
-                        <td colspan="3" class="col-6">
-                            <!--<div class="cronometro-texto" id="cronometro">00 : 00 : 00</div>-->
-                            <div class="cronometro-texto" id="cronometro"></div>
-                        </td>
-                        </td>
-                    </tr>
+                    
                     <tr>
                         <td class="col-1" rowspan="3"><img class="img-fluid" src="../images/jugadorr.png"></td>
                         <td class="col-4 text-center">Serie</td>
@@ -308,25 +302,32 @@ if (isset($_POST["idCuentaDetener"])) {
                         <td class="col-4 text-center">Entrada</td>
                     </tr>
                     <tr>
-                        <td class="col-1 text-player"><?php echo $lista_puntos['jugador1']?></td>
+                        <td class="col-1 text-player" rowspan="2"><?php echo $lista_puntos['jugador1']?></td>
                         <td class="col-4 text-center">
-                            <img src="../images/lento2.png" id="lento" alt="Imagen 1" onclick="videoLento()">
-                            <img src="../images/atrasnew3.png" id="atras2" alt="Imagen 1" onclick="retrocederVideo(30)">
-                            <img src="../images/atrasnew4.png" id="atras1" alt="Imagen 2" onclick="retrocederVideo(15)"> -
-                            <img src="../images/menosentrada3.png" alt="Menos Entrada" onclick="Entrada('<?php echo $txtID;?>', -1)">
+                            <img src="../images/atrasnew32.png" id="atras2" alt="Imagen 1" onclick="retrocederVideo(30)">
+                            <img src="../images/atrasnew42.png" id="atras1" alt="Imagen 2" onclick="retrocederVideo(15)">
+                            <img src="../images/menosentrada4.png" alt="Menos Entrada" onclick="Entrada('<?php echo $txtID;?>', -1)">
                             <a id="entrada"><?php echo $lista_puntos['entrada']?></a>
-                            <img src="../images/masentrada3.png" alt="Mas Entrada" onclick="Entrada('<?php echo $txtID;?>', 1)"> -
+                            <img src="../images/masentrada4.png" alt="Mas Entrada" onclick="Entrada('<?php echo $txtID;?>', 1)">
                             <?php
                                 if($lista_cuenta['estado_video'] == 0){
-                                    ?> <img src="../images/playnew2.png" id="play" alt="Imagen 3" onclick="Stream('<?php echo $txtID;?>', 'newcam.bat', '1')"> <?php
+                                    ?> <img src="../images/playnew22.png" id="play" alt="Imagen 3" onclick="Stream('<?php echo $txtID;?>', 'newcam.bat', '1')"> <?php
                                 }else{
-                                    ?> <img src="../images/detenernew.png" id="stop" alt="Imagen 4" onclick="Stream('<?php echo $txtID;?>', 'stop.bat', '0')"> <?php
+                                    ?> <img src="../images/detenernew2.png" id="stop" alt="Imagen 4" onclick="Stream('<?php echo $txtID;?>', 'stop.bat', '0')"> <?php
                                 }
                             ?>
-                            <img src="../images/livenew2.png" alt="Imagen 4" onclick="enVivo()">
-                            <img src="../images/normal.png" id="normal" alt="Imagen 1" onclick="videoNormal()">
+                            <img src="../images/livenew22.png" alt="Imagen 4" onclick="enVivo()">
                         </td>
-                        <td class="col-1 text-player"><?php echo $lista_puntos['jugador2']?></td>
+                        <td class="col-1 text-player" rowspan="2"><?php echo $lista_puntos['jugador2']?></td>
+                    </tr>
+                    <tr>
+                        <td class="col-4 text-center">
+                            <img src="../images/lentox22.png" id="lento2" alt="Imagen 1" onclick="videoLento2()">
+                            <img src="../images/lento22.png" id="lento" alt="Imagen 1" onclick="videoLento()">
+                            <img src="../images/normal22.png" id="normal" alt="Imagen 1" onclick="videoNormal()">
+                            <img src="../images/rapido2.png" id="rapido" alt="Imagen 1" onclick="videoRapido()">
+                            <img src="../images/rapido22.png" id="rapido" alt="Imagen 1" onclick="videoRapido2()">
+                        </td>
                     </tr>
 
 
@@ -702,9 +703,24 @@ if (isset($_POST["idCuentaDetener"])) {
             }
         }
 
+        function videoLento2() {
+            var video = document.getElementById('video');
+            video.playbackRate = 0.2;
+        }
+
         function videoLento() {
             var video = document.getElementById('video');
-            video.playbackRate = 0.25;
+            video.playbackRate = 0.5;
+        }
+
+        function videoRapido() {
+            var video = document.getElementById('video');
+            video.playbackRate = 3;
+        }
+
+        function videoRapido2() {
+            var video = document.getElementById('video');
+            video.playbackRate = 6;
         }
 
         function videoNormal() {

@@ -311,7 +311,7 @@ if (isset($_POST["idCuentaDetener"])) {
                 <table class="table table-borderless">
                     
                     <tr style="max-height: 30px;">
-                        <td style="width: 21.42%;" rowspan="5" colspan="3" class="">
+                        <td style="width: 21.42%;" rowspan="6" colspan="3" class="">
                             <a class="table-button" onclick="incrementarValor1('<?php echo $txtID;?>', 1); ConteoSerie(1, 'jugador1', '<?php echo $txtID;?>'); ">
                             <div class="image-container">
                             <img src="../images/bola_blanca.png" class="img-fluid" alt="Bola Blanca" id="bola-blanca">
@@ -331,7 +331,7 @@ if (isset($_POST["idCuentaDetener"])) {
 
                         <td style="width: 21.42%;" class="text-player" colspan="3"><?php echo $lista_puntos['jugador2']?></td>
 
-                        <td style="width: 21.42%;" rowspan="5" colspan="3" class="">
+                        <td style="width: 21.42%;" rowspan="6" colspan="3" class="">
                             <a class="table-button" onclick="incrementarValor2('<?php echo $txtID;?>', 1); ConteoSerie(1, 'jugador2', '<?php echo $txtID;?>');">
                             <div class="image-container">
                                 <img src="../images/bola_amarilla.png" class="img-fluid" alt="Bola Amarilla" id="bola-amarilla">
@@ -443,7 +443,6 @@ if (isset($_POST["idCuentaDetener"])) {
                     <tr>
                         
                         <td class="text-center" colspan="8">
-                            <img src="../images/lento2.png" id="lento" alt="Imagen 1" onclick="videoLento()">
                             <img src="../images/atrasnew3.png" id="atras2" alt="Imagen 1" onclick="retrocederVideo(30)">
                             <img src="../images/atrasnew4.png" id="atras1" alt="Imagen 2" onclick="retrocederVideo(15)"> -
                             <img src="../images/menosentrada3.png" alt="Menos Entrada" onclick="Entrada('<?php echo $txtID;?>', -1)">
@@ -457,9 +456,18 @@ if (isset($_POST["idCuentaDetener"])) {
                                 }
                             ?>
                             <img src="../images/livenew2.png" alt="Imagen 4" onclick="enVivo()">
-                            <img src="../images/normal.png" id="normal" alt="Imagen 1" onclick="videoNormal()">
                         </td>
                         
+                    </tr>
+
+                    <tr>
+                        <td class="col-4 text-center" colspan="8">
+                            <img src="../images/lentox22.png" id="lento2" alt="Imagen 1" onclick="videoLento2()">
+                            <img src="../images/lento22.png" id="lento" alt="Imagen 1" onclick="videoLento()">
+                            <img src="../images/normal22.png" id="normal" alt="Imagen 1" onclick="videoNormal()">
+                            <img src="../images/rapido2.png" id="rapido" alt="Imagen 1" onclick="videoRapido()">
+                            <img src="../images/rapido22.png" id="rapido" alt="Imagen 1" onclick="videoRapido2()">
+                        </td>
                     </tr>
 
                     <tr>
@@ -957,7 +965,22 @@ if (isset($_POST["idCuentaDetener"])) {
 
         function videoLento() {
             var video = document.getElementById('video');
-            video.playbackRate = 0.25;
+            video.playbackRate = 0.5;
+        }
+
+        function videoLento2() {
+            var video = document.getElementById('video');
+            video.playbackRate = 0.2;
+        }
+
+        function videoRapido() {
+            var video = document.getElementById('video');
+            video.playbackRate = 3;
+        }
+
+        function videoRapido2() {
+            var video = document.getElementById('video');
+            video.playbackRate = 6;
         }
 
         function videoNormal() {

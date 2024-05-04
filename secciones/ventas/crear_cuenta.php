@@ -23,11 +23,10 @@ if($_POST){
   }
 
   //Preparar la insersion de los datos
-  $sentencia=$conexion->prepare("INSERT INTO cuentas(nombre_cuenta, precio_cuenta, estado, estado_cuenta, id_sede) VALUES (:nombre_cuenta, :precio_cuenta, 1, 1, :id_sede)");
+  $sentencia=$conexion->prepare("INSERT INTO cuentas(nombre_cuenta, precio_cuenta, estado, estado_cuenta, id_sede) VALUES (:nombre_cuenta, 0, 1, 1, :id_sede)");
 
   //Asignando los valores que vienen del metodo POST ( los que vienen del formulario)
   $sentencia->bindParam(":nombre_cuenta", $nombre_cuenta);
-  $sentencia->bindParam(":precio_cuenta", $precio_cuenta);
   $sentencia->bindParam(":id_sede", $id_sede);
   $sentencia->execute();
   $mensaje="Registro agregado";
@@ -58,11 +57,6 @@ $id_sede = $registro["id_sede"];
             <div class="mb-3">
                 <label for="nombre_cuenta" class="form-label">Nombre cuenta:</label>
                 <input type="text" required class="form-control" name="nombre_cuenta" id="nombre_cuenta" aria-describedby="helpId" placeholder="Nombre cuenta">
-            </div>
-
-            <div class="mb-3">
-                <label for="precio_cuenta" class="form-label">Precio por hora:</label>
-                <input type="text" required class="form-control" name="precio_cuenta" id="precio_cuenta" aria-describedby="helpId" placeholder="$10.000">
             </div>
 
             <div class="mb-3" style="display:none;">

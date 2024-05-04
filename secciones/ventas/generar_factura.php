@@ -95,7 +95,7 @@
     $id_cuenta_factura = $lista_factura_agrupada['id_cuenta'];
     $id_factura = $lista_factura_agrupada['id_factura'];
 
-    $sentencia = $conexion->prepare("UPDATE cuentas SET estado=0, estado_cuenta=0 WHERE id_cuenta=:idCuenta AND nombre_cuenta NOT LIKE 'MESA%' AND nombre_cuenta NOT LIKE 'CLIENTE'");
+    $sentencia = $conexion->prepare("UPDATE cuentas SET nombre_cuenta = CONCAT('borrada_', nombre_cuenta), estado=0, estado_cuenta=0 WHERE id_cuenta=:idCuenta AND nombre_cuenta NOT LIKE 'MESA%' AND nombre_cuenta NOT LIKE 'CLIENTE'");
     $sentencia->bindParam(":idCuenta", $id_cuenta_factura);
     $sentencia->execute();
 

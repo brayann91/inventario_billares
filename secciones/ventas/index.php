@@ -71,7 +71,7 @@ if ($_POST) {
         }
     }
 
-    $sentencia = $conexion->prepare("SELECT p.image, p.id_producto, p.precio, p.nombre_producto, SUM(e.cantidad) total_inventario
+    $sentencia = $conexion->prepare("SELECT p.*, SUM(e.cantidad) total_inventario
     FROM productos p
     INNER JOIN entradas e ON p.id_producto = e.id_producto
     WHERE p.id_sede= '" . $_SESSION['id_sede'] . "'

@@ -54,15 +54,6 @@ foreach ($lista_cuentas as $registro) {
 $menu .= '</ul>';
 $menu2 .= '</ul>';
 
-$sentencia = $conexion->prepare("SELECT p.*, e.*, c.*, SUM(e.cantidad) total_inventario
-FROM productos p
-INNER JOIN entradas e ON p.id_producto = e.id_producto
-INNER JOIN categorias c ON p.id_categoria = c.id_categoria
-WHERE p.id_sede= '" . $_SESSION['id_sede'] . "'
-GROUP BY p.id_producto");
-$sentencia->execute();
-$lista_productos = $sentencia->fetchAll(PDO::FETCH_ASSOC);
-
 if ($_POST) {
 
     $sentencia = $conexion->prepare("SELECT * FROM categorias WHERE id_sede = " . $_SESSION['id_sede'] . "");
@@ -80,11 +71,10 @@ if ($_POST) {
         }
     }
 
-    $sentencia = $conexion->prepare("SELECT p.*, e.*, c.*, SUM(e.cantidad) total_inventario
+    $sentencia = $conexion->prepare("SELECT p.image, p.id_producto, p.precio, p.nombre_producto, SUM(e.cantidad) total_inventario
     FROM productos p
     INNER JOIN entradas e ON p.id_producto = e.id_producto
-    INNER JOIN categorias c ON p.id_categoria = c.id_categoria
-    WHERE p.id_categoria = '" . $idcategoria . "' " . " AND p.id_sede= '" . $_SESSION['id_sede'] . "'
+    WHERE p.id_sede= '" . $_SESSION['id_sede'] . "'
     GROUP BY p.id_producto");
     $sentencia->execute();
     $lista_productos = $sentencia->fetchAll(PDO::FETCH_ASSOC);

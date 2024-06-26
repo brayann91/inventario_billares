@@ -124,7 +124,7 @@ if (isset($_POST["idCuentaDetener"])) {
          $ip_segunda_pc = '192.168.10.2';
 
          $contenido = '@echo off
-         ffmpeg -f gdigrab -framerate 30 -i desktop -c:v libx264 -preset ultrafast -tune zerolatency -c:a aac -strict experimental -f hls ' . $lista_cuenta["cam"] . '\stream.m3u8';
+         ffmpeg -v verbose -i "' . $lista_cuenta['url'] . '" -vf scale=1280x720 -an -vcodec libx264 -preset ultrafast -tune zerolatency -crf 23 -sc_threshold 0 -f hls -hls_time 3 -segment_time 3 -hls_list_size 100 -start_number 10 ' . $lista_cuenta["cam"] . '\stream.m3u8';
      }
     
      file_put_contents($comando, $contenido);

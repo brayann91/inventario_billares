@@ -54,6 +54,15 @@ foreach ($lista_cuentas as $registro) {
 $menu .= '</ul>';
 $menu2 .= '</ul>';
 
+$sentencia = $conexion->prepare("SELECT p.*, e.*, c.*, SUM(e.cantidad) total_inventario
+FROM productos p
+INNER JOIN entradas e ON p.id_producto = e.id_producto
+INNER JOIN categorias c ON p.id_categoria = c.id_categoria
+WHERE p.id_sede= '" . $_SESSION['id_sede'] . "'
+GROUP BY p.id_producto");
+$sentencia->execute();
+$lista_productos = $sentencia->fetchAll(PDO::FETCH_ASSOC);
+
 if ($_POST) {
 
     $sentencia = $conexion->prepare("SELECT * FROM categorias WHERE id_sede = " . $_SESSION['id_sede'] . "");
@@ -71,10 +80,11 @@ if ($_POST) {
         }
     }
 
-    $sentencia = $conexion->prepare("SELECT p.*, SUM(e.cantidad) total_inventario
+    $sentencia = $conexion->prepare("SELECT p.*, e.*, c.*, SUM(e.cantidad) total_inventario
     FROM productos p
     INNER JOIN entradas e ON p.id_producto = e.id_producto
-    WHERE p.id_sede= '" . $_SESSION['id_sede'] . "'
+    INNER JOIN categorias c ON p.id_categoria = c.id_categoria
+    WHERE p.id_categoria = '" . $idcategoria . "' " . " AND p.id_sede= '" . $_SESSION['id_sede'] . "'
     GROUP BY p.id_producto");
     $sentencia->execute();
     $lista_productos = $sentencia->fetchAll(PDO::FETCH_ASSOC);
@@ -551,7 +561,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                         ?>
                         <td>
                           <button type="submit" id="agregar_producto_<?php echo $array_name_cuenta[$x] ?>" value=""
-                          style="background-image: url('<?php echo "../productos/" . $registro['image']; ?>');
+                          style="background-image: url('<?php echo "../productos/" . $registro['p.image']; ?>');
                               background-repeat: no-repeat;
                               background-position: center center;
                               background-size: cover;

@@ -561,7 +561,7 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                         ?>
                         <td>
                           <button type="submit" id="agregar_producto_<?php echo $array_name_cuenta[$x] ?>" value=""
-                          style="background-image: url('<?php echo "../productos/" . $registro['p.image']; ?>');
+                          style="background-image: url('<?php echo "../productos/" . $registro['image']; ?>');
                               background-repeat: no-repeat;
                               background-position: center center;
                               background-size: cover;

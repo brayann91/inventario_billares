@@ -81,11 +81,12 @@ $id_sede = $registro["id_sede"];
 
 <script>
     function validarNombreCuenta() {
-        var nombreCuenta = document.getElementById("nombre_cuenta").value;
+        var nombreCuenta = document.getElementById("nombre_cuenta").value.toLowerCase(); // Convertir todo a minúsculas
         var regex = /^[a-zA-Z0-9\s]*$/; // Expresión regular para permitir solo letras, números y espacios
 
-        if (nombreCuenta.includes("ñ") || !regex.test(nombreCuenta)) {
-            alert("El nombre de la cuenta no puede contener una 'ñ' o caracteres especiales.");
+        // Verifica si contiene la palabra "mesa" o "ñ" y si tiene caracteres especiales
+        if (nombreCuenta.includes("ñ") || nombreCuenta.includes("mesa") || !regex.test(nombreCuenta)) {
+            alert("El nombre de la cuenta no puede contener una 'ñ', la palabra 'mesa', o caracteres especiales.");
             return false; // Evita que el formulario se envíe
         }
 

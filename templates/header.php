@@ -226,7 +226,7 @@ var tabId = "";
    document.getElementById("nav-caja-tab").addEventListener("click", function() {
    changeActiveTab("nav-caja-tab",'<?php echo $url_base; ?>secciones/cajas');});
 
-   <?php if ($_SESSION['id_cargo'] == 4) {?>
+   <?php if ($_SESSION['id_cargo'] == 5) {?>
     document.getElementById("nav-cajas-tab").addEventListener("click", function() {
     changeActiveTab("nav-cajas-tab",'<?php echo $url_base; ?>secciones/ventas/index_hotel.php');});
    <?php }else{?>

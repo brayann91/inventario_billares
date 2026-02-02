@@ -226,8 +226,14 @@ var tabId = "";
    document.getElementById("nav-caja-tab").addEventListener("click", function() {
    changeActiveTab("nav-caja-tab",'<?php echo $url_base; ?>secciones/cajas');});
 
-   document.getElementById("nav-cajas-tab").addEventListener("click", function() {
-   changeActiveTab("nav-cajas-tab",'<?php echo $url_base; ?>secciones/ventas');});
+   <?php if ($_SESSION['id_cargo'] == 4) {?>
+    document.getElementById("nav-cajas-tab").addEventListener("click", function() {
+    changeActiveTab("nav-cajas-tab",'<?php echo $url_base; ?>secciones/ventas/index_hotel.php');});
+   <?php }else{?>
+    document.getElementById("nav-cajas-tab").addEventListener("click", function() {
+    changeActiveTab("nav-cajas-tab",'<?php echo $url_base; ?>secciones/ventas');});
+   <?php }?>
+
 
    document.getElementById("nav-cerrar-tab").addEventListener("click", function() {
    changeActiveTab("nav-cerrar-tab",'<?php echo $url_base; ?>cerrar.php');});

@@ -220,6 +220,7 @@ if ($_POST) {
       $id_producto_temporal = (isset($_POST["id_producto_temporal"]) ? $_POST["id_producto_temporal"] : "");
       $nombre_cuenta_temporal = (isset($_POST["nombre_cuenta_temporal"]) ? str_replace('_', ' ', $_POST["nombre_cuenta_temporal"]) : "");
       $id_cuenta_temporal = (isset($_POST["id_cuenta_temporal"]) ? $_POST["id_cuenta_temporal"] : "");
+      $cantidad = (isset($_POST["cantidad"]) ? $_POST["cantidad"] : "");
 
         $sentencia = $conexion->prepare("SELECT * FROM entradas WHERE id_cuenta = :id_cuenta_temporal AND id_producto = :id_producto_temporal AND estado = 1");
         $sentencia->bindParam(":id_cuenta_temporal", $id_cuenta_temporal);
@@ -231,18 +232,20 @@ if ($_POST) {
         
       if(isset($registro_entrada['estado'])){
         $sentencia = $conexion->prepare("UPDATE entradas e
-        SET cantidad=cantidad-1,
-          precio_total=precio_total-(SELECT precio FROM productos WHERE id_producto = :id_producto_temporal),
+        SET cantidad=:cantidad*-1,
+          precio_total=precio_total-(SELECT precio FROM productos WHERE id_producto = :id_producto_temporal) * :cantidad,
           fecha=CURRENT_TIMESTAMP()
           WHERE id_entrada=:id_entrada_mas");
+          $sentencia->bindParam(":cantidad", $cantidad);
           $sentencia->bindParam(":id_entrada_mas", $id_entrada);
           $sentencia->bindParam(":id_producto_temporal", $id_producto_temporal);
           $sentencia->execute();
       }else{
         $sentencia = $conexion->prepare("INSERT INTO entradas(cantidad, precio_total, precio_venta, fecha, estado, id_producto, id_cuenta)
-        VALUES (-1, (SELECT precio FROM productos WHERE id_producto = :id_producto_temporal)*-1,
-        (SELECT precio FROM productos WHERE id_producto = :id_producto_temporal)*-1,CURRENT_TIMESTAMP(), 1, :id_producto_temporal,
+        VALUES (:cantidad*-1, (SELECT precio FROM productos WHERE id_producto = :id_producto_temporal)*(:cantidad*-1),
+        (SELECT precio FROM productos WHERE id_producto = :id_producto_temporal)*(:cantidad*-1),CURRENT_TIMESTAMP(), 1, :id_producto_temporal,
         (SELECT id_cuenta FROM cuentas WHERE id_cuenta = :id_cuenta_temporal))");
+        $sentencia->bindParam(":cantidad", $cantidad);
         $sentencia->bindParam(":id_producto_temporal", $id_producto_temporal);
         $sentencia->bindParam(":id_cuenta_temporal", $id_cuenta_temporal);
         $sentencia->execute();
@@ -569,7 +572,8 @@ $cantidad_tiempos_sin_detener = $sentencia->fetch(PDO::FETCH_ASSOC)['cantidad'];
                               height: 50px;"
                           class="img-fluid rounded" alt=""
                           onClick="agregarProductoACuenta('<?php echo $array_name_cuenta[$x] ?>', '<?php echo $registro['id_producto']; ?>',
-                          '<?php echo $registro_cuenta['id_cuenta']; ?>', '<?php echo $registro['precio']; ?>')"
+                          '<?php echo $registro_cuenta['id_cuenta']; ?>', '<?php echo $registro['precio']; ?>', '<?php echo "../productos/" . $registro['image'];?>', 
+                          '<?php echo $registro['nombre_producto'];?>')"
                           >
                         </td>
                         <td><?php echo $registro['nombre_producto']; ?></td>
@@ -1150,12 +1154,12 @@ window.onhashchange();
 
   }
 
-  function agregarProductoACuenta(nombre_cuenta_temporal, id_producto_temporal, id_cuenta_temporal, precio) {
+  function agregarProductoACuenta(nombre_cuenta_temporal, id_producto_temporal, id_cuenta_temporal, precio, imagen, nombre) {
 
     var nombreProducto = document.getElementById("nombre_p_" + nombre_cuenta_temporal + "_" + id_producto_temporal); 
     var precioProducto = document.getElementById("precio_p_" + nombre_cuenta_temporal + "_" + id_producto_temporal); 
     var cantidadProducto = document.getElementById("cantidad_p_" + nombre_cuenta_temporal + "_" + id_producto_temporal);
-    var precioTotal = document.getElementById("precio_" + nombre_cuenta_temporal); 
+    var precioTotal = document.getElementById("precio_" + nombre_cuenta_temporal);
     
     if (nombreProducto) {
       $.ajax({
@@ -1186,19 +1190,88 @@ window.onhashchange();
         }
       });
     } else {
-      $.ajax({
-        url: 'index.php',
-        method: 'POST',
-        data: { id_cuenta_temporal: id_cuenta_temporal, id_producto_temporal: id_producto_temporal },
-        success: function(response) {
-          //setTimeout(function(){
-            location.reload();
-          //}, 500);
-        },
-        error: function(xhr, textStatus, errorThrown) {
-          console.log(xhr.responseText);
+      Swal.fire({
+      title: nombre,
+
+      imageUrl: imagen,
+      imageWidth: 120,
+      imageHeight: 120,
+      imageAlt: 'Producto',
+
+      html: `
+        <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
+          <button id="btnMenos" style="padding:5px 12px; font-size:18px;">-</button>
+          <input id="cantidadInput" type="text" value="1" 
+            style="width:60px; text-align:center; font-size:18px;" />
+          <button id="btnMas" style="padding:5px 12px; font-size:18px;">+</button>
+        </div>
+      `,
+
+      showCancelButton: true,
+      confirmButtonColor: '#30d659',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Añadir',
+      cancelButtonText: 'Cancelar',
+
+      didOpen: () => {
+        const input = document.getElementById('cantidadInput');
+        const btnMas = document.getElementById('btnMas');
+        const btnMenos = document.getElementById('btnMenos');
+
+        // SOLO números
+        input.addEventListener('input', () => {
+          input.value = input.value.replace(/[^0-9]/g, '');
+
+          if (input.value === '' || parseInt(input.value) < 1) {
+            input.value = 1;
+          }
+        });
+
+        // BOTÓN +
+        btnMas.addEventListener('click', () => {
+          let valor = parseInt(input.value) || 1;
+          input.value = valor + 1;
+        });
+
+        // BOTÓN -
+        btnMenos.addEventListener('click', () => {
+          let valor = parseInt(input.value) || 1;
+          if (valor > 1) {
+            input.value = valor - 1;
+          }
+        });
+      },
+
+      preConfirm: () => {
+        const cantidad = document.getElementById('cantidadInput').value;
+        if (!cantidad || parseInt(cantidad) < 1) {
+          Swal.showValidationMessage('La cantidad debe ser mayor a 0');
+          return false;
         }
-      });
+        return cantidad;
+      }
+
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const cantidadSeleccionada = parseInt(result.value);
+
+        $.ajax({
+          url: 'index.php',
+          method: 'POST',
+          data: { 
+            id_cuenta_temporal: id_cuenta_temporal, 
+            id_producto_temporal: id_producto_temporal,
+            cantidad: cantidadSeleccionada
+          },
+          success: function(response) {
+            location.reload();
+          },
+          error: function(xhr, textStatus, errorThrown) {
+            console.log(xhr.responseText);
+          }
+        });
+      }
+    });
     }
   }
 

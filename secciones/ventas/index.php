@@ -232,11 +232,10 @@ if ($_POST) {
         
       if(isset($registro_entrada['estado'])){
         $sentencia = $conexion->prepare("UPDATE entradas e
-        SET cantidad=:cantidad*-1,
-          precio_total=precio_total-(SELECT precio FROM productos WHERE id_producto = :id_producto_temporal) * :cantidad,
+        SET cantidad=cantidad-1,
+          precio_total=precio_total-(SELECT precio FROM productos WHERE id_producto = :id_producto_temporal),
           fecha=CURRENT_TIMESTAMP()
           WHERE id_entrada=:id_entrada_mas");
-          $sentencia->bindParam(":cantidad", $cantidad);
           $sentencia->bindParam(":id_entrada_mas", $id_entrada);
           $sentencia->bindParam(":id_producto_temporal", $id_producto_temporal);
           $sentencia->execute();
@@ -1167,7 +1166,7 @@ window.onhashchange();
         method: 'POST',
         data: { id_cuenta_temporal: id_cuenta_temporal, id_producto_temporal: id_producto_temporal },
         success: function(response) {
-          var precioActual =convertToDoubleWithDecimal(precioProducto.innerHTML);
+          var precioActual = convertToDoubleWithDecimal(precioProducto.innerHTML);
           var precioActualTotal = convertToDoubleWithDecimal(precioTotal.innerHTML);
           if (!isNaN(precioActual)) {
           var nuevoPrecio = precioActual + parseFloat(precio);
